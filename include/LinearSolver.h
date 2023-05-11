@@ -38,15 +38,11 @@ public:
     void setup_system();
     void assemble_system();
     void solve();
+    void output_results(const std::string filename) const;
     Triangulation<dim>& get_triangulation();
 //    void run();
 
 private:
-
-
-
-
-//    void output_results() const;
 
     Triangulation<dim> triangulation;
     FE_Q<dim> fe;

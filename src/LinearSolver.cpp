@@ -127,3 +127,18 @@ void LinearSolver<dim>::solve(){
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
 }
+
+template<int dim>
+void LinearSolver<dim>::output_results(const std::string filename) const{
+
+    DataOut<dim> data_out;
+
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(solution, "u");
+
+    data_out.build_patches();
+    std::cout << "writing solution: " << filename + ".vtu" << std::endl;
+    std::ofstream output(filename+".vtu");
+    data_out.write_vtu(output);
+
+}

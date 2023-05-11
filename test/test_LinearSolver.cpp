@@ -72,3 +72,14 @@ TEST(LinearSolver, solve_system){
     solver.solve();
 
 }
+
+TEST(LinearSolver, output_results){
+
+    LinearSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.setup_system();
+    solver.assemble_system();
+    solver.solve();
+    solver.output_results("unit_square");
+
+}
