@@ -3,13 +3,21 @@ project(solver)
 set(CMAKE_CXX_STANDARD 17)
 
 
+add_library(solver SHARED src/LinearSolver.cpp src/RightHandSide.cpp include/RightHandSide.h)
+target_include_directories(solver PUBLIC include)
 
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
 include_directories(${deallii_dir}/include/)
 
-add_executable(solver linear.cpp linear.h)
-
 target_link_libraries(solver debug
         /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
-        tbb
-        )
+        tbb)
+
+# Locate GTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+
+add_executable(test_solver
+        test/test_LinearSolver.cpp)
+
+target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
