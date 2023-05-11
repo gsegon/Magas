@@ -30,6 +30,8 @@ void print_mesh_info(const Triangulation<dim> &triangulation)
     }
 }
 
+std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+
 TEST(LinearSolver, instantiation){
 
     LinearSolver<2> solver;
@@ -39,7 +41,7 @@ TEST(LinearSolver, instantiation){
 TEST(LinearSolver, read_mesh){
 
     LinearSolver<2> solver;
-    solver.read_mesh("/home/gordan/Programs/solver/test/test_data/test_iron_core/iron_core.msh");
+    solver.read_mesh(test_mesh);
     print_mesh_info<2>(solver.get_triangulation());
 
 }
@@ -47,7 +49,7 @@ TEST(LinearSolver, read_mesh){
 TEST(LinearSolver, setup_system){
 
     LinearSolver<2> solver;
-    solver.read_mesh("/home/gordan/Programs/solver/test/test_data/test_iron_core/iron_core.msh");
+    solver.read_mesh(test_mesh);
     solver.setup_system();
 
 }
@@ -55,7 +57,7 @@ TEST(LinearSolver, setup_system){
 TEST(LinearSolver, assemble_system){
 
     LinearSolver<2> solver;
-    solver.read_mesh("/home/gordan/Programs/solver/test/test_data/test_iron_core/iron_core.msh");
+    solver.read_mesh(test_mesh);
     solver.setup_system();
     solver.assemble_system();
 
@@ -64,7 +66,7 @@ TEST(LinearSolver, assemble_system){
 TEST(LinearSolver, solve_system){
 
     LinearSolver<2> solver;
-    solver.read_mesh("/home/gordan/Programs/solver/test/test_data/test_iron_core/iron_core.msh");
+    solver.read_mesh(test_mesh);
     solver.setup_system();
     solver.assemble_system();
     solver.solve();
