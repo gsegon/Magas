@@ -39,6 +39,9 @@ public:
     void assemble_system();
     void solve();
     void output_results(const std::string filename) const;
+    void set_nu_map(std::unordered_map<int, double> map);
+    void set_f_map(std::unordered_map<int, double> map);
+    void set_dc_map(std::unordered_map<int, double> map);
     Triangulation<dim>& get_triangulation();
 //    void run();
 
@@ -54,6 +57,9 @@ private:
 
     Vector<double> solution;
     Vector<double> system_rhs;
+    std::unordered_map<int, double> nu_map;
+    std::unordered_map<int, double> f_map;
+    std::unordered_map<int, double> dc_map;
 };
 
 

@@ -72,6 +72,8 @@ void LinearSolver<dim>::assemble_system() {
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double> cell_rhs(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+    double nu = 0;
+    double f = 0;
 
     // Iterate over cells and assemble to local and move to global
     for (const auto &cell : dof_handler.active_cell_iterators()){
@@ -81,16 +83,19 @@ void LinearSolver<dim>::assemble_system() {
 
         fe_values.reinit(cell);
 
+        nu = nu_map.at(cell->material_id());
+        f = f_map.at(cell->material_id());
+
         // Ass. into a local system
         for (const unsigned int q : fe_values.quadrature_point_indices()){
             for (const unsigned int i : fe_values.dof_indices()){
                 for (const unsigned int j : fe_values.dof_indices()){
-                    cell_matrix(i, j) +=
+                    cell_matrix(i, j) += nu*                      // nu at cell
                             fe_values.shape_grad(i, q)*        // grad phi_i(x_q)
                             fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
                             fe_values.JxW(q);                 // dx
                 }
-                cell_rhs(i) +=
+                cell_rhs(i) += f*                               // f at cell
                         fe_values.shape_value(i, q)*        // phi_i(x_q)
                         fe_values.JxW(q);                   // dx
             }
@@ -102,14 +107,19 @@ void LinearSolver<dim>::assemble_system() {
             for (const unsigned int j : fe_values.dof_indices()){
                 system_matrix.add(local_dof_indices[i], local_dof_indices[j], cell_matrix(i, j));
             }
-            system_rhs.add(local_dof_indices[i]);
+            system_rhs(local_dof_indices[i]) += cell_rhs(i);
         }
     }
 
     // Apply boundary conditions
     std::map<types::global_dof_index, double> boundary_values;
-    VectorTools::interpolate_boundary_values(dof_handler, 5, Functions::ZeroFunction<2>(), boundary_values);
+    for (auto& [mat_id, value] : dc_map){
+        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), boundary_values);
+    }
+
     MatrixTools::apply_boundary_values(boundary_values,system_matrix,solution,system_rhs);
+
+    std::cout << "Number of dofs: " << dof_handler.n_dofs() << std::endl;
 
 }
 
@@ -120,7 +130,7 @@ void LinearSolver<dim>::solve(){
     SolverCG<Vector<double>> solver(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.2);
+    preconditioner.initialize(system_matrix, 1.6);
 
     solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
@@ -141,4 +151,19 @@ void LinearSolver<dim>::output_results(const std::string filename) const{
     std::ofstream output(filename+".vtu");
     data_out.write_vtu(output);
 
+}
+
+template<int dim>
+void LinearSolver<dim>::set_nu_map(std::unordered_map<int, double> map) {
+    this->nu_map = map;
+}
+
+template<int dim>
+void LinearSolver<dim>::set_f_map(std::unordered_map<int, double> map) {
+    this->f_map = map;
+}
+
+template<int dim>
+void LinearSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
+    this->dc_map = map;
 }
