@@ -1,4 +1,6 @@
 {
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh",
+
   "material": {
     "core": {
       "nu": 318.30988601
@@ -16,8 +18,8 @@
   },
 
   "source": {
-    "J1": 1.0,
-    "J2": -1.0,
+    "J1": 31830.9886184,
+    "J2": -31830.9886184,
     "0": 0.0
   },
 
@@ -33,8 +35,6 @@
       "source": "0"},
     "100": {
       "boundary": "A=0"}
-  },
-
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh"
+  }
 
 }
