@@ -17,7 +17,7 @@ void print_triangulation_info(const Triangulation<dim> &triangulation)
             if (face->at_boundary())
                 boundary_count[face->boundary_id()]++;
 
-        std::cout << " boundary indicators: ";
+        std::cout << " boundary indicators (APP): ";
         for (const std::pair<const types::boundary_id, unsigned int> &pair : boundary_count)
         {
             std::cout << pair.first << "(" << pair.second << " times)";
@@ -25,7 +25,6 @@ void print_triangulation_info(const Triangulation<dim> &triangulation)
         std::cout << std::endl;
     }
 }
-
 
 int main(int argc, char* argv[]){
 
@@ -35,7 +34,7 @@ int main(int argc, char* argv[]){
     double Jdensity = i_current / (std::pow(0.1,2) * M_PI);
 
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x_dense.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x_dense_2.msh";
 
     std::unordered_map<int, double> nu_map{{3, nu_0},       // Air
                                            {1, nu_0},       // Conductor 1

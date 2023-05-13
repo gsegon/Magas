@@ -18,7 +18,8 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 add_executable(test_solver
-        test/test_LinearSolver.cpp)
+        test/test_LinearSolver.cpp
+        test/test_gmsh_mesh.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 

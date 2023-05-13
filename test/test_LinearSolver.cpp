@@ -8,28 +8,6 @@
 
 #include "LinearSolver.h"
 
-template<int dim>
-void print_mesh_info(const Triangulation<dim> &triangulation)
-{
-
-    std::cout   << "Mesh info: " << std::endl
-                << " dimension: " << dim << std::endl
-                << " no. of cells: " << triangulation.n_active_cells() << std::endl;
-    {
-        std::map<types::boundary_id, unsigned int> boundary_count;
-        for (const auto &face : triangulation.active_face_iterators())
-            if (face->at_boundary())
-                boundary_count[face->boundary_id()]++;
-
-        std::cout << " boundary indicators: ";
-        for (const std::pair<const types::boundary_id, unsigned int> &pair : boundary_count)
-        {
-            std::cout << pair.first << "(" << pair.second << " times)";
-        }
-        std::cout << std::endl;
-    }
-}
-
 std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
 std::unordered_map<int, double> nu_map{{6, 1}};
 std::unordered_map<int, double> f_map{{6, 1}};
@@ -46,10 +24,9 @@ TEST(LinearSolver, read_mesh){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    print_mesh_info<2>(solver.get_triangulation());
+
 
 }
-
 
 TEST(LinearSolver, setup_system){
 
@@ -128,17 +105,18 @@ TEST(LinearSolver, 2_conductors){
     double Jdensity = i_current / (std::pow(0.1,2) * M_PI);
 
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x_dense.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh";
 
-    std::unordered_map<int, double> nu_map{{2, nu_0},
-                                           {3, nu_0},
-                                           {4, nu_0}};
+    std::unordered_map<int, double> nu_map{{1, nu_0},       // Conductor 1
+                                           {2, nu_0},       // Conductor 2
+                                           {3, nu_0}};      // Air          
 
-    std::unordered_map<int, double> f_map{{4, 0},
-                                          {2, Jdensity},
-                                          {3, -Jdensity}};
+    std::unordered_map<int, double> f_map{ {1, Jdensity},   // Conductor 1
+                                           {2, -Jdensity},  // Conductor 2
+                                           {3, 0},          // Air
+                                        };
 
-    std::unordered_map<int, double> dc_map{{1, 0}};
+    std::unordered_map<int, double> dc_map{{100, 0}};       // Outerbounds
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -149,7 +127,5 @@ TEST(LinearSolver, 2_conductors){
     solver.assemble_system();
     solver.solve();
     solver.output_results("2_conductors");
-    print_mesh_info(solver.get_triangulation());
-
 
 }
