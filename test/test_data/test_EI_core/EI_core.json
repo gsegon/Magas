@@ -1,6 +1,4 @@
 {
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh",
-
   "material": {
     "core": {
       "nu": 318.30988601
@@ -18,22 +16,29 @@
   },
 
   "source": {
-    "J1": 31830.9886184,
-    "J2": -31830.9886184,
-    "0": 0.0
+    "J1": 818401.636803,
+    "J2": -818401.636803
   },
 
   "mesh_id": {
-    "1": {
+    "200": {
+      "material": "core"},
+    "201": {
+      "material": "core"},
+    "202": {
       "material": "copper",
       "source": "J1"},
-    "2": {
+    "203": {
       "material": "copper",
       "source": "J2"},
-    "3": {
+    "204": {
       "material": "air"},
-    "100": {
+    "205": {
+      "material": "air"},
+    "44": {
       "boundary": "A=0"}
-  }
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh"
 
 }

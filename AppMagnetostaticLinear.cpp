@@ -29,6 +29,9 @@ int main(int argc, char* argv[]){
     json input_data = json::parse(input);
 
     std::string mesh_filepath{input_data.at("mesh_path")};
+
+    std::cout << "Mesh file: " << mesh_filepath << std::endl;
+
     auto mesh_id_data = input_data.at("mesh_id");
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
@@ -45,6 +48,9 @@ int main(int argc, char* argv[]){
         }
         if (mesh_data.value().contains("source")){
             f_map.insert({mat_id, source_data.at(mesh_data.value().at("source"))});
+        }
+        else{
+            f_map.insert({mat_id, 0.0});
         }
         if (mesh_data.value().contains("boundary")){
             dc_map.insert({mat_id, boundary_data.at(mesh_data.value().at("boundary"))});
