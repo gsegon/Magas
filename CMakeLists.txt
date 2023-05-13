@@ -23,9 +23,12 @@ add_executable(test_solver
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 
-add_executable(AppMagnetostaticLinear AppMagnetostaticLinear.cpp)
+add_executable(aml AppMagnetostaticLinear.cpp)
 
-target_link_libraries(AppMagnetostaticLinear optimized
+set(json_dir "/home/gordan/Programs/json")
+include_directories(${json_dir}/include)
+
+target_link_libraries(aml optimized
         /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
         tbb
         solver)

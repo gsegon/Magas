@@ -26,12 +26,14 @@
 #include <deal.II/numerics/data_out.h>
 
 #include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/manifold_lib.h>
 
 using namespace dealii;
 
 template<int dim>
-void print_mesh_info(const Triangulation<dim> &triangulation)
+void print_mesh_info(const Triangulation<dim> &triangulation,
+                     const std::string& filename)
 {
 
     std::cout   << "Mesh info: " << std::endl
@@ -39,9 +41,33 @@ void print_mesh_info(const Triangulation<dim> &triangulation)
                 << " no. of cells: " << triangulation.n_active_cells() << std::endl;
     {
         std::map<types::boundary_id, unsigned int> boundary_count;
-        for (const auto &face : triangulation.active_face_iterators())
+        for (const auto &face : triangulation.active_face_iterators()){
             if (face->at_boundary())
                 boundary_count[face->boundary_id()]++;
+        }
+
+        auto manifold_ids = triangulation.get_manifold_ids();
+        auto boundary_ids = triangulation.get_boundary_ids();
+
+        std::map<types::boundary_id, unsigned int> cell_boundary_ids;
+        std::map<types::material_id , unsigned int> cell_material_ids;
+        std::map<types::manifold_id , unsigned int> cell_manifold_ids;
+        for (const auto &cell : triangulation.active_cell_iterators()){
+            cell_material_ids[cell->material_id()]++;
+            cell_material_ids[cell->boundary_id()]++;
+            cell_manifold_ids[cell->manifold_id()]++;
+        }
+
+        std::cout << "Manifold IDs: " << std::endl;
+        for (auto manifold_id : manifold_ids)
+            std::cout << manifold_id << std::endl;
+        std::cout << std::endl;
+
+        std::cout << "Boundary IDs: " << std::endl;
+        for (auto boundary_id : boundary_ids)
+            std::cout << boundary_id << std::endl;
+        std::cout << std::endl;
+
 
         std::cout << " boundary indicator: " << std::endl;
         for (const std::pair<const types::boundary_id, unsigned int> &pair : boundary_count)
@@ -50,6 +76,12 @@ void print_mesh_info(const Triangulation<dim> &triangulation)
         }
         std::cout << std::endl;
     }
+
+    std::ofstream out(filename);
+    GridOut grid_out;
+    grid_out.write_eps(triangulation, out);
+    std::cout << " written to " << filename << std::endl << std::endl;
+
 }
 
 
@@ -62,7 +94,7 @@ TEST(GmshMesh, unit_square){
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(test_mesh);
     grid_in.read_msh(input_file);
-    print_mesh_info(triangulation);
+    print_mesh_info(triangulation, "grid-out-unit_square.eps");
 
 }
 
@@ -75,7 +107,7 @@ TEST(GmshMesh, two_conductors){
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(test_mesh);
     grid_in.read_msh(input_file);
-    print_mesh_info(triangulation);
+    print_mesh_info(triangulation, "grid-out-two_conductors.eps");
 
 
 }
@@ -89,7 +121,21 @@ TEST(GmshMesh, test_n){
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(test_mesh);
     grid_in.read_msh(input_file);
-    print_mesh_info(triangulation);
+    print_mesh_info(triangulation, "grid-out-test_n.eps");
 
 }
+
+TEST(GmshMesh, EI_core){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+    print_mesh_info(triangulation, "grid-out-EI_core.eps");
+
+}
+
 
