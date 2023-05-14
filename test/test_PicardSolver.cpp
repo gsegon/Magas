@@ -131,8 +131,8 @@ TEST(PicardSolver, EI_core){
     constexpr double mu_0 = 1.2566370621219e-6;
     constexpr double nu_0 = 1/mu_0;
     constexpr double nu_core = 1/(2500*mu_0);
-    double J1 = 10*66/8.0645e-05;
-    double J2 = -10*66/8.0645e-05;
+    double J1 = 30*66/8.0645e-05;
+    double J2 = -30*66/8.0645e-05;
 
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
@@ -174,6 +174,53 @@ TEST(PicardSolver, EI_core){
     data_out.attach_dof_handler(dof_handler);
     data_out.add_data_vector(solver.get_solution(), "u");
     data_out.add_data_vector(solver.get_solution(), pmfdp);
+
+    Vector<float> mat_id_mask(solver.get_triangulation().n_active_cells());
+    for (const auto& cell : dof_handler.active_cell_iterators()){
+        mat_id_mask(cell->active_cell_index()) = (float) cell->material_id();
+    }
+    data_out.add_data_vector(mat_id_mask, "mat_id");
+
+    Vector<float> at_boundary(solver.get_triangulation().n_active_cells());
+    for (const auto& cell : dof_handler.active_cell_iterators()){
+        at_boundary(cell->active_cell_index()) = (float) cell->at_boundary();
+    }
+    data_out.add_data_vector(at_boundary, "at_boundary");
+
+    Vector<float> manifold_id(solver.get_triangulation().n_active_cells());
+    for (const auto& cell : dof_handler.active_cell_iterators()){
+        manifold_id(cell->active_cell_index()) = (float) cell->manifold_id();
+    }
+    data_out.add_data_vector(manifold_id, "manifold_id");
+
+    Vector<double> nu_val1(solver.get_triangulation().n_active_cells());
+    Vector<double> nu_val2(solver.get_triangulation().n_active_cells());
+    Vector<double> nu_val3(solver.get_triangulation().n_active_cells());
+    Vector<double> nu_val4(solver.get_triangulation().n_active_cells());
+    NuHistory<2> *local_quadrature_points_history;
+    for (const auto& cell : dof_handler.active_cell_iterators()){
+
+        if (nu_map.at(cell->material_id()).type() != typeid(double)){
+            local_quadrature_points_history = reinterpret_cast<NuHistory<2> *>(cell->user_pointer());
+            nu_val1(cell->active_cell_index()) = (double) local_quadrature_points_history->nu[0];
+            nu_val2(cell->active_cell_index()) = (double) local_quadrature_points_history->nu[1];
+            nu_val3(cell->active_cell_index()) = (double) local_quadrature_points_history->nu[2];
+            nu_val4(cell->active_cell_index()) = (double) local_quadrature_points_history->nu[3];
+        }
+        else{
+            nu_val1(cell->active_cell_index()) = 0*std::any_cast<double>(nu_map.at(cell->material_id()));
+            nu_val2(cell->active_cell_index()) = 0*std::any_cast<double>(nu_map.at(cell->material_id()));
+            nu_val3(cell->active_cell_index()) = 0*std::any_cast<double>(nu_map.at(cell->material_id()));
+            nu_val4(cell->active_cell_index()) = 0*std::any_cast<double>(nu_map.at(cell->material_id()));
+        }
+
+
+    }
+    data_out.add_data_vector(nu_val1, "nu_q1c", DataOut<2>::type_cell_data);
+    data_out.add_data_vector(nu_val2, "nu_q2");
+    data_out.add_data_vector(nu_val3, "nu_q3");
+    data_out.add_data_vector(nu_val4, "nu_q4");
+
     data_out.build_patches();
 
     std::string filename = "test_result_EI_core_picard";

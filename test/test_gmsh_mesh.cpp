@@ -48,13 +48,14 @@ void print_mesh_info(const Triangulation<dim> &triangulation,
 
         auto manifold_ids = triangulation.get_manifold_ids();
         auto boundary_ids = triangulation.get_boundary_ids();
+//        auto material_ids = triangulation.get_material_ids();
 
         std::map<types::boundary_id, unsigned int> cell_boundary_ids;
         std::map<types::material_id , unsigned int> cell_material_ids;
         std::map<types::manifold_id , unsigned int> cell_manifold_ids;
         for (const auto &cell : triangulation.active_cell_iterators()){
             cell_material_ids[cell->material_id()]++;
-            cell_material_ids[cell->boundary_id()]++;
+            cell_boundary_ids[cell->boundary_id()]++;
             cell_manifold_ids[cell->manifold_id()]++;
         }
 
@@ -75,6 +76,7 @@ void print_mesh_info(const Triangulation<dim> &triangulation,
             std::cout << "\t\t" << pair.first << " (" << pair.second << " times)" << std::endl;
         }
         std::cout << std::endl;
+
     }
 
     std::ofstream out(filename);

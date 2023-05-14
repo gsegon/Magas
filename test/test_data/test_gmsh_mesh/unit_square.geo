@@ -30,7 +30,7 @@ Plane Surface(2) = {2};
 
 
 Physical Curve("bc_outer", 5) = {1, 2, 3, 4};
-Physical Curve("bc_inside", 2) = {5, 6, 7};
+//Physical Curve("bc_inside", 2) = {5, 6, 7};
 Physical Point("bc_outer", 2) = {5, 6, 7};
 
 Physical Surface("mat_1", 6) = {1};

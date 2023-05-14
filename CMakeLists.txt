@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(solver)
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(demo_vtu11 /home/gordan/Programs/vtu11)
 
 add_library(solver SHARED
         src/LinearSolver.cpp
@@ -25,7 +26,7 @@ add_executable(test_solver
         test/test_PicardSolver.cpp
         test/test_gmsh_mesh.cpp
         test/test_PicardSolver.cpp
-        test/test_PostMagneticFluxDensity.cpp)
+        test/test_PostMagneticFluxDensity.cpp test/test_export_vtu11.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 
