@@ -38,7 +38,6 @@ public:
     void setup_system();
     void assemble_system();
     void solve();
-    void output_results(const std::string) const;
     void set_nu_map(std::unordered_map<int, double>);
     void set_f_map(std::unordered_map<int, double>);
     void set_dc_map(std::unordered_map<int, double>);

@@ -6,6 +6,7 @@
 #include <fstream>
 #include "LinearSolver.h"
 #include "nlohmann/json.hpp"
+#include "PostMagneticFluxDensity.h"
 
 using json = nlohmann::json;
 
@@ -67,8 +68,21 @@ int main(int argc, char* argv[]){
     solver.assemble_system();
     solver.solve();
 
-    // Output results
-    solver.output_results("alm_output");
+    // Visualization
+    PostMagneticFluxDensity<2> pmfdp;
+    DoFHandler<2> dof_handler(solver.get_triangulation());
+    dof_handler.distribute_dofs(solver.get_fe());
+
+    DataOut<2> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(solver.get_solution(), "A [Wb/m]");
+    data_out.add_data_vector(solver.get_solution(), pmfdp);
+    data_out.build_patches();
+
+    std::string filename = "alm_visualization";
+    std::cout << "Solution results: " << filename + ".vtu" << std::endl;
+    std::ofstream output(filename + ".vtu");
+    data_out.write_vtu(output);
 
     return 0;
 }

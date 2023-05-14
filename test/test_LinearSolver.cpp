@@ -69,25 +69,6 @@ TEST(LinearSolver, solve_system){
 
 }
 
-TEST(LinearSolver, output_results){
-
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
-    std::unordered_map<int, double> nu_map{{6, 1}};
-    std::unordered_map<int, double> f_map{{6, 1}};
-    std::unordered_map<int, double> dc_map{{5, 0}};
-
-    LinearSolver<2> solver;
-    solver.read_mesh(test_mesh);
-    solver.setup_system();
-    solver.set_nu_map(nu_map);
-    solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
-    solver.assemble_system();
-    solver.solve();
-    solver.output_results("unit_square");
-
-}
-
 TEST(LinearSolver, set_nu_map){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
@@ -149,6 +130,5 @@ TEST(LinearSolver, 2_conductors){
     solver.set_dc_map(dc_map);
     solver.assemble_system();
     solver.solve();
-    solver.output_results("2_conductors");
 
 }
