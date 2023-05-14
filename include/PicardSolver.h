@@ -2,8 +2,10 @@
 // Created by gordan on 5/10/23.
 //
 
-#ifndef SOLVER_LINEARSOLVER_H
-#define SOLVER_LINEARSOLVER_H
+#ifndef SOLVER_PICARDSOLVER_H
+#define SOLVER_PICARDSOLVER_H
+
+#include <any>
 
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
@@ -30,18 +32,30 @@
 using namespace dealii;
 
 template <int dim>
-class LinearSolver{
+struct NuHistory
+{
+    //TODO: Generalize
+    double nu[4];
+};
+
+template <int dim>
+class PicardSolver{
 
 public:
-    LinearSolver();
+    PicardSolver();
     void read_mesh(std::string);
     void setup_system();
     void assemble_system();
     void solve();
+    void solver_nonlinear(int);
     void output_results(const std::string) const;
-    void set_nu_map(std::unordered_map<int, double>);
+    void set_nu_map(std::unordered_map<int, std::any>);
     void set_f_map(std::unordered_map<int, double>);
     void set_dc_map(std::unordered_map<int, double>);
+    void setup_cell_nu_history();
+    void update_cell_nu_history();
+    void initialize_cell_nu_history(double);
+
     Triangulation<dim>& get_triangulation();
 //    void run();
 
@@ -57,12 +71,15 @@ private:
 
     Vector<double> solution;
     Vector<double> system_rhs;
-    std::unordered_map<int, double> nu_map;
+    std::unordered_map<int, std::any> nu_map;
     std::unordered_map<int, double> f_map;
     std::unordered_map<int, double> dc_map;
+
+    Vector<double> initial_solution;
+    std::vector<NuHistory<dim>> quadrature_nu_history;
 };
 
 
 
 
-#endif //SOLVER_LINEARSOLVER_H
+#endif //SOLVER_PICARDSOLVER_H

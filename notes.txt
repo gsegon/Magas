@@ -1,0 +1,1 @@
+TODO: https://groups.io/g/femm/topic/85287510 : hysteresis calculations
