@@ -171,7 +171,7 @@ void PicardSolver<dim>::solve(){
 }
 
 template<int dim>
-void PicardSolver<dim>::solver_nonlinear(int max_iterations){
+void PicardSolver<dim>::solve_nonlinear(int max_iterations){
     while(max_iterations--){
         this->assemble_system();
         this->solve();
@@ -194,6 +194,17 @@ template<int dim>
 void PicardSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
     this->dc_map = map;
 }
+
+template<int dim>
+Vector<double>& PicardSolver<dim>::get_solution(){
+    return this->solution;
+}
+
+template<int dim>
+FE_Q<dim>& PicardSolver<dim>::get_fe(){
+    return this->fe;
+}
+
 
 template<int dim>
 void PicardSolver<dim>::setup_cell_nu_history() {

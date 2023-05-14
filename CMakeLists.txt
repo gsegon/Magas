@@ -38,3 +38,13 @@ target_link_libraries(aml optimized
         /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
         tbb
         solver)
+
+add_executable(amp AppMagnetostaticPicard.cpp)
+
+set(json_dir "/home/gordan/Programs/json")
+include_directories(${json_dir}/include)
+
+target_link_libraries(amp optimized
+        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
+        tbb
+        solver)

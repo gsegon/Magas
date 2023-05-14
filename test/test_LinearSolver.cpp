@@ -5,8 +5,10 @@
 #include <tuple>
 #include <unordered_map>
 #include <string>
+#include <fstream>
 
 #include "LinearSolver.h"
+#include "PostMagneticFluxDensity.h"
 
 
 TEST(LinearSolver, instantiation){
@@ -131,4 +133,58 @@ TEST(LinearSolver, 2_conductors){
     solver.assemble_system();
     solver.solve();
 
+}
+
+TEST(LinearSolver, EI_core){
+
+    constexpr double mu_0 = 1.2566370621219e-6;
+    constexpr double nu_0 = 1/mu_0;
+    constexpr double nu_core = 1/(2500*mu_0);
+    double J1 = 10*66/8.0645e-05;
+    double J2 = -10*66/8.0645e-05;
+
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
+    std::unordered_map<int, double> nu_map{{200, nu_core},       // Core1
+                                             {201, nu_core},       // Core2
+                                             {202, nu_0},       // Copper
+                                             {203, nu_0},       // Copper
+                                             {204, nu_0},       // Air
+                                             {205, nu_0},       // Air
+    };
+
+    std::unordered_map<int, double> f_map{ {200, 0},        // Core1
+                                           {201, 0},        // Core2
+                                           {202, J1},       // Copper
+                                           {203, J2},       // Copper
+                                           {204, 0},        // Air
+                                           {205, 0},        // Air
+    };
+
+    std::unordered_map<int, double> dc_map{{44, 0}} ;      // Air
+
+    // Solve
+    LinearSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.setup_system();
+    solver.set_nu_map(nu_map);
+    solver.set_f_map(f_map);
+    solver.set_dc_map(dc_map);
+    solver.assemble_system();
+    solver.solve();
+
+    // Post process
+    PostMagneticFluxDensity<2> pmfdp;
+    DoFHandler<2> dof_handler(solver.get_triangulation());
+    dof_handler.distribute_dofs(solver.get_fe());
+    DataOut<2> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(solver.get_solution(), "u");
+    data_out.add_data_vector(solver.get_solution(), pmfdp);
+    data_out.build_patches();
+
+    // Write to file
+    std::string filename = "test_result_EI_core_linear";
+    std::ofstream output(filename + ".vtu");
+    data_out.write_vtu(output);
 }

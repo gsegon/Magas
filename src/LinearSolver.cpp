@@ -152,6 +152,7 @@ template<int dim>
 void LinearSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
     this->dc_map = map;
 }
+
 template<int dim>
 Vector<double>& LinearSolver<dim>::get_solution(){
     return this->solution;

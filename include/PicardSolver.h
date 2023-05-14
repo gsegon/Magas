@@ -47,7 +47,7 @@ public:
     void setup_system();
     void assemble_system();
     void solve();
-    void solver_nonlinear(int);
+    void solve_nonlinear(int);
     void set_nu_map(std::unordered_map<int, std::any>);
     void set_f_map(std::unordered_map<int, double>);
     void set_dc_map(std::unordered_map<int, double>);
@@ -56,7 +56,8 @@ public:
     void initialize_cell_nu_history(double);
 
     Triangulation<dim>& get_triangulation();
-//    void run();
+    Vector<double>& get_solution();
+    FE_Q<dim>& get_fe();
 
 private:
 

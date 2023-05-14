@@ -41,6 +41,7 @@ public:
     void set_nu_map(std::unordered_map<int, double>);
     void set_f_map(std::unordered_map<int, double>);
     void set_dc_map(std::unordered_map<int, double>);
+
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
     FE_Q<dim>& get_fe();

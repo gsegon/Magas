@@ -6,15 +6,12 @@
 #include <unordered_map>
 #include <string>
 #include <any>
+#include <fstream>
 
 #include "PicardSolver.h"
+#include "PostMagneticFluxDensity.h"
 
 TEST(PicardSolver, instantiation){
-
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
-    std::unordered_map<int, std::any> nu_map{{6, 1}};
-    std::unordered_map<int, double> f_map{{6, 1}};
-    std::unordered_map<int, double> dc_map{{5, 0}};
 
     PicardSolver<2> solver;
 
@@ -124,10 +121,9 @@ TEST(PicardSolver, solve_nonlinear){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(1);
-    solver.solver_nonlinear(3);
+    solver.solve_nonlinear(3);
 
 }
-
 
 
 TEST(PicardSolver, EI_core){
@@ -135,14 +131,14 @@ TEST(PicardSolver, EI_core){
     constexpr double mu_0 = 1.2566370621219e-6;
     constexpr double nu_0 = 1/mu_0;
     constexpr double nu_core = 1/(2500*mu_0);
-    double J1 = 30*66/8.0645e-05;
-    double J2 = -30*66/8.0645e-05;
+    double J1 = 10*66/8.0645e-05;
+    double J2 = -10*66/8.0645e-05;
 
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
 
-    std::unordered_map<int, std::any> nu_map{{200, nu_core},       // Core1
-                                             {201, nu_core},       // Core2
+    std::unordered_map<int, std::any> nu_map{{200, "Nonlinear"},       // Core1
+                                             {201, "Nonlinear"},       // Core2
                                              {202, nu_0},       // Copper
                                              {203, nu_0},       // Copper
                                              {204, nu_0},       // Air
@@ -167,5 +163,20 @@ TEST(PicardSolver, EI_core){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(nu_core);
-    solver.solver_nonlinear(2);
+    solver.solve_nonlinear(10);
+
+    PostMagneticFluxDensity<2> pmfdp;
+
+    DoFHandler<2> dof_handler(solver.get_triangulation());
+    dof_handler.distribute_dofs(solver.get_fe());
+
+    DataOut<2> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(solver.get_solution(), "u");
+    data_out.add_data_vector(solver.get_solution(), pmfdp);
+    data_out.build_patches();
+
+    std::string filename = "test_result_EI_core_picard";
+    std::ofstream output(filename + ".vtu");
+    data_out.write_vtu(output);
 }
