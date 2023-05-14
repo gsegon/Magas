@@ -1,0 +1,44 @@
+{
+  "material": {
+    "core": {
+      "nu": "NonLinear"
+    },
+    "air": {
+      "nu": 795774.715025
+    },
+    "copper": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0
+  },
+
+  "source": {
+    "J1": 8184016.36803,
+    "J2": -8184016.36803
+  },
+
+  "mesh_id": {
+    "200": {
+      "material": "core"},
+    "201": {
+      "material": "core"},
+    "202": {
+      "material": "copper",
+      "source": "J1"},
+    "203": {
+      "material": "copper",
+      "source": "J2"},
+    "204": {
+      "material": "air"},
+    "205": {
+      "material": "air"},
+    "44": {
+      "boundary": "A=0"}
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh"
+
+}
