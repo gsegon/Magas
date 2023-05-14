@@ -8,11 +8,6 @@
 
 #include "LinearSolver.h"
 
-std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
-std::unordered_map<int, double> nu_map{{6, 1}};
-std::unordered_map<int, double> f_map{{6, 1}};
-std::unordered_map<int, double> dc_map{{5, 0}};
-
 
 TEST(LinearSolver, instantiation){
 
@@ -21,6 +16,7 @@ TEST(LinearSolver, instantiation){
 }
 
 TEST(LinearSolver, read_mesh){
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -30,6 +26,8 @@ TEST(LinearSolver, read_mesh){
 
 TEST(LinearSolver, setup_system){
 
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_system();
@@ -37,6 +35,11 @@ TEST(LinearSolver, setup_system){
 }
 
 TEST(LinearSolver, assemble_system){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, double> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -50,6 +53,11 @@ TEST(LinearSolver, assemble_system){
 
 TEST(LinearSolver, solve_system){
 
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, double> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
+
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_system();
@@ -62,6 +70,11 @@ TEST(LinearSolver, solve_system){
 }
 
 TEST(LinearSolver, output_results){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, double> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -77,11 +90,21 @@ TEST(LinearSolver, output_results){
 
 TEST(LinearSolver, set_nu_map){
 
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, double> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
+
     LinearSolver<2> solver;
     solver.set_nu_map(nu_map);
 }
 
 TEST(LinearSolver, set_f_map){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, double> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
     solver.set_f_map(f_map);

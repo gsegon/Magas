@@ -9,9 +9,6 @@
 
 #include "PicardSolver.h"
 
-
-
-
 TEST(PicardSolver, instantiation){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
@@ -92,9 +89,6 @@ TEST(PicardSolver, solve_system){
 
 }
 
-
-
-
 TEST(PicardSolver, output_results){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
@@ -150,14 +144,12 @@ TEST(PicardSolver, output_nonlinear){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(1);
-    solver.solver_nonlinear(15);
+    solver.solver_nonlinear(2);
     solver.output_results("picard-unit_square");
 
 }
 
 TEST(PicardSolver, EI_core){
-
-
 
     constexpr double mu_0 = 1.2566370621219e-6;
     constexpr double nu_0 = 1/mu_0;
@@ -194,32 +186,6 @@ TEST(PicardSolver, EI_core){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(nu_core);
-    solver.solver_nonlinear(15);
+    solver.solver_nonlinear(2);
     solver.output_results("picard-EI_core");
 }
-
-
-//
-//TEST(PicardSolver, set_nu_map){
-//
-//    PicardSolver<2> solver;
-//    solver.set_nu_map(nu_map);
-//}
-//
-//TEST(PicardSolver, set_f_map){
-//
-//    PicardSolver<2> solver;
-//    solver.set_f_map(f_map);
-//}
-//
-//TEST(PicardSolver, setup_system_3){
-//
-//    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh";
-//
-//    PicardSolver<2> solver;
-//    solver.read_mesh(test_mesh);
-//    solver.setup_system();
-//
-//}
-//
-

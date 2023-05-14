@@ -71,12 +71,12 @@ private:
 
     Vector<double> solution;
     Vector<double> system_rhs;
+
     std::unordered_map<int, std::any> nu_map;
     std::unordered_map<int, double> f_map;
     std::unordered_map<int, double> dc_map;
-
-    Vector<double> initial_solution;
     std::vector<NuHistory<dim>> quadrature_nu_history;
+
 };
 
 

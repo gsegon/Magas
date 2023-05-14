@@ -43,7 +43,8 @@ public:
     void set_f_map(std::unordered_map<int, double>);
     void set_dc_map(std::unordered_map<int, double>);
     Triangulation<dim>& get_triangulation();
-//    void run();
+    Vector<double>& get_solution();
+    FE_Q<dim>& get_fe();
 
 private:
 
@@ -61,8 +62,5 @@ private:
     std::unordered_map<int, double> f_map;
     std::unordered_map<int, double> dc_map;
 };
-
-
-
 
 #endif //SOLVER_LINEARSOLVER_H
