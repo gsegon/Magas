@@ -88,7 +88,7 @@ int main(int argc, char* argv[]){
     data_out.add_data_vector(solver.get_solution(), pmfdp);
     data_out.build_patches();
 
-    std::string filename = "alm_visualization";
+    std::string filename = "alp_visualization";
     std::cout << "Solution results: " << filename + ".vtu" << std::endl;
     std::ofstream output(filename + ".vtu");
     data_out.write_vtu(output);
