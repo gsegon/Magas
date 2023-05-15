@@ -1,5 +1,16 @@
 TODO: https://groups.io/g/femm/topic/85287510 : hysteresis calculations
-TODO: https://github.com/phmkopp/vtu11 Output to VTK using vtu11:
+TODO: https://github.com/phmkopp/vtu11 Output to VTK using vtu11
 
 References:
 [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+[2] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein.
+
+TODO:
+* Magnetic energy per cell [J/m3] 
+* Total Magnetic energy [J/m]
+* Inductance matrix [H/m]
+* CVW forces [N/m]
+* Maxwell stress tensor forces [N/m]
+* Lorentz Force [N/m]
+* 
+
