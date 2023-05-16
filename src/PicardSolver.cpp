@@ -201,6 +201,11 @@ Vector<double>& PicardSolver<dim>::get_solution(){
 }
 
 template<int dim>
+Vector<double>& PicardSolver<dim>::get_rhs(){
+    return this->system_rhs;
+}
+
+template<int dim>
 FE_Q<dim>& PicardSolver<dim>::get_fe(){
     return this->fe;
 }

@@ -159,6 +159,11 @@ Vector<double>& LinearSolver<dim>::get_solution(){
 }
 
 template<int dim>
+Vector<double>& LinearSolver<dim>::get_rhs(){
+    return this->system_rhs;
+}
+
+template<int dim>
 FE_Q<dim>& LinearSolver<dim>::get_fe(){
     return this->fe;
 }

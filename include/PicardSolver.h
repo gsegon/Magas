@@ -57,6 +57,7 @@ public:
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
+    Vector<double>& get_rhs();
     FE_Q<dim>& get_fe();
 
 private:

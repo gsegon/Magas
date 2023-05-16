@@ -1,18 +1,20 @@
 TODO: https://groups.io/g/femm/topic/85287510 : hysteresis calculations
 TODO: https://github.com/phmkopp/vtu11 Output to VTK using vtu11
 
+TODO: Magnetic energy per cell [J/m3]
+TODO: Total Magnetic energy [J/m]
+TODO: Inductance matrix [H/m]
+TODO: CVW forces [N/m]
+TODO: Maxwell stress tensor forces [N/m]
+TODO: Lorentz Force [N/m]
+
 References:
 [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
-[2] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein.
+[2] Eggshell method to compute force: https://groups.google.com/g/dealii/c/eIF6BT-5jl0
+[3] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein.
 [3] Meshing overview: osti.gov/servlets/purl/1394106
 [4] John Burkardt: people.sc.fsu.edu/~jburkardt/
+[5] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
 
-TODO:
-* Magnetic energy per cell [J/m3] 
-* Total Magnetic energy [J/m]
-* Inductance matrix [H/m]
-* CVW forces [N/m]
-* Maxwell stress tensor forces [N/m]
-* Lorentz Force [N/m]
-* 
+
 
