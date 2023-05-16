@@ -10,9 +10,9 @@
 
 #include "LinearSolver.h"
 #include "PicardSolver.h"
-#include "PostMagneticFluxDensity.h"
+#include "MagneticFluxPostprocessor.h"
 
-TEST(PostMagneticFluxDensity, initialize_linear){
+TEST(MagneticFluxPostprocessor, unit_square){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
     std::unordered_map<int, double> nu_map{{6, 1}};
@@ -28,20 +28,9 @@ TEST(PostMagneticFluxDensity, initialize_linear){
     solver.assemble_system();
     solver.solve();
 
-    PostMagneticFluxDensity<2> pmfdp;
+    MagneticFluxPostprocessor<2> flux_postprocessor{solver.get_triangulation(), solver.get_solution(), solver.get_fe()};
+    flux_postprocessor.process();
 
-    DoFHandler<2> dof_handler(solver.get_triangulation());
-    dof_handler.distribute_dofs(solver.get_fe());
-
-    DataOut<2> data_out;
-    data_out.attach_dof_handler(dof_handler);
-    data_out.add_data_vector(solver.get_solution(), "u");
-    data_out.add_data_vector(solver.get_solution(), pmfdp);
-    data_out.build_patches();
-
-    std::string filename = "pmfdp_linear";
-    std::ofstream output(filename + ".vtu");
-    data_out.write_vtu(output);
 
 }
 
