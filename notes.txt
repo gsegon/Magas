@@ -4,6 +4,7 @@ TODO: https://github.com/phmkopp/vtu11 Output to VTK using vtu11
 References:
 [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
 [2] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein.
+[3] Meshing overview: osti.gov/servlets/purl/1394106
 
 TODO:
 * Magnetic energy per cell [J/m3] 
