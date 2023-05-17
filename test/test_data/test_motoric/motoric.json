@@ -1,0 +1,141 @@
+{
+  "material": {
+    "core": {
+      "nu": 318.30988601
+    },
+    "air": {
+      "nu": 795774.715025
+    },
+    "copper": {
+      "nu": 795774.715025
+    },
+    "magnet": {
+      "nu": 795774.715025
+    },
+    "nonmagnetic-steel": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0
+  },
+
+  "source": {
+    "Ja": 1000,
+    "Jb": -500,
+    "Jc": -500,
+
+    "-Ja": -1000,
+    "-Jb": 500,
+    "-Jc": 500
+  },
+
+  "mesh_id": {
+
+    "505": {
+      "boundary": "A=0"},
+
+    "1": {
+      "material": "core"},
+    "2": {
+      "material": "core"},
+
+
+
+    "101": {
+      "material": "copper",
+      "source": "Ja"},
+    "102": {
+      "material": "copper",
+      "source": "-Ja"},
+    "103": {
+      "material": "copper",
+      "source": "-Jb"},
+    "104": {
+      "material": "copper",
+      "source": "Jb"},
+    "105": {
+      "material": "copper",
+      "source": "Jc"},
+    "106": {
+      "material": "copper",
+      "source": "-Jc"},
+
+    "107": {
+      "material": "copper",
+      "source": "Ja"},
+    "108": {
+      "material": "copper",
+      "source": "-Ja"},
+    "109": {
+      "material": "copper",
+      "source": "-Jb"},
+    "110": {
+      "material": "copper",
+      "source": "Jb"},
+    "111": {
+      "material": "copper",
+      "source": "Jc"},
+    "112": {
+      "material": "copper",
+      "source": "-Jc"},
+
+    "113": {
+      "material": "copper",
+      "source": "Ja"},
+    "114": {
+      "material": "copper",
+      "source": "-Ja"},
+    "115": {
+      "material": "copper",
+      "source": "-Jb"},
+    "116": {
+      "material": "copper",
+      "source": "Jb"},
+    "117": {
+      "material": "copper",
+      "source": "Jc"},
+    "118": {
+      "material": "copper",
+      "source": "-Jc"},
+
+    "119": {
+      "material": "copper",
+      "source": "Ja"},
+    "120": {
+      "material": "copper",
+      "source": "-Ja"},
+    "121": {
+      "material": "copper",
+      "source": "-Jb"},
+    "122": {
+      "material": "copper",
+      "source": "Jb"},
+    "123": {
+      "material": "copper",
+      "source": "Jc"},
+    "124": {
+      "material": "copper",
+      "source": "-Jc"},
+
+    "125": {
+      "material": "magnet"},
+    "126": {
+      "material": "magnet"},
+
+    "127": {
+      "material": "air"},
+    "128": {
+      "material": "air"},
+
+    "129": {
+      "material": "nonmagnetic-steel"},
+
+    "130": {
+      "material": "air"}
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_motoric/motoric.msh"
+
+}

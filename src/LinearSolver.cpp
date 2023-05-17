@@ -126,7 +126,7 @@ void LinearSolver<dim>::assemble_system() {
 template<int dim>
 void LinearSolver<dim>::solve(){
 
-    SolverControl solver_control(1000, 1e-12);
+    SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
