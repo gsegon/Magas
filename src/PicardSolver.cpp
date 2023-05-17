@@ -173,6 +173,7 @@ void PicardSolver<dim>::solve(){
 template<int dim>
 void PicardSolver<dim>::solve_nonlinear(int max_iterations){
     while(max_iterations--){
+        this->setup_system();
         this->assemble_system();
         this->solve();
         this->update_cell_nu_history();

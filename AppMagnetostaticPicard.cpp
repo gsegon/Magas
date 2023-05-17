@@ -72,12 +72,12 @@ int main(int argc, char* argv[]){
     PicardSolver<2> solver;
     solver.read_mesh(mesh_filepath);
     solver.setup_cell_nu_history();
-    solver.setup_system();
+//    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(nu_core);
-    solver.solve_nonlinear(10);
+    solver.solve_nonlinear(5);
 
     // Visualization
     // Export
