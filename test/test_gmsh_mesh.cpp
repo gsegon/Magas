@@ -140,4 +140,17 @@ TEST(GmshMesh, EI_core){
 
 }
 
+TEST(GmshMesh, motoric){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric/motoric.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+    print_mesh_info(triangulation, "grid-out-motoric.eps");
+
+}
+
 
