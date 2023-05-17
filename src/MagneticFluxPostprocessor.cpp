@@ -17,6 +17,12 @@ template class MagneticFluxPostprocessor<2>;
 
 
 template <int dim>
+MagneticFluxPostprocessor<dim>::MagneticFluxPostprocessor() {
+    this->abs = true;
+}
+
+
+template <int dim>
 MagneticFluxPostprocessor<dim>::MagneticFluxPostprocessor(unsigned int component) {
     this->component = component;
 }
@@ -43,12 +49,18 @@ void MagneticFluxPostprocessor<dim>::process(const Triangulation<dim>&  triangul
         fe_values.reinit(cell);
         fe_values.get_function_gradients(*solution_ptr, solution_gradients);
 
-        if (component == 0){
-            result.push_back(solution_gradients[0][1]);
+        if (this->abs) {
+            result.push_back(std::sqrt(std::pow(solution_gradients[0][1], 2) + std::pow(-solution_gradients[0][0], 2)));
         }
-        else if (component == 1){
-            result.push_back(-solution_gradients[0][0]);
+        else{
+            if (component == 0){
+                result.push_back(solution_gradients[0][1]);
+            }
+            else if (component == 1){
+                result.push_back(-solution_gradients[0][0]);
+            }
         }
+
 
 
     }

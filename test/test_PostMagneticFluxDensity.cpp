@@ -27,7 +27,9 @@ TEST(MagneticFluxPostprocessor, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    MagneticFluxPostprocessor<2> flux_postprocessor{0};
+    MagneticFluxPostprocessor<2> flux_postprocessor0{0};
+    MagneticFluxPostprocessor<2> flux_postprocessor1{1};
+    MagneticFluxPostprocessor<2> flux_postprocessor{};
     std::vector<double> result;
     flux_postprocessor.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
 

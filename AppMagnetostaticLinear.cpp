@@ -6,7 +6,10 @@
 #include <fstream>
 #include "LinearSolver.h"
 #include "nlohmann/json.hpp"
-#include "PostMagneticFluxDensity.h"
+
+#include "ExportVtu.h"
+#include "MagneticFluxPostprocessor.h"
+#include "MatIDPostprocessor.h"
 
 using json = nlohmann::json;
 
@@ -69,20 +72,18 @@ int main(int argc, char* argv[]){
     solver.solve();
 
     // Visualization
-    PostMagneticFluxDensity<2> pmfdp;
-    DoFHandler<2> dof_handler(solver.get_triangulation());
-    dof_handler.distribute_dofs(solver.get_fe());
+    // Export
+    MagneticFluxPostprocessor<2> bx_postprocessor(0);
+    MagneticFluxPostprocessor<2> by_postprocessor(1);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor;
+    MatIDPostprocessor<2> mat_id_postprocessor;
 
-    DataOut<2> data_out;
-    data_out.attach_dof_handler(dof_handler);
-    data_out.add_data_vector(solver.get_solution(), "A [Wb/m]");
-    data_out.add_data_vector(solver.get_solution(), pmfdp);
-    data_out.build_patches();
-
-    std::string filename = "alm_visualization";
-    std::cout << "Solution results: " << filename + ".vtu" << std::endl;
-    std::ofstream output(filename + ".vtu");
-    data_out.write_vtu(output);
+    ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+    export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
+    export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
+    export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
+    export_vtu.write("aml");
 
     return 0;
 }

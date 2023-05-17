@@ -18,6 +18,7 @@ template <int dim>
 class MagneticFluxPostprocessor : public Postprocessor<dim> {
 
 public:
+    MagneticFluxPostprocessor();
     MagneticFluxPostprocessor(unsigned int component);
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -30,6 +31,7 @@ private:
     const FE_Q<dim> *fe_ptr = nullptr;
 
     unsigned int component;
+    unsigned int abs = false;
 
 };
 
