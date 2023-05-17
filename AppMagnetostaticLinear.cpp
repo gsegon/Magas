@@ -10,6 +10,8 @@
 #include "ExportVtu.h"
 #include "MagneticFluxPostprocessor.h"
 #include "MatIDPostprocessor.h"
+#include "MagneticEnergyDensityPostprocessor.h"
+#include "MagneticEnergyPostprocessor.h"
 
 using json = nlohmann::json;
 
@@ -73,16 +75,24 @@ int main(int argc, char* argv[]){
 
     // Visualization
     // Export
-    MagneticFluxPostprocessor<2> bx_postprocessor(0);
-    MagneticFluxPostprocessor<2> by_postprocessor(1);
-    MagneticFluxPostprocessor<2> b_abs_postprocessor;
+    MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor(0, 1);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor(0);
+    MagneticEnergyDensityPostprocessor<2> e_density(nu_map);
+    MagneticEnergyPostprocessor<2> e_cell(nu_map);
     MatIDPostprocessor<2> mat_id_postprocessor;
+
+    std::vector<double> e_cells;
+    e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
+    auto E_total = std::reduce(e_cells.begin(), e_cells.end());
+    std::cout << "E total: " << E_total << std::endl;
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
     export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
     export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
+    export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
     export_vtu.write("aml");
 
     return 0;

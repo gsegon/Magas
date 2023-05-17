@@ -81,9 +81,9 @@ int main(int argc, char* argv[]){
 
     // Visualization
     // Export
-    MagneticFluxPostprocessor<2> bx_postprocessor(0);
-    MagneticFluxPostprocessor<2> by_postprocessor(1);
-    MagneticFluxPostprocessor<2> b_abs_postprocessor;
+    MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor(0, 1);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor(0);
     MatIDPostprocessor<2> mat_id_postprocessor;
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());

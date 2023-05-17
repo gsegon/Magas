@@ -1,7 +1,7 @@
 TODO: https://groups.io/g/femm/topic/85287510 : hysteresis calculations
 TODO: https://github.com/phmkopp/vtu11 Output to VTK using vtu11
 
-TODO: Magnetic energy per cell [J/m3]
+TODO: Magnetic energy density [J/m3]
 TODO: Total Magnetic energy [J/m]
 TODO: Inductance matrix [H/m]
 TODO: CVW forces [N/m]

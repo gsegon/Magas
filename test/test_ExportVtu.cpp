@@ -11,6 +11,8 @@
 #include "ExportVtu.h"
 #include "MagneticFluxPostprocessor.h"
 #include "MatIDPostprocessor.h"
+#include "MagneticEnergyPostprocessor.h"
+#include "MagneticEnergyDensityPostprocessor.h"
 
 
 
@@ -76,14 +78,35 @@ TEST(ExportVtu, initialize_EI_core){
     solver.solve();
 
     // Export
-    MagneticFluxPostprocessor<2> bx_postprocessor(0);
-    MagneticFluxPostprocessor<2> by_postprocessor(1);
+    MagneticFluxPostprocessor<2> bx_postprocessor_q0(0, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor_q0(0, 1);
+    MagneticFluxPostprocessor<2> bx_postprocessor_q1(1, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor_q1(1, 1);
+    MagneticFluxPostprocessor<2> bx_postprocessor_q2(2, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor_q2(2, 1);
+    MagneticFluxPostprocessor<2> bx_postprocessor_q3(3, 0);
+    MagneticFluxPostprocessor<2> by_postprocessor_q3(3, 1);
+
+    MagneticEnergyPostprocessor<2> energy_cell(nu_map);
+    MagneticEnergyDensityPostprocessor<2> energy_density(nu_map);
+
     MatIDPostprocessor<2> mat_id_postprocessor;
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
     export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
-    export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
-    export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
+
+    export_vtu.attach_postprocessor(&bx_postprocessor_q0, "Bx_q0 [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor_q0, "By_q0 [T]");
+    export_vtu.attach_postprocessor(&bx_postprocessor_q1, "Bx_q1 [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor_q1, "By_q1 [T]");
+    export_vtu.attach_postprocessor(&bx_postprocessor_q2, "Bx_q2 [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor_q2, "By_q2 [T]");
+    export_vtu.attach_postprocessor(&bx_postprocessor_q3, "Bx_q3 [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor_q3, "By_q3 [T]");
+
+    export_vtu.attach_postprocessor(&energy_cell, "E [J/m]");
+    export_vtu.attach_postprocessor(&energy_density, "E [J/m^3]");
+
     export_vtu.write("vtu_export_EI_core");
 
 }
