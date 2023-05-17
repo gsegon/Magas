@@ -31,7 +31,14 @@ ExportVtu<dim>::ExportVtu(const Triangulation<dim> &triangulation, const Vector<
     rhs_ptr = &rhs;
     solution_ptr = &solution;
     fe_ptr = &fe;
+
 }
+
+template<int dim>
+void ExportVtu<dim>::attach_postprocessor(Postprocessor<dim>* post_processor, std::string name) {
+    post_processors[name] = post_processor;
+}
+
 
 
 template <int dim>
@@ -39,9 +46,6 @@ void ExportVtu<dim>::write(const std::string& filename){
 
     DoFHandler<dim> dof_handler(*triangulation_ptr);
     dof_handler.distribute_dofs(*fe_ptr);
-
-    // Cell data
-    std::vector<double> mat_ids;
 
     // Point data
     std::vector<double> rhs_export;
@@ -74,8 +78,7 @@ void ExportVtu<dim>::write(const std::string& filename){
             point_index+=4;
 
         }
-        // Mat id data
-        mat_ids.push_back(cell->material_id());
+
     }
 
     std::vector<vtu11::VtkIndexType> offsets(triangulation_ptr->n_active_cells());
@@ -85,39 +88,27 @@ void ExportVtu<dim>::write(const std::string& filename){
     std::vector<vtu11::VtkCellType> types(triangulation_ptr->n_active_cells(), 9);
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
-
-    std::vector<std::tuple<double, double>> B;
-    std::vector<double> Bx;
-    std::vector<double> By;
-
-    QGauss<dim> quadrature_formula(fe_ptr->degree +1);
-
-    FEValues<dim> fe_values(*fe_ptr, quadrature_formula, update_values | update_gradients | update_quadrature_points |
-                                                         update_JxW_values);
-    std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
-    for (auto cell : dof_handler.active_cell_iterators()){
-        fe_values.reinit(cell);
-        fe_values.get_function_gradients(*solution_ptr, solution_gradients);
-
-        Bx.push_back(solution_gradients[0][1]);
-        By.push_back(-solution_gradients[0][0]);
-
-        B.push_back(std::tuple<double, double>{solution_gradients[0][1], -solution_gradients[0][0]});
-    }
-
-
-
     // Create tuples with (name, association, number of components) for each data set
     std::vector<vtu11::DataSetInfo> dataSetInfo{
-            { "Material ID", vtu11::DataSetType::CellData, 1},
             { "rhs", vtu11::DataSetType::PointData, 1},
             { "solution", vtu11::DataSetType::PointData, 1},
-            { "Bx", vtu11::DataSetType::CellData, 1},
-            { "By", vtu11::DataSetType::CellData, 1},
-            { "B", vtu11::DataSetType::CellData, 2},
+
     };
 
-    vtu11::writeVtu(filename+".vtu", mesh, dataSetInfo, {mat_ids, rhs_export, solution_export, Bx, By, Bx},"Ascii");
+    // Instantiate a dataset
+    std::vector<vtu11::DataSetData> dataSetData = {rhs_export, solution_export};
+
+    // Add data from attached postprocessors
+    std::vector<double> results;
+    for (auto & [name, post_processor] : post_processors){
+        results.clear();
+        post_processor->process(*triangulation_ptr, *solution_ptr, *fe_ptr, results);
+        dataSetInfo.emplace_back(name, vtu11::DataSetType::CellData, 1);
+        dataSetData.push_back(results);
+    }
+
+    // results
+    vtu11::writeVtu(filename+".vtu", mesh, dataSetInfo, dataSetData,"Ascii");
 
 }
 

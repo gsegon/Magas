@@ -9,7 +9,6 @@
 #include <fstream>
 
 #include "LinearSolver.h"
-#include "PicardSolver.h"
 #include "MagneticFluxPostprocessor.h"
 
 TEST(MagneticFluxPostprocessor, unit_square){
@@ -28,9 +27,12 @@ TEST(MagneticFluxPostprocessor, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    MagneticFluxPostprocessor<2> flux_postprocessor{solver.get_triangulation(), solver.get_solution(), solver.get_fe()};
-    flux_postprocessor.process();
+    MagneticFluxPostprocessor<2> flux_postprocessor{0};
+    std::vector<double> result;
+    flux_postprocessor.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
 
+    for (auto res: result)
+        std::cout << res << ", " << std::endl;
 
 }
 

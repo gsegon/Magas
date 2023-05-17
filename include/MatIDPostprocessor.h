@@ -2,8 +2,8 @@
 // Created by gordan on 5/16/23.
 //
 
-#ifndef SOLVER_MAGNETICFLUXPOSTPROCESSOR_H
-#define SOLVER_MAGNETICFLUXPOSTPROCESSOR_H
+#ifndef SOLVER_MATIDPOSTPROCESSOR_H
+#define SOLVER_MATIDPOSTPROCESSOR_H
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/grid/tria.h>
@@ -15,10 +15,10 @@
 using namespace dealii;
 
 template <int dim>
-class MagneticFluxPostprocessor : public Postprocessor<dim> {
+class MatIDPostprocessor : public Postprocessor<dim> {
 
 public:
-    MagneticFluxPostprocessor(unsigned int component);
+    MatIDPostprocessor();
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
                  const FE_Q<dim>&           fe,
@@ -29,8 +29,6 @@ private:
     const Vector<double> *solution_ptr = nullptr;
     const FE_Q<dim> *fe_ptr = nullptr;
 
-    unsigned int component;
-
 };
 
-#endif //SOLVER_MAGNETICFLUXPOSTPROCESSOR_H
+#endif //SOLVER_MATIDPOSTPROCESSOR_H

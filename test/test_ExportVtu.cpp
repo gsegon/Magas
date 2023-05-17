@@ -9,6 +9,8 @@
 
 #include "LinearSolver.h"
 #include "ExportVtu.h"
+#include "MagneticFluxPostprocessor.h"
+#include "MatIDPostprocessor.h"
 
 
 
@@ -74,8 +76,15 @@ TEST(ExportVtu, initialize_EI_core){
     solver.solve();
 
     // Export
-    ExportVtu<2> export_vtu3(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu3.write("vtu_export_EI_core");
+    MagneticFluxPostprocessor<2> bx_postprocessor(0);
+    MagneticFluxPostprocessor<2> by_postprocessor(1);
+    MatIDPostprocessor<2> mat_id_postprocessor;
+
+    ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+    export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
+    export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
+    export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
+    export_vtu.write("vtu_export_EI_core");
 
 }
 

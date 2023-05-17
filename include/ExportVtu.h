@@ -10,6 +10,7 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
+#include "Postprocessor.h"
 
 using namespace dealii;
 
@@ -20,6 +21,8 @@ public:
     ExportVtu(const Triangulation<dim>& triangulation);
     ExportVtu(const Triangulation<dim>& triangulation, const Vector<double>& rhs, const Vector<double>& solution, const FE_Q<dim>& fe);
 
+    void attach_postprocessor(Postprocessor<dim>*, std::string);
+
     void write(const std::string&);
 
 
@@ -28,6 +31,8 @@ protected:
     const Vector<double>* solution_ptr = nullptr;
     const Vector<double>* rhs_ptr = nullptr;
     const FE_Q<dim>* fe_ptr = nullptr;
+    std::unordered_map<std::string, Postprocessor<dim>*> post_processors;
+
 
 };
 

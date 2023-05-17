@@ -13,7 +13,8 @@ include_directories(${deallii_dir}/include/)
 add_library(solver SHARED
         src/LinearSolver.cpp
         src/PicardSolver.cpp
-        src/ExportVtu.cpp src/MagneticFluxPostprocessor.cpp include/MagneticFluxPostprocessor.h)
+        src/ExportVtu.cpp
+        src/MagneticFluxPostprocessor.cpp src/MatIDPostprocessor.cpp)
 target_include_directories(solver PUBLIC include)
 target_link_libraries(solver debug
         /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
