@@ -30,7 +30,7 @@ TEST(ExportVtu, initialize_unit){
 
     // Export
     ExportVtu<2> export_vtu3(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu3.write("unit_square_core_vtu_export");
+    export_vtu3.write("vtu_export_unit_square_core");
 
 }
 
@@ -75,8 +75,7 @@ TEST(ExportVtu, initialize_EI_core){
 
     // Export
     ExportVtu<2> export_vtu3(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu3.write("EI_core_vtu_export");
-
+    export_vtu3.write("vtu_export_EI_core");
 
 }
 

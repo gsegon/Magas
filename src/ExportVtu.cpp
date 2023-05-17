@@ -11,6 +11,8 @@
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/base/quadrature_lib.h>
 
 
 
@@ -83,14 +85,39 @@ void ExportVtu<dim>::write(const std::string& filename){
     std::vector<vtu11::VtkCellType> types(triangulation_ptr->n_active_cells(), 9);
     vtu11::Vtu11UnstructuredMesh mesh { points, connectivity, offsets, types };
 
+
+    std::vector<std::tuple<double, double>> B;
+    std::vector<double> Bx;
+    std::vector<double> By;
+
+    QGauss<dim> quadrature_formula(fe_ptr->degree +1);
+
+    FEValues<dim> fe_values(*fe_ptr, quadrature_formula, update_values | update_gradients | update_quadrature_points |
+                                                         update_JxW_values);
+    std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
+    for (auto cell : dof_handler.active_cell_iterators()){
+        fe_values.reinit(cell);
+        fe_values.get_function_gradients(*solution_ptr, solution_gradients);
+
+        Bx.push_back(solution_gradients[0][1]);
+        By.push_back(-solution_gradients[0][0]);
+
+        B.push_back(std::tuple<double, double>{solution_gradients[0][1], -solution_gradients[0][0]});
+    }
+
+
+
     // Create tuples with (name, association, number of components) for each data set
     std::vector<vtu11::DataSetInfo> dataSetInfo{
             { "Material ID", vtu11::DataSetType::CellData, 1},
             { "rhs", vtu11::DataSetType::PointData, 1},
             { "solution", vtu11::DataSetType::PointData, 1},
+            { "Bx", vtu11::DataSetType::CellData, 1},
+            { "By", vtu11::DataSetType::CellData, 1},
+            { "B", vtu11::DataSetType::CellData, 2},
     };
 
-    vtu11::writeVtu(filename+".vtu", mesh, dataSetInfo, {mat_ids, rhs_export, solution_export},"Ascii");
+    vtu11::writeVtu(filename+".vtu", mesh, dataSetInfo, {mat_ids, rhs_export, solution_export, Bx, By, Bx},"Ascii");
 
 }
 
