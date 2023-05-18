@@ -67,31 +67,39 @@ int main(int argc, char* argv[]){
 
     // Initialize Solver and solver
     constexpr double mu_0 = 1.2566370621219e-6;
-    constexpr double nu_core = 1/(2500*mu_0);
+    constexpr double nu_core = 1/(mu_0);
 
     PicardSolver<2> solver;
     solver.read_mesh(mesh_filepath);
     solver.setup_cell_nu_history();
-//    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(nu_core);
-    solver.solve_nonlinear(5);
 
     // Visualization
-    // Export
     MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
     MagneticFluxPostprocessor<2> by_postprocessor(0, 1);
-    MagneticFluxPostprocessor<2> b_abs_postprocessor(0);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor1(0);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor2(1);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor3(2);
+    MagneticFluxPostprocessor<2> b_abs_postprocessor4(3);
     MatIDPostprocessor<2> mat_id_postprocessor;
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
     export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
-    export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
+    export_vtu.attach_postprocessor(&b_abs_postprocessor1, "|B| [T] q=1");
+    export_vtu.attach_postprocessor(&b_abs_postprocessor2, "|B| [T] q=2");
+    export_vtu.attach_postprocessor(&b_abs_postprocessor3, "|B| [T] q=3");
+    export_vtu.attach_postprocessor(&b_abs_postprocessor4, "|B| [T] q=4");
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
-    export_vtu.write("amp");
+
+    for (int nonlinear_step = 0; nonlinear_step < 30; nonlinear_step++){
+        solver.solve_nonlinear(1);
+        export_vtu.write("amp-"+std::to_string(nonlinear_step));
+    }
+
 
     return 0;
 }
