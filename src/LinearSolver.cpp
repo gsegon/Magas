@@ -18,6 +18,7 @@
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/grid/tria_accessor.h>
 
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -95,9 +96,20 @@ void LinearSolver<dim>::assemble_system() {
                             fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
                             fe_values.JxW(q);                 // dx
                 }
+
                 cell_rhs(i) += f*                               // f at cell
                         fe_values.shape_value(i, q)*        // phi_i(x_q)
-                        fe_values.JxW(q);                   // dx
+                        fe_values.JxW(q);
+
+
+                double Hx = 0;
+                double Hy = 1e3;
+                Tensor<1, dim> Hc_prime({-Hy, Hx});
+                if (cell->material_id() == 2){
+                    cell_rhs(i) += Hc_prime*fe_values.shape_grad(i, q)*fe_values.JxW(q);
+                }
+
+
             }
         }
 

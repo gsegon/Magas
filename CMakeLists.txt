@@ -29,7 +29,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # test solver
 add_executable(test_solver
         test/test_LinearSolver.cpp
-        test/test_PicardSolver.cpp)
+        test/test_PicardSolver.cpp test/test_MagnetComputations.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 
