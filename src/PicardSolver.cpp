@@ -77,11 +77,14 @@ void PicardSolver<dim>::setup_system() {
     DoFTools::make_sparsity_pattern(dof_handler, dsp);
     sparsity_pattern.copy_from(dsp);
 
+}
+
+template<int dim>
+void PicardSolver<dim>::reinit_system(){
     system_matrix.reinit(sparsity_pattern);
 
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
-
 }
 
 template<int dim>
@@ -175,7 +178,7 @@ void PicardSolver<dim>::solve(){
 template<int dim>
 void PicardSolver<dim>::solve_nonlinear(int max_iterations){
     while(max_iterations--){
-        this->setup_system();
+        this->reinit_system();
         this->assemble_system();
         this->solve();
         this->update_cell_nu_history();
@@ -263,7 +266,7 @@ void PicardSolver<dim>::update_cell_nu_history() {
                 double H_at_q = h_fun(b_at_qs[q]);
                 double Nu_at_q = H_at_q/b_at_qs[q];
 
-                local_quadrature_points_history->nu[q] += 0.2*(Nu_at_q-local_quadrature_points_history->nu[q]);
+                local_quadrature_points_history->nu[q] += 0.1*(Nu_at_q-local_quadrature_points_history->nu[q]);
             }
 
         }

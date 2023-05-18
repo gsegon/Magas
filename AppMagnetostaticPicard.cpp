@@ -76,6 +76,7 @@ int main(int argc, char* argv[]){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(nu_core);
+    solver.setup_system();
 
     // Visualization
     MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
@@ -95,7 +96,7 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
 
-    for (int nonlinear_step = 0; nonlinear_step < 30; nonlinear_step++){
+    for (int nonlinear_step = 0; nonlinear_step < 5; nonlinear_step++){
         solver.solve_nonlinear(1);
         export_vtu.write("amp-"+std::to_string(nonlinear_step));
     }

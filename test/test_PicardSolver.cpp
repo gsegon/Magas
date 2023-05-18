@@ -47,6 +47,21 @@ TEST(PicardSolver, setup_system){
 
 }
 
+TEST(PicardSolver, reinit_system){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
+    std::unordered_map<int, double> f_map{{6, 1.0}};
+    std::unordered_map<int, double> dc_map{{5, 0.0}};
+
+    PicardSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.setup_cell_nu_history();
+    solver.setup_system();
+    solver.reinit_system();
+
+}
+
 TEST(PicardSolver, assemble_system){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
@@ -58,9 +73,12 @@ TEST(PicardSolver, assemble_system){
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
     solver.setup_system();
+
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+
+    solver.reinit_system();
     solver.assemble_system();
 
 }
@@ -76,34 +94,19 @@ TEST(PicardSolver, solve_system){
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
     solver.setup_system();
+
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.initialize_cell_nu_history(1);
+
+    solver.reinit_system();
     solver.assemble_system();
     solver.solve();
 
 }
 
-TEST(PicardSolver, output_results){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
-    std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
-    std::unordered_map<int, double> f_map{{6, 1.0}};
-    std::unordered_map<int, double> dc_map{{5, 0.0}};
-
-    PicardSolver<2> solver;
-    solver.read_mesh(test_mesh);
-    solver.setup_cell_nu_history();
-    solver.setup_system();
-    solver.set_nu_map(nu_map);
-    solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
-    solver.initialize_cell_nu_history(1);
-    solver.assemble_system();
-    solver.solve();
-
-}
 
 TEST(PicardSolver, solve_nonlinear){
 
@@ -158,6 +161,7 @@ TEST(PicardSolver, EI_core){
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
     solver.setup_system();
+    solver.reinit_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);

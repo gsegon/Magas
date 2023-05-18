@@ -45,6 +45,7 @@ public:
     PicardSolver();
     void read_mesh(const std::string&);
     void setup_system();
+    void reinit_system();
     void assemble_system();
     void solve();
     void solve_nonlinear(int);
