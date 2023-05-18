@@ -49,12 +49,12 @@ TEST(ExportVtu, initialize_EI_core){
 
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
-    std::unordered_map<int, double> nu_map{{200, nu_core},       // Core1
-                                           {201, nu_core},       // Core2
-                                           {202, nu_0},       // Copper
-                                           {203, nu_0},       // Copper
-                                           {204, nu_0},       // Air
-                                           {205, nu_0},       // Air
+    std::unordered_map<int, double> nu_map{{200, nu_core},      // Core1
+                                           {201, nu_core},      // Core2
+                                           {202, nu_0},         // Copper
+                                           {203, nu_0},         // Copper
+                                           {204, nu_0},         // Air
+                                           {205, nu_0},         // Air
     };
 
     std::unordered_map<int, double> f_map{ {200, 0},        // Core1
