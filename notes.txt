@@ -16,6 +16,7 @@ TODO[x]: BH curve analytical form. Construct piecewise like so: H = alpha*B + ex
     beta:  5.289952851132246
     theta:  -1638220.518181392
 TODO[]: Matrix condition number - printout
+TODO[]: Newton method nonlinear
 
 
 TODO References:
