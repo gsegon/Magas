@@ -8,13 +8,21 @@ TODO: CVW forces [N/m]
 TODO: Maxwell stress tensor forces [N/m]
 TODO: Lorentz Force [N/m]
 
-References:
-[1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
-[2] Eggshell method to compute force: https://groups.google.com/g/dealii/c/eIF6BT-5jl0
-[3] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein.
-[3] Meshing overview: osti.gov/servlets/purl/1394106
-[4] John Burkardt: people.sc.fsu.edu/~jburkardt/
-[5] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
+TODO BH curve analytical form. Construct piecewise like so: H = alpha*B + exp(beta*B) -1 for B<Bsat and H = nu_0*B + theta for B>=Bsat
+    Bsat:  2.2530727020352703
+    alpha:  2077.205761389225
+    beta:  5.289952851132246
+    theta:  -1638220.518181392
 
+
+TODO References:
+    [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
+    [2] Eggshell method to compute force: https://groups.google.com/g/dealii/c/eIF6BT-5jl0
+    [3] Magnetostatic problem: numa jku at, Ulrich Langer, Clemens Pechstein. https://numa.jku.at/media/filer_public/dc/50/dc501391-c4bb-458d-ac37-04fd323bf9cd/bachelor-lechner_muehlboeck.pdf
+    [4] Meshing overview: osti.gov/servlets/purl/1394106
+    [5] John Burkardt: people.sc.fsu.edu/~jburkardt/
+    [6] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
+    [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
+    [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
 
 
