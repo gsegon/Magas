@@ -43,7 +43,7 @@ class PicardSolver{
 
 public:
     PicardSolver();
-    void read_mesh(std::string);
+    void read_mesh(const std::string&);
     void setup_system();
     void assemble_system();
     void solve();

@@ -28,24 +28,26 @@
 #include "PicardSolver.h"
 using namespace dealii;
 
-std::vector<double> B = {0,        0.2003,     0.3204,
-                         0.40045,  0.50055,    0.5606,
-                         0.7908,   0.931,      1.1014,
-                         1.2016,   1.302,      1.4028,
-                         1.524,    1.626,      1.698,
-                         1.73,     1.87,       1.99,
-                         2.04,     2.07,       2.095,
-                         2.2,      2.4};
-std::vector<double> H = {0,        238.7,     318.3,
-                         358.1,    437.7,      477.5,
-                         636.6,    795.8,      1114.1,
-                         1273.2,   1591.5,     2228.2,
-                         3183.1,   4774.6,     6366.2,
-                         7957.7,   15915.5,    31831,
-                         47746.5,  63663,      79577.5,
-                         159155,   318310};
 
-dealii::Functions::CSpline<1> sp(B, H);
+double h_fun_1(double b){
+    double alpha = 2077.205761389225;
+    double beta = 5.289952851132246;
+
+    return alpha*b+std::exp(beta*b)-1;
+}
+
+double h_fun(double b){
+
+    double nu_0 = 795774.715025;
+    double b_sat = 2.2530727020352703;
+    double theta = -1638220.518181392;
+
+    if (b < b_sat)
+        return h_fun_1(b);
+    else
+        return nu_0*b + theta;
+
+}
 
 
 template class PicardSolver<2>;
@@ -55,7 +57,7 @@ PicardSolver<dim>::PicardSolver(): fe(1), dof_handler(triangulation), quadrature
 {};
 
 template<int dim>
-void PicardSolver<dim>::read_mesh(std::string mesh_filepath) {
+void PicardSolver<dim>::read_mesh(const std::string& mesh_filepath) {
     GridIn<dim> grid_in;
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(mesh_filepath);
@@ -249,22 +251,21 @@ void PicardSolver<dim>::update_cell_nu_history() {
     FEValues<dim> fe_values(fe, quadrature_formula, update_values | update_gradients);
     std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
 
-    double Bmax = 2.3;
+    std::vector<double> b_at_qs(quadrature_formula.size(), 0);
     for (auto& cell : dof_handler.active_cell_iterators()){
         if (typeid(nu_map[cell->material_id()]) != typeid(double)){
+            auto *local_quadrature_points_history = reinterpret_cast<NuHistory<dim> *>(cell->user_pointer());
             for (const unsigned int q: fe_values.quadrature_point_indices()){
-                auto *local_quadrature_points_history = reinterpret_cast<NuHistory<dim> *>(cell->user_pointer());
                 fe_values.reinit(cell);
                 fe_values.get_function_gradients(solution, solution_gradients);
-                double Blocal = std::sqrt(std::pow(solution_gradients[q][0], 2) + std::pow(solution_gradients[q][1], 2));
+                b_at_qs[q] = std::sqrt(std::pow(solution_gradients[q][0], 2) + std::pow(solution_gradients[q][1], 2));
 
-                if (Blocal > Bmax)
-                    Blocal = Bmax;
+                double H_at_q = h_fun(b_at_qs[q]);
+                double Nu_at_q = H_at_q/b_at_qs[q];
 
-                double nu_vcalc = sp.value(dealii::Point<1>{Blocal});
-
-                local_quadrature_points_history->nu[q] += 0.7*(nu_vcalc-local_quadrature_points_history->nu[q]);
+                local_quadrature_points_history->nu[q] += 0.2*(Nu_at_q-local_quadrature_points_history->nu[q]);
             }
+
         }
     }
 }
