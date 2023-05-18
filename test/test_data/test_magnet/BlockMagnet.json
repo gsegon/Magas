@@ -1,0 +1,32 @@
+{
+  "material": {
+    "magnet": {
+      "nu": 795774.715025
+    },
+    "air": {
+      "nu": 795774.715025
+    }
+
+  },
+
+  "boundary": {
+    "A=0": 0.0
+  },
+
+  "source": {
+    "H": 0.0
+  },
+
+  "mesh_id": {
+    "1": {
+      "material": "air"},
+    "2": {
+      "material": "magnet"},
+
+    "505": {
+      "boundary": "A=0"}
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_magnet/BlockMagnet.msh"
+
+}
