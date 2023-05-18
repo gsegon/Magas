@@ -14,7 +14,6 @@ TODO BH curve analytical form. Construct piecewise like so: H = alpha*B + exp(be
     beta:  5.289952851132246
     theta:  -1638220.518181392
 
-
 TODO References:
     [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     [2] Eggshell method to compute force: https://groups.google.com/g/dealii/c/eIF6BT-5jl0
