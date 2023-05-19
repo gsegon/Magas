@@ -32,5 +32,3 @@ TODO References:
     [6] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
     [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
     [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
-
-
