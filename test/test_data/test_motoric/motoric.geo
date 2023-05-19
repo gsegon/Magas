@@ -8,7 +8,7 @@ Plane Surface(67) = {85};
 //+
 Coherence;
 //+
-Physical Curve("A0", 1) = {1};
+Physical Curve("A0", 505) = {1};
 Physical Surface("Core_Rotor", 1) = {1};
 Physical Surface("Core_Stator", 2) = {2};
 
