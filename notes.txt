@@ -18,6 +18,9 @@ TODO[x]: BH curve analytical form. Construct piecewise like so: H = alpha*B + ex
 TODO[]: Matrix condition number - printout
 TODO[]: Newton method nonlinear
 TODO[]: Periodic and anti-periodic boundary conditions
+TODO[/]: Magnet modelling
+    []: Modelling as linear BH relationship
+    []: Nonlinear using BH curve
 
 
 TODO References:
