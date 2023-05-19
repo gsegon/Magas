@@ -73,11 +73,15 @@ void LinearSolver<dim>::assemble_system() {
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double> cell_rhs(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-    double nu = 0;
-    double f = 0;
+
+
 
     // Iterate over cells and assemble to local and move to global
     for (const auto &cell : dof_handler.active_cell_iterators()){
+
+        double nu = 0;
+        double f = 0;
+        Tensor<1, dim> Hc({0, 0});
 
         cell_matrix = 0.0;
         cell_rhs = 0.0;
@@ -85,7 +89,21 @@ void LinearSolver<dim>::assemble_system() {
         fe_values.reinit(cell);
 
         nu = nu_map.at(cell->material_id());
-        f = f_map.at(cell->material_id());
+        auto f_variant = f_map.at(cell->material_id());
+        if(std::holds_alternative<double>(f_variant)){
+            f = std::get<double>(f_variant);
+            Hc[0] = 0;
+            Hc[1] = 0;
+        }
+        else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
+            f = 0;
+            Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
+            Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
+        }
+        else{
+            std::cout << "SOmething else?" << std::endl;
+        }
+
 
         // Ass. into a local system
         for (const unsigned int q : fe_values.quadrature_point_indices()){
@@ -97,18 +115,13 @@ void LinearSolver<dim>::assemble_system() {
                             fe_values.JxW(q);                 // dx
                 }
 
+                // Current contribution
                 cell_rhs(i) += f*                               // f at cell
-                        fe_values.shape_value(i, q)*        // phi_i(x_q)
+                        fe_values.shape_value(i, q)*            // phi_i(x_q)
                         fe_values.JxW(q);
 
-
-                double Hx = 0;
-                double Hy = 1e3;
-                Tensor<1, dim> Hc_prime({-Hy, Hx});
-                if (cell->material_id() == 2){
-                    cell_rhs(i) += Hc_prime*fe_values.shape_grad(i, q)*fe_values.JxW(q);
-                }
-
+                // Magnet contribution
+                cell_rhs(i) += Hc*fe_values.shape_grad(i, q)*fe_values.JxW(q);
 
             }
         }
@@ -156,7 +169,7 @@ void LinearSolver<dim>::set_nu_map(std::unordered_map<int, double> map) {
 }
 
 template<int dim>
-void LinearSolver<dim>::set_f_map(std::unordered_map<int, double> map) {
+void LinearSolver<dim>::set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>> map) {
     this->f_map = map;
 }
 

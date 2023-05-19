@@ -5,6 +5,8 @@
 #ifndef SOLVER_LINEARSOLVER_H
 #define SOLVER_LINEARSOLVER_H
 
+#include <variant>
+
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/logstream.h>
@@ -39,7 +41,7 @@ public:
     void assemble_system();
     void solve();
     void set_nu_map(std::unordered_map<int, double>);
-    void set_f_map(std::unordered_map<int, double>);
+    void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
 
     Triangulation<dim>& get_triangulation();
@@ -60,7 +62,7 @@ private:
     Vector<double> solution;
     Vector<double> system_rhs;
     std::unordered_map<int, double> nu_map;
-    std::unordered_map<int, double> f_map;
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
 };
 

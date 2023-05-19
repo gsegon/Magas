@@ -40,8 +40,22 @@ Physical Surface("Coil_4_b+", 122) = {8+3*12, 10+3*12};
 Physical Surface("Coil_4_c+", 123) = {11+3*12, 13+3*12};
 Physical Surface("Coil_4_c-", 124) = {12+3*12, 14+3*12};
 
-Physical Surface("Magnet_n", 125) = {51, 52, 55, 56, 59, 60, 63, 64};
-Physical Surface("Magnet_s", 126) = {53, 54, 57, 58, 61, 62, 65, 66};
+Physical Surface("Magnet1_n", 651) = {51};
+Physical Surface("Magnet2_n", 652) = {52};
+Physical Surface("Magnet3_s", 653) = {53};
+Physical Surface("Magnet4_s", 654) = {54};
+Physical Surface("Magnet5_n", 655) = {55};
+Physical Surface("Magnet6_n", 656) = {56};
+Physical Surface("Magnet7_s", 657) = {57};
+Physical Surface("Magnet8_s", 658) = {58};
+Physical Surface("Magnet9_n", 659) = {59};
+Physical Surface("Magnet10_n", 660) = {60};
+Physical Surface("Magnet11_s", 661) = {61};
+Physical Surface("Magnet12_s", 662) = {62};
+Physical Surface("Magnet13_n", 663) = {63};
+Physical Surface("Magnet14_n", 664) = {64};
+Physical Surface("Magnet15_s", 665) = {65};
+Physical Surface("Magnet16_s", 666) = {66};
 
 Physical Surface("air", 127) = {69,
 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,

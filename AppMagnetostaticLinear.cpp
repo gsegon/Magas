@@ -43,23 +43,43 @@ int main(int argc, char* argv[]){
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
 
-    std::unordered_map<int, double> f_map;
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> nu_map;
     std::unordered_map<int, double> dc_map;
 
-    for (auto& mesh_data : mesh_id_data.items()){
-        int mat_id{std::stoi(mesh_data.key())};
-        if (mesh_data.value().contains("material")){
-            nu_map.insert({mat_id, material_data.at(mesh_data.value().at("material")).at("nu")});
+    for (auto& mesh_el_data : mesh_id_data.items()){
+        int mat_id{std::stoi(mesh_el_data.key())};
+        if (mesh_el_data.value().contains("material")){
+            nu_map.insert({mat_id, material_data.at(mesh_el_data.value().at("material")).at("nu")});
         }
-        if (mesh_data.value().contains("source")){
-            f_map.insert({mat_id, source_data.at(mesh_data.value().at("source"))});
+        if (mesh_el_data.value().contains("source")){
+
+            auto source_d = source_data.at(mesh_el_data.value().at("source"));
+
+            // If mesh data contains angle, the source is vector Hc. Magnitude in Material data and direction from mesh data.
+            if (mesh_el_data.value().contains("angle")){
+                double Hc = source_d;
+                double angle = mesh_el_data.value().at("angle");
+                double Hc_x = Hc*std::cos(angle);
+                double Hc_y = Hc*std::sin(angle);
+
+                std::pair<double, double> Hc_vec{Hc_x, Hc_y};
+                f_map.insert({mat_id, Hc_vec});
+            }
+
+            // Otherwise, the source is J (current density)
+            else {
+                double J = source_d;
+                f_map.insert({mat_id, J});
+            }
         }
+
+        // If there is no source, set f to 0.
         else{
             f_map.insert({mat_id, 0.0});
         }
-        if (mesh_data.value().contains("boundary")){
-            dc_map.insert({mat_id, boundary_data.at(mesh_data.value().at("boundary"))});
+        if (mesh_el_data.value().contains("boundary")){
+            dc_map.insert({mat_id, boundary_data.at(mesh_el_data.value().at("boundary"))});
         }
     }
 
