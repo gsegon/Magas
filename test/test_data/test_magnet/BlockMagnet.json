@@ -14,15 +14,14 @@
   },
 
   "source": {
-    "Hc_magnet1": [0.0, 1000.0]
+    "H": 0.0
   },
 
   "mesh_id": {
     "1": {
       "material": "air"},
     "2": {
-      "material": "magnet",
-      "source": "Hc_magnet1"},
+      "material": "magnet"},
 
     "505": {
       "boundary": "A=0"}

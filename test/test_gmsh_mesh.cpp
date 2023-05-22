@@ -153,7 +153,20 @@ TEST(GmshMesh, motoric){
 
 }
 
-TEST(GmshMesh, block_magnet){
+TEST(GmshMesh, motoric_section){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+    print_mesh_info(triangulation, "grid-out-motoric.eps");
+
+}
+
+TEST(GmshMesh, block_magnet) {
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_magnet/BlockMagnet.msh";
 
@@ -163,5 +176,4 @@ TEST(GmshMesh, block_magnet){
     std::ifstream input_file(test_mesh);
     grid_in.read_msh(input_file);
     print_mesh_info(triangulation, "grid-out-block_magnet.eps");
-
 }
