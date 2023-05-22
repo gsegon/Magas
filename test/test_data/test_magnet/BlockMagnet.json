@@ -14,7 +14,7 @@
   },
 
   "source": {
-    "Hc": 0.0
+    "Hc": 10e3
   },
 
   "mesh_id": {
@@ -22,7 +22,7 @@
       "material": "air"},
     "2": {
       "material": "magnet",
-      "source":  "H",
+      "source":  "Hc",
       "angle": 1.57079632679
     },
 

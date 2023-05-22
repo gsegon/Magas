@@ -194,8 +194,9 @@ TEST(LinearSolver, Magnet){
 
     };
 
+    std::pair<double, double> Hc{0, 10e3};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},
-                                           {2, 0},        // Magnet
+                                           {2, Hc},        // Magnet
                                            };
 
     std::unordered_map<int, double> dc_map{{505, 0}} ;      // Outer boundary
