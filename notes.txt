@@ -23,6 +23,7 @@ TODO[/]: Magnet modelling
     []: Nonlinear using BH curve
 
 
+
 TODO References:
     [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
     [2] Eggshell method to compute force: https://groups.google.com/g/dealii/c/eIF6BT-5jl0
@@ -32,3 +33,4 @@ TODO References:
     [6] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
     [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
     [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
+    [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185

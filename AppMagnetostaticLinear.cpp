@@ -4,36 +4,74 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "LinearSolver.h"
 #include "nlohmann/json.hpp"
+#include <cxxopts.hpp>
+#include <vector>
 
 #include "ExportVtu.h"
 #include "MagneticFluxPostprocessor.h"
 #include "MatIDPostprocessor.h"
 #include "MagneticEnergyDensityPostprocessor.h"
 #include "MagneticEnergyPostprocessor.h"
+#include "misc.h"
 
 using json = nlohmann::json;
 
 int main(int argc, char* argv[]){
 
-    std::ifstream input;
+    cxxopts::Options options("aml", "Application for magnetostatic simulations.");
 
-    if (argc <= 1){
-        std::cout << "Error: No input file given." << std::endl;
-        return -1;
+    options.add_options()
+            ("input", "Input config file (.json)", cxxopts::value<std::string>())
+            ("o, output", "Visualization output", cxxopts::value<std::string>())
+            ("m, mesh", "Mesh file (.gmsh)")
+            ("s, sources", "Sources", cxxopts::value<std::vector<std::string>>())
+            ("h, help", "Print usage")
+    ;
+
+    options.positional_help("file...");
+    options.show_positional_help();
+    options.parse_positional({"input"});
+    options.allow_unrecognised_options();
+
+
+    auto result = options.parse(argc, argv);
+
+    if (result.count("help")){
+        std::cout << options.help() << std::endl;
+        exit(0);
     }
-    if (argc > 1){
-        input.open(argv[1]);
-        if(input.fail()){
-            throw std::runtime_error("Failed to open input file");
+
+    if (!result.count("input")){
+        std::cout << "No input file given.\nSee 'aml --help' for usage." << std::endl;
+        exit(0);
+    }
+
+    std::filesystem::path input = result["input"].as<std::string>();
+    std::filesystem::path output = input.filename().replace_extension();
+    if (result.count("output")){
+        output = result["output"].as<std::string>();
+        output.replace_extension();
+    }
+
+    std::unordered_map<std::string, double> cli_source_map;
+    if (result.count("sources")){
+        for (const auto& src_param_str : result["sources"].as<std::vector<std::string>>()){
+            std::vector<std::string> v = split(src_param_str, "=");
+            cli_source_map[v[0]] = std::stod(v[1]);
         }
-        std::cout << "Input file " << argv[1] << " loaded." << std::endl;
     }
+
+    std::ifstream ifs_input;
+    ifs_input.open(input);
+        if(ifs_input.fail()){
+            throw std::runtime_error("Failed to open input file.");
+        }
 
     // Parse JSON
-    json input_data = json::parse(input);
-
+    json input_data = json::parse(ifs_input);
     std::string mesh_filepath{input_data.at("mesh_path")};
 
     std::cout << "Mesh file: " << mesh_filepath << std::endl;
@@ -42,6 +80,18 @@ int main(int argc, char* argv[]){
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
+
+    // modify source data if needed:
+    // TODO: Rewrite possibly
+    std::cout << "Sources: " << std::endl;
+    for (auto& [key, val] : source_data.items()){
+        if (cli_source_map.count(key))
+            val = cli_source_map[key];
+    }
+
+    for (auto& [key, val] : source_data.items()){
+        std::cout << key << ": " << val << std::endl;
+    }
 
     std::unordered_map<int, double> f_map;
     std::unordered_map<int, double> nu_map;
@@ -93,7 +143,9 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
     export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
-    export_vtu.write("aml");
+
+    export_vtu.write(output);
+    std::cout << "Output written to " << output.concat(".vtu") << std::endl;
 
     return 0;
 }
