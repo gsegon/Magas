@@ -35,3 +35,4 @@ TODO References:
     [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
     [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185
 [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
+[11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
