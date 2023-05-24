@@ -16,6 +16,7 @@
 #include "MagneticEnergyDensityPostprocessor.h"
 #include "MagneticEnergyPostprocessor.h"
 #include "misc.h"
+#include <cstdlib>
 
 using json = nlohmann::json;
 

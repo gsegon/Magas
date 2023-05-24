@@ -3,57 +3,84 @@ project(solver)
 set(CMAKE_CXX_STANDARD 17)
 
 # External libs
-include_directories(demo_vtu11 /home/gordan/Programs/vtu11)
-set(json_dir "/home/gordan/Programs/json")
-include_directories(${json_dir}/include)
-set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
-include_directories(${deallii_dir}/include/)
-include_directories(/home/gordan/Programs/cxxopts/include)
+#include_directories(demo_vtu11 /home/gordan/Programs/vtu11)
+#set(json_dir "/home/gordan/Programs/json")
+#include_directories(${json_dir}/include)
+#set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
+#include_directories(${deallii_dir}/include/)
+#include_directories(/home/gordan/Programs/cxxopts/include)
 
 # solver
-add_library(solver SHARED
+find_package(Boost REQUIRED serialization)
+
+add_library(solver
         src/LinearSolver.cpp
         src/PicardSolver.cpp
         src/ExportVtu.cpp
         src/MagneticFluxPostprocessor.cpp
         src/MatIDPostprocessor.cpp
-        src/MagneticEnergyPostprocessor.cpp src/MagneticEnergyDensityPostprocessor.cpp)
+        src/MagneticEnergyPostprocessor.cpp
+        src/MagneticEnergyDensityPostprocessor.cpp)
 target_include_directories(solver PUBLIC include)
-target_link_libraries(solver debug
-        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
-        tbb)
+target_include_directories(solver PUBLIC /home/gordan/Programs/dealii/dealii-install-static/include)
+target_include_directories(solver PUBLIC /home/gordan/Programs/vtu11)
+target_include_directories(solver PUBLIC /home/gordan/Programs/cxxopts/include)
+
+target_link_directories(solver PUBLIC /home/gordan/Programs/dealii/dealii-install-static/lib)
+
+target_link_libraries(solver deal_II tbb)
+
+target_include_directories(solver PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(solver ${Boost_LIBRARIES})
 
 # Locate GTest
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+#find_package(GTest REQUIRED)
+#include_directories(${GTEST_INCLUDE_DIRS})
+#
+## test solver
+#add_executable(test_solver
+#        test/test_LinearSolver.cpp
+#        test/test_PicardSolver.cpp test/test_MagnetComputations.cpp)
+#
+#target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
+#
+## test export
+#add_executable(test_export
+#        test/test_ExportVtu.cpp test/test_MagneticFluxPostprocessor.cpp test/test_MagneticEnergyPostprocessor.cpp test/test_MagneticEnergyDensityPostprocessor.cpp)
+#target_link_libraries(test_export ${GTEST_LIBRARIES} gtest_main pthread solver)
+#
+## test mesh
+#add_executable(test_mesh
+#                test/test_gmsh_mesh.cpp)
+#target_link_libraries(test_mesh ${GTEST_LIBRARIES} gtest_main pthread solver)
 
-# test solver
-add_executable(test_solver
-        test/test_LinearSolver.cpp
-        test/test_PicardSolver.cpp test/test_MagnetComputations.cpp)
+## aml
+#add_executable(aml AppMagnetostaticLinear.cpp)
+#target_link_libraries(aml optimized
+#        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
+#        tbb
+#        solver)
+#
+## amp
+#add_executable(amp AppMagnetostaticPicard.cpp)
+#target_link_libraries(amp optimized
+#        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
+#        tbb
+#        solver)
 
-target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 
-# test export
-add_executable(test_export
-        test/test_ExportVtu.cpp test/test_MagneticFluxPostprocessor.cpp test/test_MagneticEnergyPostprocessor.cpp test/test_MagneticEnergyDensityPostprocessor.cpp)
-target_link_libraries(test_export ${GTEST_LIBRARIES} gtest_main pthread solver)
+# Static version
+add_executable(aml_static AppMagnetostaticLinear.cpp)
+target_include_directories(aml_static PUBLIC include)
+#target_include_directories(aml_static PUBLIC /home/gordan/Programs/dealii/dealii-install-static/include)
+target_include_directories(aml_static PUBLIC /home/gordan/Programs/vtu11)
+target_include_directories(aml_static PUBLIC /home/gordan/Programs/cxxopts/include)
+target_include_directories(aml_static PUBLIC /home/gordan/Programs/json/include)
 
-# test mesh
-add_executable(test_mesh
-                test/test_gmsh_mesh.cpp)
-target_link_libraries(test_mesh ${GTEST_LIBRARIES} gtest_main pthread solver)
+#target_link_directories(aml_static PUBLIC /home/gordan/Programs/dealii/dealii-install-static/lib)
 
-# aml
-add_executable(aml AppMagnetostaticLinear.cpp)
-target_link_libraries(aml optimized
-        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
-        tbb
-        solver)
+#target_link_libraries(aml_static deal_II)
+target_link_libraries(aml_static solver)
+target_link_libraries(aml_static pthread tbb)
+#target_link_libraries(aml_static ${Boost_LIBRARIES})
 
-# amp
-add_executable(amp AppMagnetostaticPicard.cpp)
-target_link_libraries(amp optimized
-        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
-        tbb
-        solver)
