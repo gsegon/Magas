@@ -34,6 +34,6 @@ Physical Surface("air_surrounding", 204) = {7};
 Physical Surface("air_gap", 205) = {3};
 Physical Point("a=0", 44) = {25, 26, 24, 23};
 
-Transfinite Curve {42, 17, 38, 21, 34} = 30 Using Progression 1;
-Transfinite Curve {43} = 120 Using Progression 1;
+//Transfinite Curve {42, 17, 38, 21, 34} = 30 Using Progression 1;
+//Transfinite Curve {43} = 120 Using Progression 1;
 

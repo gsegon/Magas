@@ -32,7 +32,7 @@ TODO References:
     [5] John Burkardt: people.sc.fsu.edu/~jburkardt/
     [6] Vertex to DOF: https://github.com/dealii/dealii/wiki/Frequently-Asked-Questions#how-do-i-get-the-degree-of-freedom-indices-at-vertices
     [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
-    [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
+    [8] Advanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
     [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185
-[10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
-[11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
+    [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
+    [11] Multiphysics Simulation by Design for Electrical Machines, Power Electronics and Drives.

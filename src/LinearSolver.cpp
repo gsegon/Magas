@@ -22,6 +22,10 @@
 
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
+
+#include <deal.II/grid/grid_refinement.h>
+#include <deal.II/numerics/error_estimator.h>
+
 #include <fstream>
 
 #include "LinearSolver.h"
@@ -51,14 +55,26 @@ template<int dim>
 void LinearSolver<dim>::setup_system() {
     dof_handler.distribute_dofs(fe);
 
-    DynamicSparsityPattern dsp(dof_handler.n_dofs());
-    DoFTools::make_sparsity_pattern(dof_handler, dsp);
-    sparsity_pattern.copy_from(dsp);
-
-    system_matrix.reinit(sparsity_pattern);
-
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
+
+    constraints.clear();
+    DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+
+    for (auto& [mat_id, value] : dc_map){
+        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
+    }
+    constraints.close();
+
+    DynamicSparsityPattern dsp(dof_handler.n_dofs());
+    DoFTools::make_sparsity_pattern(dof_handler,
+                                    dsp,
+                                    constraints,
+                                    false);
+
+    sparsity_pattern.copy_from(dsp);
+    system_matrix.reinit(sparsity_pattern);
+
 
 }
 
@@ -73,8 +89,6 @@ void LinearSolver<dim>::assemble_system() {
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double> cell_rhs(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-
 
     // Iterate over cells and assemble to local and move to global
     for (const auto &cell : dof_handler.active_cell_iterators()){
@@ -101,7 +115,7 @@ void LinearSolver<dim>::assemble_system() {
             Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
         }
         else{
-            std::cout << "SOmething else?" << std::endl;
+            std::cout << "Something else?" << std::endl;
         }
 
 
@@ -126,26 +140,28 @@ void LinearSolver<dim>::assemble_system() {
             }
         }
 
-        // Ass. local system into global
         cell->get_dof_indices(local_dof_indices);
-        for (const unsigned int i : fe_values.dof_indices()){
-            for (const unsigned int j : fe_values.dof_indices()){
-                system_matrix.add(local_dof_indices[i], local_dof_indices[j], cell_matrix(i, j));
-            }
-            system_rhs(local_dof_indices[i]) += cell_rhs(i);
-        }
+        constraints.distribute_local_to_global(cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
     }
 
-    // Apply boundary conditions
-    std::map<types::global_dof_index, double> boundary_values;
-    for (auto& [mat_id, value] : dc_map){
-        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), boundary_values);
-    }
+    std::cout   << "\tNumber of degrees of freedom:\t"
+                << dof_handler.n_dofs() << std::endl;
+}
 
-    MatrixTools::apply_boundary_values(boundary_values,system_matrix,solution,system_rhs);
+template <int dim>
+void LinearSolver<dim>::refine_grid(){
+    Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
 
-    std::cout << "Number of dofs: " << dof_handler.n_dofs() << std::endl;
+    KellyErrorEstimator<dim>::estimate(dof_handler,
+                                       QGauss<dim -1>(fe.degree),
+                                       {},
+                                       solution,
+                                       estimated_error_per_cell);
 
+
+    GridRefinement::refine_and_coarsen_fixed_number(triangulation, estimated_error_per_cell, 0.05, 0.03);
+
+    triangulation.execute_coarsening_and_refinement();
 }
 
 template<int dim>
@@ -155,11 +171,13 @@ void LinearSolver<dim>::solve(){
     SolverCG<Vector<double>> solver(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.6);
+    preconditioner.initialize(system_matrix, 1.2);
 
     solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
+
+    constraints.distribute(solution);
 
 }
 

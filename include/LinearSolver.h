@@ -39,6 +39,7 @@ public:
     void read_mesh(std::string);
     void setup_system();
     void assemble_system();
+    void refine_grid();
     void solve();
     void set_nu_map(std::unordered_map<int, double>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
@@ -55,6 +56,8 @@ private:
     FE_Q<dim> fe;
     DoFHandler<dim> dof_handler;
     QGauss<dim> quadrature_formula;
+
+    AffineConstraints<double> constraints;
 
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;

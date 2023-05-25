@@ -52,10 +52,10 @@ TEST(LinearSolver, assemble_system){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
     solver.assemble_system();
 
 }
@@ -69,10 +69,10 @@ TEST(LinearSolver, solve_system){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
     solver.assemble_system();
     solver.solve();
 
@@ -133,10 +133,10 @@ TEST(LinearSolver, 2_conductors){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
     solver.assemble_system();
     solver.solve();
 
@@ -152,8 +152,8 @@ TEST(LinearSolver, EI_core){
 
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
-    std::unordered_map<int, double> nu_map{{200, nu_core},       // Core1
-                                             {201, nu_core},       // Core2
+    std::unordered_map<int, double> nu_map{{200, nu_core},      // Core1
+                                             {201, nu_core},    // Core2
                                              {202, nu_0},       // Copper
                                              {203, nu_0},       // Copper
                                              {204, nu_0},       // Air
@@ -173,10 +173,10 @@ TEST(LinearSolver, EI_core){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
     solver.assemble_system();
     solver.solve();
 
@@ -204,10 +204,10 @@ TEST(LinearSolver, Magnet){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
     solver.assemble_system();
     solver.solve();
 

@@ -25,10 +25,11 @@ TEST(ExportVtu, initialize_unit){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
+    solver.set_dc_map(dc_map);
     solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
+
     solver.assemble_system();
     solver.solve();
 
@@ -46,7 +47,6 @@ TEST(ExportVtu, initialize_EI_core){
     constexpr double nu_core = 1/(2500*mu_0);
     double J1 = 10*66/8.0645e-05;
     double J2 = -10*66/8.0645e-05;
-
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
     std::unordered_map<int, double> nu_map{{200, nu_core},      // Core1
@@ -70,12 +70,12 @@ TEST(ExportVtu, initialize_EI_core){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
+    solver.set_dc_map(dc_map);
+
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
-    solver.assemble_system();
-    solver.solve();
+//    solver.assemble_system();
+//    solver.solve();
 
     // Export
     MagneticFluxPostprocessor<2> bx_postprocessor_q0(0, 0);
@@ -107,7 +107,28 @@ TEST(ExportVtu, initialize_EI_core){
     export_vtu.attach_postprocessor(&energy_cell, "E [J/m]");
     export_vtu.attach_postprocessor(&energy_density, "E [J/m^3]");
 
-    export_vtu.write("vtu_export_EI_core");
+
+    for (unsigned int cycle=0; cycle<5; ++cycle){
+        std::cout << "Cycle " << cycle << ":" << std::endl;
+
+        if (cycle == 0){
+            std::cout << "No refinement." << std::endl;
+        }
+        else {
+            solver.refine_grid();
+        }
+
+        std::cout   << "\tNumber of active cells:\t"
+                    << solver.get_triangulation().n_active_cells() << std::endl;
+
+        solver.setup_system();
+        solver.assemble_system();
+        solver.solve();
+        export_vtu.write("vtu_export_EI_core-"+std::to_string(cycle));
+    }
+
+
+
 
 }
 

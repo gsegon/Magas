@@ -28,6 +28,7 @@ int main(int argc, char* argv[]){
             ("o, output", "Visualization output", cxxopts::value<std::string>())
             ("m, mesh", "Mesh file (.gmsh)")
             ("s, sources", "Sources", cxxopts::value<std::vector<std::string>>())
+            ("r, refinement", "Number of mesh refinement steps", cxxopts::value<int>()->default_value("0"))
             ("h, help", "Print usage")
     ;
 
@@ -136,26 +137,17 @@ int main(int argc, char* argv[]){
     // Initialize Solver and solver
     LinearSolver<2> solver;
     solver.read_mesh(mesh_filepath);
-    solver.setup_system();
+    solver.set_dc_map(dc_map);
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
-    solver.assemble_system();
-    solver.solve();
 
-    // Visualization
-    // Export
+    // Attach postprocessors
     MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
     MagneticFluxPostprocessor<2> by_postprocessor(0, 1);
     MagneticFluxPostprocessor<2> b_abs_postprocessor(0);
     MagneticEnergyDensityPostprocessor<2> e_density(nu_map);
     MagneticEnergyPostprocessor<2> e_cell(nu_map);
     MatIDPostprocessor<2> mat_id_postprocessor;
-
-    std::vector<double> e_cells;
-    e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
-    auto E_total = std::reduce(e_cells.begin(), e_cells.end());
-    std::cout << "E total: " << E_total << std::endl;
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
     export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
@@ -164,8 +156,31 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
     export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
 
-    export_vtu.write(output);
-    std::cout << "Output written to " << output.concat(".vtu") << std::endl;
+    for (unsigned int cycle=0; cycle <= result["r"].as<int>(); ++cycle){
+        std::cout << "Cycle " << cycle << ":" << std::endl;
+
+        if (cycle == 0){
+            std::cout << "No refinement." << std::endl;
+        }
+        else {
+            solver.refine_grid();
+        }
+
+        std::cout   << "\tNumber of active cells:\t"
+                    << solver.get_triangulation().n_active_cells() << std::endl;
+
+        solver.setup_system();
+        solver.assemble_system();
+        solver.solve();
+        export_vtu.write(output.filename().string() + "-" + std::to_string(cycle));
+        std::cout << "Output written to " << output.filename().string() + "-" + std::to_string(cycle) +".vtu" << std::endl;
+
+        // Some other postprocessing
+        std::vector<double> e_cells;
+        e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
+        auto E_total = std::reduce(e_cells.begin(), e_cells.end());
+        std::cout << "E total: " << E_total << std::endl;
+    }
 
     return 0;
 }
