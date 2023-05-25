@@ -159,7 +159,7 @@ void LinearSolver<dim>::refine_grid(){
                                        estimated_error_per_cell);
 
 
-    GridRefinement::refine_and_coarsen_fixed_number(triangulation, estimated_error_per_cell, 0.05, 0.03);
+    GridRefinement::refine_and_coarsen_fixed_number(triangulation, estimated_error_per_cell, 0.05, 0.00);
 
     triangulation.execute_coarsening_and_refinement();
 }

@@ -107,7 +107,6 @@ TEST(ExportVtu, initialize_EI_core){
     export_vtu.attach_postprocessor(&energy_cell, "E [J/m]");
     export_vtu.attach_postprocessor(&energy_density, "E [J/m^3]");
 
-
     for (unsigned int cycle=0; cycle<5; ++cycle){
         std::cout << "Cycle " << cycle << ":" << std::endl;
 

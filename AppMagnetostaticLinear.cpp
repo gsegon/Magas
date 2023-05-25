@@ -156,6 +156,8 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
     export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
 
+
+    double E_total_last = 0;
     for (unsigned int cycle=0; cycle <= result["r"].as<int>(); ++cycle){
         std::cout << "Cycle " << cycle << ":" << std::endl;
 
@@ -179,6 +181,11 @@ int main(int argc, char* argv[]){
         std::vector<double> e_cells;
         e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
         auto E_total = std::reduce(e_cells.begin(), e_cells.end());
+        if (cycle != 0){
+            auto dif_per_E_total = (E_total-E_total_last)/(E_total_last) * 100;
+            std::cout << "Diff. in energy from previous step: " << dif_per_E_total << "%" << std::endl;
+        }
+        E_total_last = E_total;
         std::cout << "E total: " << E_total << std::endl;
     }
 
