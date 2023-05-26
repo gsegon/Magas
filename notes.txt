@@ -36,3 +36,4 @@ TODO References:
     [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185
 [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
 [11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
+[12] Mathematical models for eddy currents and Magnetostatics, Rachid Tauzani
