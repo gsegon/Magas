@@ -38,3 +38,4 @@ femm website SlidingBand
 [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
 [11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
 [12] Mathematical models for eddy currents and Magnetostatics, Rachid Tauzani
+[13] Solving Nonlinear Magnetic Problems Using Newton Trust Region Methods
