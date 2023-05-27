@@ -13,11 +13,10 @@ include_directories(/home/gordan/Programs/cxxopts/include)
 # solver
 add_library(solver SHARED
         src/LinearSolver.cpp
-        src/PicardSolver.cpp
         src/ExportVtu.cpp
         src/MagneticFluxPostprocessor.cpp
         src/MatIDPostprocessor.cpp
-        src/MagneticEnergyPostprocessor.cpp src/MagneticEnergyDensityPostprocessor.cpp)
+        src/MagneticEnergyPostprocessor.cpp src/MagneticEnergyDensityPostprocessor.cpp src/NewtonSolver.cpp)
 target_include_directories(solver PUBLIC include)
 target_link_libraries(solver debug
         /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
@@ -30,7 +29,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # test solver
 add_executable(test_solver
         test/test_LinearSolver.cpp
-        test/test_PicardSolver.cpp test/test_MagnetComputations.cpp)
+        test/test_MagnetComputations.cpp test/test_NewtonSolver.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 

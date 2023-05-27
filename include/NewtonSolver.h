@@ -2,8 +2,8 @@
 // Created by gordan on 5/10/23.
 //
 
-#ifndef SOLVER_PICARDSOLVER_H
-#define SOLVER_PICARDSOLVER_H
+#ifndef SOLVER_NEWTONSOLVER_H
+#define SOLVER_NEWTONSOLVER_H
 
 #include <any>
 
@@ -39,25 +39,23 @@ struct NuHistory
 };
 
 template <int dim>
-class PicardSolver{
+class NewtonSolver{
 
 public:
-    PicardSolver();
+    NewtonSolver();
     void read_mesh(const std::string&);
-    void setup_system();
-    void reinit_system();
+    void setup_system(const bool initial_step);
     void assemble_system();
     void solve();
-    void solve_nonlinear(int);
+//    void solve_nonlinear(int);
     void set_nu_map(std::unordered_map<int, std::any>);
-    void set_f_map(std::unordered_map<int, double>);
+    void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
-    void setup_cell_nu_history();
-    void update_cell_nu_history();
-    void initialize_cell_nu_history(double);
+    double compute_residual() const;
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
+    Vector<double>& get_current_solution();
     Vector<double>& get_rhs();
     FE_Q<dim>& get_fe();
 
@@ -71,17 +69,18 @@ private:
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
+    AffineConstraints<double> hanging_node_constraints;
+
     Vector<double> solution;
     Vector<double> system_rhs;
 
+    Vector<double> current_solution;
+    Vector<double> newton_update;
+
     std::unordered_map<int, std::any> nu_map;
-    std::unordered_map<int, double> f_map;
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
-    std::vector<NuHistory<dim>> quadrature_nu_history;
 
 };
 
-
-
-
-#endif //SOLVER_PICARDSOLVER_H
+#endif //SOLVER_NEWTONSOLVER_H
