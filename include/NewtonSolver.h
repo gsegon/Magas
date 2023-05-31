@@ -46,7 +46,7 @@ public:
     void read_mesh(const std::string&);
     void setup_system(const bool initial_step);
     void assemble_system();
-    void solve();
+    void solve(const double alpha);
 //    void solve_nonlinear(int);
     void set_nu_map(std::unordered_map<int, std::any>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);

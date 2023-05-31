@@ -216,7 +216,7 @@ void NewtonSolver<dim>::assemble_system() {
 }
 
 template<int dim>
-void NewtonSolver<dim>::solve(){
+void NewtonSolver<dim>::solve(const double alpha){
 
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
@@ -229,7 +229,6 @@ void NewtonSolver<dim>::solve(){
 
     hanging_node_constraints.distribute(newton_update);
 
-    const double alpha = 1;
     current_solution.add(alpha, newton_update);
 
 }

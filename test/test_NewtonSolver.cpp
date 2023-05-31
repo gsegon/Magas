@@ -93,9 +93,20 @@ TEST(NewtonSolver, solve){
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_current_solution(), solver.get_fe());
 
     int i = 0;
+    double alpha = 0.0;
     while(i++ < 50){
         solver.assemble_system();
-        solver.solve();
+        if (i < 5){
+            alpha = 0.1;
+        }
+        else if (i < 15){
+            alpha = 0.3;
+        }
+        else{
+            alpha = 0.5;
+        }
+
+        solver.solve(alpha);
         std::cout << "\tResidual(" << i<< "): " << solver.compute_residual() << std::endl;
         export_vtu.write("vtu_export_newton_unit_square-" + std::to_string(i));
     }
@@ -103,39 +114,6 @@ TEST(NewtonSolver, solve){
 
 }
 
-
-//TEST(NewtonSolver, 2_conductors){
-//
-//    constexpr double mu_0 = 1.2566370621219e-6;
-//    constexpr double nu_0 = 1/mu_0;
-//    double i_current = 1e3;
-//    double Jdensity = i_current / (std::pow(0.1,2) * M_PI);
-//
-//
-//    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh";
-//
-//    std::unordered_map<int, double> nu_map{{1, nu_0},       // Conductor 1
-//                                           {2, nu_0},       // Conductor 2
-//                                           {3, nu_0}};      // Air
-//
-//    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, Jdensity},   // Conductor 1
-//                                           {2, -Jdensity},  // Conductor 2
-//                                           {3, 0},          // Air
-//                                        };
-//
-//    std::unordered_map<int, double> dc_map{{100, 0}};       // Outerbounds
-//
-//    NewtonSolver<2> solver;
-//    solver.read_mesh(test_mesh);
-//    solver.setup_system();
-//    solver.set_nu_map(nu_map);
-//    solver.set_f_map(f_map);
-//    solver.set_dc_map(dc_map);
-//    solver.assemble_system();
-//    solver.solve();
-//
-//}
-//
 TEST(NewtonSolver, EI_core){
 
     constexpr double mu_0 = 1.2566370621219e-6;
@@ -186,9 +164,18 @@ TEST(NewtonSolver, EI_core){
     export_vtu.attach_postprocessor(&b_abs_postprocessor_q3, "Babs_q3 [T]");
 
     int i = 0;
+    double alpha = 0.0;
     while(i++ < 50){
+
+        if (i < 10)
+            alpha = 0.1;
+        else if (i < 15)
+            alpha = 0.3;
+        else
+            alpha = 0.5;
+
         solver.assemble_system();
-        solver.solve();
+        solver.solve(alpha);
         double res = solver.compute_residual();
         std::cout << "\tResidual(" << i<< "): " << res << std::endl;
         export_vtu.write("vtu_export_newton_EI_core-" + std::to_string(i));
