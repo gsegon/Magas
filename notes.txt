@@ -1,28 +1,3 @@
-TODO[]: https://groups.io/g/femm/topic/85287510 : hysteresis calculations
-TODO[x]: https://github.com/phmkopp/vtu11 Output to VTK using vtu11
-TODO[/]: Magnetic energy density [J/m3]
-    [x] Linear case
-    [] Nonlinear case
-TODO[]: Total Magnetic energy [J/m]
-    [] Linear case
-    [] Nonlinear case
-TODO[]: Inductance matrix [H/m]
-TODO[]: CVW forces [N/m]
-TODO[]: Maxwell stress tensor forces [N/m]
-TODO[]: Lorentz Force [N/m]
-TODO[x]: BH curve analytical form. Construct piecewise like so: H = alpha*B + exp(beta*B) -1 for B<Bsat and H = nu_0*B + theta for B>=Bsat
-    Bsat:  2.2530727020352703
-    alpha:  2077.205761389225
-    beta:  5.289952851132246
-    theta:  -1638220.518181392
-TODO[]: Matrix condition number - printout
-TODO[]: Newton method nonlinear
-TODO[]: Periodic and anti-periodic boundary conditions
-TODO[/]: Magnet modelling
-    []: Modelling as linear BH relationship
-    []: Nonlinear using BH curve
-
-
 
 TODO References:
     [1] https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf
@@ -34,5 +9,8 @@ TODO References:
     [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
     [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
     [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185
-[10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
-[11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
+        femm website SlidingBand
+    [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
+    [11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
+    [12] Mathematical models for eddy currents and Magnetostatics, Rachid Tauzani
+    [13] Solving Nonlinear Magnetic Problems Using Newton Trust Region Methods

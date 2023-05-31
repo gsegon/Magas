@@ -96,7 +96,7 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
 
-    for (int nonlinear_step = 0; nonlinear_step < 5; nonlinear_step++){
+    for (int nonlinear_step = 0; nonlinear_step < 50; nonlinear_step++){
         solver.solve_nonlinear(1);
         export_vtu.write("amp-"+std::to_string(nonlinear_step));
     }
