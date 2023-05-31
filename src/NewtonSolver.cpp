@@ -180,7 +180,7 @@ void NewtonSolver<dim>::assemble_system() {
                             fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
                             fe_values.JxW(q);                 // dx
                 }
-                cell_rhs(i) += (f                               // (f
+                cell_rhs(i) += (f*fe_values.shape_value(i, q)                               // (f
                             -                                   // -
                             no*                                 // nu at cell*
                             fe_values.shape_grad(i, q)*       // phi_i(x_q)*
@@ -244,7 +244,7 @@ double NewtonSolver<dim>::compute_residual() const
 
     FEValues<dim>     fe_values(fe,
                                 quadrature_formula,
-                                update_gradients | update_quadrature_points |
+                                update_values | update_gradients | update_quadrature_points |
                                 update_JxW_values);
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
@@ -290,10 +290,11 @@ double NewtonSolver<dim>::compute_residual() const
                 no = std::any_cast<double>(nu_map.at(cell->material_id()));
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                cell_residual(i) += ( (f-fe_values.shape_grad(i, q)         // \nabla \phi_i
-                                     * no                               // * a_n
-                                     * gradients[q])                        // * \nabla u_n
-                                     * fe_values.JxW(q));                // * dx
+                cell_residual(i) += (f*fe_values.shape_value(i, q)
+                                        - fe_values.shape_grad(i, q)         // \nabla \phi_i
+                                        * no                               // * a_n
+                                        * gradients[q])                        // * \nabla u_n
+                                        * fe_values.JxW(q);                // * dx
         }
 
         cell->get_dof_indices(local_dof_indices);
