@@ -9,6 +9,7 @@ include_directories(${json_dir}/include)
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
 include_directories(${deallii_dir}/include/)
 include_directories(/home/gordan/Programs/cxxopts/include)
+include_directories(/home/gordan/Programs/exprtk)
 
 # solver
 add_library(solver SHARED

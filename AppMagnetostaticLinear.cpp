@@ -16,6 +16,8 @@
 #include "MagneticEnergyDensityPostprocessor.h"
 #include "MagneticEnergyPostprocessor.h"
 #include "misc.h"
+#include "exprtk.hpp"
+
 
 using json = nlohmann::json;
 
@@ -56,11 +58,21 @@ int main(int argc, char* argv[]){
         output.replace_extension();
     }
 
+    typedef exprtk::symbol_table<double> symbol_table_t;
+    typedef exprtk::expression<double>   expression_t;
+    typedef exprtk::parser<double>       parser_t;
+
+
     std::unordered_map<std::string, double> cli_source_map;
     if (result.count("sources")){
         for (const auto& src_param_str : result["sources"].as<std::vector<std::string>>()){
             std::vector<std::string> v = split(src_param_str, "=");
-            cli_source_map[v[0]] = std::stod(v[1]);
+            std::string user_expr_string = v[1];
+            symbol_table_t symbol_table;
+            expression_t expression;
+            parser_t parser;
+            parser.compile(user_expr_string, expression);
+            cli_source_map[v[0]] = expression.value();
         }
     }
 
@@ -97,6 +109,8 @@ int main(int argc, char* argv[]){
     std::unordered_map<int, double> nu_map;
     std::unordered_map<int, double> dc_map;
 
+    static const double pi = 3.141592653589793238462643383279502;
+
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
@@ -104,11 +118,30 @@ int main(int argc, char* argv[]){
         }
         if (mesh_el_data.value().contains("source")){
 
+            // if number take number; if string evaluate expression
             auto source_d = source_data.at(mesh_el_data.value().at("source"));
+            double source_val = 0;
+            if (source_d.is_number()){
+                source_val = source_d;
+            }
+            else if (source_d.is_string()){
+                std::string user_expr_string = source_d;
+                std::cout << "user_expr_string: " << user_expr_string << std::endl;
+                symbol_table_t symbol_table;
+                expression_t expression;
+                parser_t parser;
+
+                symbol_table.add_constant("pi", pi);
+                expression.register_symbol_table(symbol_table);
+                parser.compile(user_expr_string, expression);
+                source_val = expression.value();
+                std::cout << std::setprecision(12);
+                std::cout << "Evaluated " << mesh_el_data.value().at("source") << ": " << source_val << std::endl;
+            }
 
             // If mesh data contains angle, the source is vector Hc. Magnitude in Material data and direction from mesh data.
             if (mesh_el_data.value().contains("angle")){
-                double Hc = source_d;
+                double Hc = source_val;
                 double angle = mesh_el_data.value().at("angle");
                 double Hc_x = Hc*std::cos(angle);
                 double Hc_y = Hc*std::sin(angle);
@@ -119,7 +152,7 @@ int main(int argc, char* argv[]){
 
             // Otherwise, the source is J (current density)
             else {
-                double J = source_d;
+                double J = source_val;
                 f_map.insert({mat_id, J});
             }
         }
