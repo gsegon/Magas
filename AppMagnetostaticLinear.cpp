@@ -15,6 +15,7 @@
 #include "MatIDPostprocessor.h"
 #include "MagneticEnergyDensityPostprocessor.h"
 #include "MagneticEnergyPostprocessor.h"
+#include "ExpressionPostprocessor.h"
 #include "misc.h"
 #include "exprtk.hpp"
 
@@ -92,6 +93,7 @@ int main(int argc, char* argv[]){
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
+    auto postprocess_data = input_data.at("postprocess");
 
     // modify source data if needed:
     // TODO: Rewrite possibly
@@ -184,6 +186,10 @@ int main(int argc, char* argv[]){
     MagneticEnergyDensityPostprocessor<2> e_density(nu_map);
     MagneticEnergyPostprocessor<2> e_cell(nu_map);
     MatIDPostprocessor<2> mat_id_postprocessor;
+    std::map<std::string, ExpressionPostprocessor<2>*> user_expr_postprocessors; // expression_post("sqrt(x_q1^2 + y_q1^2)");
+    for (auto& user_post_data : postprocess_data.items()) {
+        user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value());
+    }
 
     std::vector<double> e_cells;
     e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
@@ -196,6 +202,10 @@ int main(int argc, char* argv[]){
     export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
     export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
     export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
+
+    for (auto [key, val] : user_expr_postprocessors){
+        export_vtu.attach_postprocessor(val, key);
+    }
 
     export_vtu.write(output);
     std::cout << "Output written to " << output.concat(".vtu") << std::endl;
