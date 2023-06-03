@@ -23,6 +23,13 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <fstream>
+#include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/manifold_lib.h>
+#include <fstream>
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/fe/mapping_q1.h>
+#include <deal.II/grid/grid_tools.h>
+
 
 #include "LinearSolver.h"
 using namespace dealii;
@@ -40,6 +47,15 @@ void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(mesh_filepath);
     grid_in.read_msh(input_file);
+
+//    std::vector<GridTools::PeriodicFacePair<typename Triangulation<dim>::cell_iterator>> periodic_faces;
+//    FullMatrix<double> rotation_matrix(dim);
+//    rotation_matrix[0][1] = 1.0;
+//    rotation_matrix[1][0] = -1.0;
+//    GridTools::collect_periodic_faces(triangulation, 519, 520, 1, periodic_faces, Tensor<1, dim>(), rotation_matrix);
+//
+//    triangulation.add_periodicity(periodic_faces);
+
 }
 
 template<int dim>
@@ -51,8 +67,55 @@ template<int dim>
 void LinearSolver<dim>::setup_system() {
     dof_handler.distribute_dofs(fe);
 
+    constraints.clear();
+
+    // Apply 0 DC boundary conditions
+    for (auto& [mat_id, value] : dc_map){
+        std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
+        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
+    }
+
+//    // Collect periodic faces and make periodicity constraints
+//    FullMatrix<double> rotation_matrix(dim);
+//    rotation_matrix[0][1] = 1.0;
+//    rotation_matrix[1][0] = -1.0;
+//    Tensor<1, dim> offset;
+
+    const IndexSet boundary_dofs_519 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {518});
+    const IndexSet boundary_dofs_520 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {519});
+
+    types::global_dof_index first;
+    types::global_dof_index second;
+
+    if (boundary_dofs_519.n_elements() == boundary_dofs_520.n_elements())
+        std::cout << "n_dofs_519 == n_dofs_520: " << std::endl;
+    else
+        std::cout << "n_dofs_519 != n_dofs_520: " << std::endl;
+
+    MappingQ1<dim> mapping;
+    std::vector<Point<dim>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+
+    for (int i =0; i < boundary_dofs_519.n_elements(); i++){
+
+        first = boundary_dofs_519.nth_index_in_set(i);
+        second = boundary_dofs_520.nth_index_in_set(i);
+
+        std::cout << "Setting dof " << first << " to dof " << second << std::endl;
+        std::cout << nodes[first] << "-------" << nodes[second] << std::endl;
+
+        constraints.add_line(first);
+        constraints.add_entry(first, second, 1);
+    }
+
+//    constraints.print(std::cout);
+//    std::ofstream dot_out("at_print.dot");
+//    constraints.write_dot(dot_out);
+    constraints.close();
+
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
-    DoFTools::make_sparsity_pattern(dof_handler, dsp);
+    DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+    constraints.condense(dsp);
     sparsity_pattern.copy_from(dsp);
 
     system_matrix.reinit(sparsity_pattern);
@@ -128,21 +191,12 @@ void LinearSolver<dim>::assemble_system() {
 
         // Ass. local system into global
         cell->get_dof_indices(local_dof_indices);
-        for (const unsigned int i : fe_values.dof_indices()){
-            for (const unsigned int j : fe_values.dof_indices()){
-                system_matrix.add(local_dof_indices[i], local_dof_indices[j], cell_matrix(i, j));
-            }
-            system_rhs(local_dof_indices[i]) += cell_rhs(i);
-        }
+        constraints.distribute_local_to_global(cell_matrix,
+                                               cell_rhs,
+                                               local_dof_indices,
+                                               system_matrix,
+                                               system_rhs);
     }
-
-    // Apply boundary conditions
-    std::map<types::global_dof_index, double> boundary_values;
-    for (auto& [mat_id, value] : dc_map){
-        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), boundary_values);
-    }
-
-    MatrixTools::apply_boundary_values(boundary_values,system_matrix,solution,system_rhs);
 
     std::cout << "Number of dofs: " << dof_handler.n_dofs() << std::endl;
 
@@ -150,6 +204,9 @@ void LinearSolver<dim>::assemble_system() {
 
 template<int dim>
 void LinearSolver<dim>::solve(){
+
+    constraints.condense(system_matrix);
+    constraints.condense(system_rhs);
 
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
@@ -160,6 +217,7 @@ void LinearSolver<dim>::solve(){
     solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
+    constraints.distribute(solution);
 
 }
 

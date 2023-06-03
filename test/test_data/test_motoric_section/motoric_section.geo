@@ -44,14 +44,16 @@ Curve Loop(11) = {241, -247, -248, 362, 361, -254, 255, -256, 366, 365, -262, 26
 //+
 Plane Surface(27) = {11};
 
-Transfinite Curve {242} = 4 Using Progression 1;
-Transfinite Curve {241} = 4 Using Progression 1;
+//Transfinite Curve {242} = 1 Using Progression 1;
+//Transfinite Curve {241} = 1 Using Progression 1;
+Periodic Line {246} = {244};
+Periodic Line {241} = {242};
+Periodic Line {369} = {367};
+
 Mesh 2;
 
 //
-Periodic Line {246} = {-244};
-Periodic Line {241} = {-242};
-Periodic Line {369} = {-367};
+
 //+
 //
 //Physical Curve("A0", 505) = {1};
@@ -87,9 +89,16 @@ Physical Surface("Magnet_S_2") = {16};
 Physical Surface("AirPockets") = {19, 20, 21, 22, 23, 24, 25, 26};
 //+
 Physical Surface("Airgap") = {27};
+////+
+//Physical Curve("bc_periodic_rotor_a") = {369};
+//Physical Curve("bc_periodic_rotor_b") = {367};
+////+
+//Physical Curve("bc_periodic_stator_a") = {246};
+//Physical Curve("bc_periodic_stator_b") = {244};
+////+
+//Physical Curve("bc_periodic_airgap_a") = {241};
+//Physical Curve("bc_periodic_airgap_b") = {242};
+
 //+
-Physical Curve("bc_periodic_rotor") = {369, 367};
-//+
-Physical Curve("bc_periodic_stator") = {246, 244};
-//+
-Physical Curve("bc_periodic_airgap") = {241, 242};
+Physical Curve("bc_periodic_a") = {369, 241, 246};
+Physical Curve("bc_periodic_b") = {367, 242, 244};

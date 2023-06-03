@@ -133,10 +133,10 @@ TEST(LinearSolver, 2_conductors){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
 
@@ -173,12 +173,84 @@ TEST(LinearSolver, EI_core){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
+
+}
+
+TEST(LinearSolver, motoric_section){
+
+    constexpr double mu_0 = 1.2566370621219e-6;
+    constexpr double nu_0 = 1/mu_0;
+    constexpr double nu_core = 1/(2500*mu_0);
+    double J1 = 10*66/8.0645e-05;
+    double J2 = -10*66/8.0645e-05;
+
+
+    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh";
+    std::unordered_map<int, double> nu_map{{1, nu_core},       // Core rotor
+                                           {2, nu_core},       // Core stator
+
+                                           {506, nu_core},         // copper
+                                           {507, nu_core},
+                                           {508, nu_core},
+                                           {509, nu_core},
+                                           {510, nu_core},
+                                           {511, nu_core},
+
+                                           {512, nu_core},         // magnets
+                                           {513, nu_core},
+                                           {514, nu_core},
+                                           {515, nu_core},
+
+                                           {516, nu_core},      // Air
+                                           {517, nu_core},
+    };
+
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},       // Core rotor
+                                                                                    {2, 0},       // Core stator
+
+                                                                                    {506, 0},         // Coils
+                                                                                    {507, 0},
+                                                                                    {508, J1},
+                                                                                    {509, 0},
+                                                                                    {510, 0},
+                                                                                    {511, 0},
+
+                                                                                    {512, 0},         // magnets
+                                                                                    {513, 0},
+                                                                                    {514, 0},
+                                                                                    {515, 0},
+                                                                                    {516, 0},
+                                                                                    {517, 0},
+    };
+
+    std::unordered_map<int, double> dc_map{{505, 0.0},
+//                                           {518, 0.0},
+//                                           {521, 0.0},
+//                                           {519, 0.0},
+//                                           {520, 0.0}
+    } ;
+
+    // Solve
+    LinearSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.set_nu_map(nu_map);
+    solver.set_f_map(f_map);
+    solver.set_dc_map(dc_map);
+    solver.setup_system();
+    solver.assemble_system();
+    solver.solve();
+
+    ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+    MatIDPostprocessor<2> mat_id_postprocessor;
+    export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
+
+    export_vtu.write("vtu_export_motoric_section_periodic");
 
 }
 
@@ -204,10 +276,10 @@ TEST(LinearSolver, Magnet){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
 

@@ -56,6 +56,8 @@ private:
     DoFHandler<dim> dof_handler;
     QGauss<dim> quadrature_formula;
 
+    AffineConstraints<double> constraints;
+
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
