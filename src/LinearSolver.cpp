@@ -52,7 +52,7 @@ void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
 //    FullMatrix<double> rotation_matrix(dim);
 //    rotation_matrix[0][1] = 1.0;
 //    rotation_matrix[1][0] = -1.0;
-//    GridTools::collect_periodic_faces(triangulation, 519, 520, 1, periodic_faces, Tensor<1, dim>(), rotation_matrix);
+//    GridTools::collect_periodic_faces(triangulation, 518, 519, 1, periodic_faces, Tensor<1, dim>(), rotation_matrix);
 //
 //    triangulation.add_periodicity(periodic_faces);
 
@@ -96,13 +96,27 @@ void LinearSolver<dim>::setup_system() {
     std::vector<Point<dim>> nodes(dof_handler.n_dofs());
     DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
 
-    for (int i =0; i < boundary_dofs_519.n_elements(); i++){
+    std::vector<std::pair<unsigned int, double>> dofs_519;
+    for(auto dof : boundary_dofs_519){
+        dofs_519.push_back({dof, nodes[dof].norm_square()});
+    }
 
-        first = boundary_dofs_519.nth_index_in_set(i);
-        second = boundary_dofs_520.nth_index_in_set(i);
+    std::vector<std::pair<unsigned int, double>> dofs_520;
+    for(auto dof : boundary_dofs_520){
+        dofs_520.push_back({dof, nodes[dof].norm_square()});
+    }
 
-        std::cout << "Setting dof " << first << " to dof " << second << std::endl;
-        std::cout << nodes[first] << "-------" << nodes[second] << std::endl;
+    std::sort(dofs_519.begin(), dofs_519.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+    std::sort(dofs_520.begin(), dofs_520.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+
+    for (int i =0; i < dofs_519.size(); i++){
+
+        first = std::get<0>(dofs_519[i]);
+        second = std::get<0>(dofs_520[i]);
+
+        std::cout << "Setting dof " << first << " to dof " << second  << std::endl;
+        if (abs(std::get<1>(dofs_519[i])-std::get<1>(dofs_520[i])) > 1e-9)
+            std::cerr << "Warning: Tol > 1e-8 " << std::endl;
 
         constraints.add_line(first);
         constraints.add_entry(first, second, 1);

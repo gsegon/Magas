@@ -30,7 +30,6 @@ TEST(LinearSolver, read_mesh){
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
 
-
 }
 
 TEST(LinearSolver, setup_system){
@@ -192,23 +191,23 @@ TEST(LinearSolver, motoric_section){
 
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh";
-    std::unordered_map<int, double> nu_map{{1, nu_core},       // Core rotor
-                                           {2, nu_core},       // Core stator
+    std::unordered_map<int, double> nu_map{{1, nu_core},            // Core rotor
+                                           {2, nu_core},            // Core stator
 
-                                           {506, nu_core},         // copper
-                                           {507, nu_core},
-                                           {508, nu_core},
-                                           {509, nu_core},
-                                           {510, nu_core},
-                                           {511, nu_core},
+                                           {506, nu_0},         // copper
+                                           {507, nu_0},
+                                           {508, nu_0},
+                                           {509, nu_0},
+                                           {510, nu_0},
+                                           {511, nu_0},
 
                                            {512, nu_core},         // magnets
                                            {513, nu_core},
                                            {514, nu_core},
                                            {515, nu_core},
 
-                                           {516, nu_core},      // Air
-                                           {517, nu_core},
+                                           {516, nu_0},          // Air
+                                           {517, nu_0},
     };
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},       // Core rotor
@@ -217,7 +216,7 @@ TEST(LinearSolver, motoric_section){
                                                                                     {506, 0},         // Coils
                                                                                     {507, 0},
                                                                                     {508, J1},
-                                                                                    {509, 0},
+                                                                                    {509, J1},
                                                                                     {510, 0},
                                                                                     {511, 0},
 
