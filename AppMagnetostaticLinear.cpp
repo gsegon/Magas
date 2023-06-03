@@ -89,11 +89,15 @@ int main(int argc, char* argv[]){
 
     std::cout << "Mesh file: " << mesh_filepath << std::endl;
 
-    auto mesh_id_data = input_data.at("mesh_id");
+
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
     auto postprocess_data = input_data.at("postprocess");
+
+    auto boundary_id_data = input_data.at("boundary_id");
+    auto mesh_id_data = input_data.at("mesh_id");
+
 
     // modify source data if needed:
     // TODO: Rewrite possibly
@@ -111,6 +115,15 @@ int main(int argc, char* argv[]){
     std::unordered_map<int, double> nu_map;
     std::unordered_map<int, double> dc_map;
 
+    // Add boundary values to dc_map
+    for (auto& boundary_el_data : boundary_id_data.items()) {
+        int boundary_id{std::stoi(boundary_el_data.key())};
+        auto boundary_value = boundary_data.at(boundary_el_data.value().at("boundary"));
+        if (boundary_value.is_number())
+            dc_map.insert({boundary_id, boundary_value});
+    }
+
+    // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
 
     for (auto& mesh_el_data : mesh_id_data.items()){
@@ -163,18 +176,16 @@ int main(int argc, char* argv[]){
         else{
             f_map.insert({mat_id, 0.0});
         }
-        if (mesh_el_data.value().contains("boundary")){
-            dc_map.insert({mat_id, boundary_data.at(mesh_el_data.value().at("boundary"))});
-        }
+
     }
 
     // Initialize Solver and solver
     LinearSolver<2> solver;
     solver.read_mesh(mesh_filepath);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
 

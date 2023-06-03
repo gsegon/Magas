@@ -1,0 +1,111 @@
+{
+  "material": {
+    "core": {
+      "nu": 7957.74715025
+    },
+    "air": {
+      "nu": 795774.715025
+    },
+    "copper": {
+      "nu": 7957.74715025
+    },
+    "Magnet_NdFe": {
+      "nu": 795774.715025
+    },
+    "Magnet_NdFe2": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0,
+    "per1": "periodic"
+  },
+
+  "source": {
+    "Ja": 0.0,
+    "Jb": 0.0,
+    "Jc": 0.0,
+    "-Ja": 0.0,
+    "-Jb": 0.0,
+    "-Jc": 0.0,
+    "Magnet_NdFe": 956180.0,
+    "Magnet_NdFe2": 0
+  },
+
+
+  "boundary_id": {
+    "505": {
+      "boundary": "A=0"},
+
+    "518": {
+      "boundary": "per1"
+    },
+
+    "519": {
+      "boundary": "per1"
+    }
+  },
+
+  "mesh_id": {
+
+    "1": {
+      "material": "core"},
+    "2": {
+      "material": "core"},
+
+    "506": {
+      "Name": "Coil_A+",
+      "material": "copper",
+      "source": "Ja"},
+    "507": {
+      "Name": "Coil_A-",
+      "material": "copper",
+      "source": "-Ja"},
+    "508": {
+      "Name": "Coil_B-",
+      "material": "copper",
+      "source": "-Jb"},
+    "509": {
+      "Name": "Coil_C+",
+      "material": "copper",
+      "source": "Jc"},
+    "510": {
+      "Name": "Coil_B+",
+      "material": "copper",
+      "source": "Jb"},
+    "511": {
+      "Name": "Coil_C-",
+      "material": "copper",
+      "source": "-Jc"},
+
+
+    "512": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 0.74176493209 },
+    "513": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 1.61442955809 },
+    "514": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 3.09795942229  },
+    "515": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 3.97062404829  },
+
+
+    "516": {
+      "name": "Air pockets",
+      "material": "air"},
+    "517": {
+      "name": "Airgap",
+      "material": "air"}
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh"
+
+}
