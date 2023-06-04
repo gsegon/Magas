@@ -67,50 +67,59 @@ void LinearSolver<dim>::setup_system() {
         VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
     }
 
-    const IndexSet boundary_dofs_519 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {518});
-    const IndexSet boundary_dofs_520 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {519});
+    // Apply periodic or anti-periodic boundary conditions
+    for (auto [per_type, boundary_ids] : per_map){
+        const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
+        const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
 
-    types::global_dof_index first;
-    types::global_dof_index second;
+        double weight = 0;
+        if (per_type == "periodic")
+            weight = 1;
+        else if (per_type == "anti-periodic")
+            weight = -1;
 
-    if (boundary_dofs_519.n_elements() == boundary_dofs_520.n_elements())
-        std::cout << "n_dofs_519 == n_dofs_520: " << std::endl;
-    else
-        std::cout << "n_dofs_519 != n_dofs_520: " << std::endl;
+        AssertThrow ((per_type == "periodic") or (per_type == "anti-periodic"), ExceptionBase());
+        AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError());
 
-    MappingQ1<dim> mapping;
-    std::vector<Point<dim>> nodes(dof_handler.n_dofs());
-    DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+        types::global_dof_index first;
+        types::global_dof_index second;
 
-    std::vector<std::pair<unsigned int, double>> dofs_519;
-    for(auto dof : boundary_dofs_519){
-        dofs_519.push_back({dof, nodes[dof].norm_square()});
+        MappingQ1<dim> mapping;
+        std::vector<Point<dim>> nodes(dof_handler.n_dofs());
+        DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+
+        std::vector<std::pair<unsigned int, double>> dofs_1;
+        for(auto dof : b_dofs_1){
+            dofs_1.push_back({dof, nodes[dof].norm_square()});
+        }
+
+        std::vector<std::pair<unsigned int, double>> dofs_2;
+        for(auto dof : b_dofs_2){
+            dofs_2.push_back({dof, nodes[dof].norm_square()});
+        }
+
+        std::sort(dofs_1.begin(), dofs_1.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+        std::sort(dofs_2.begin(), dofs_2.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+
+        for (int i =0; i < dofs_1.size(); i++){
+
+            first = std::get<0>(dofs_1[i]);
+            second = std::get<0>(dofs_2[i]);
+
+//            std::cout << "Setting dof " << first << " to dof " << second  << std::endl;
+            if (abs(std::get<1>(dofs_1[i]) - std::get<1>(dofs_2[i])) > 1e-9)
+                std::cerr << "Warning: Tol > 1e-8 " << std::endl;
+
+            constraints.add_line(first);
+            constraints.add_entry(first, second, weight);
+        }
+
     }
 
-    std::vector<std::pair<unsigned int, double>> dofs_520;
-    for(auto dof : boundary_dofs_520){
-        dofs_520.push_back({dof, nodes[dof].norm_square()});
-    }
 
-    std::sort(dofs_519.begin(), dofs_519.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
-    std::sort(dofs_520.begin(), dofs_520.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
-
-    for (int i =0; i < dofs_519.size(); i++){
-
-        first = std::get<0>(dofs_519[i]);
-        second = std::get<0>(dofs_520[i]);
-
-        std::cout << "Setting dof " << first << " to dof " << second  << std::endl;
-        if (abs(std::get<1>(dofs_519[i])-std::get<1>(dofs_520[i])) > 1e-9)
-            std::cerr << "Warning: Tol > 1e-8 " << std::endl;
-
-        constraints.add_line(first);
-        constraints.add_entry(first, second, 1);
-    }
-
-    constraints.print(std::cout);
-    std::ofstream dot_out("at_print.dot");
-    constraints.write_dot(dot_out);
+//    constraints.print(std::cout);
+//    std::ofstream dot_out("at_print.dot");
+//    constraints.write_dot(dot_out);
     constraints.close();
 
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
@@ -238,6 +247,12 @@ template<int dim>
 void LinearSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
     this->dc_map = map;
 }
+
+template<int dim>
+void LinearSolver<dim>::set_per_map(std::unordered_map<std::string, std::vector<unsigned int>> map) {
+    this->per_map = map;
+}
+
 
 template<int dim>
 Vector<double>& LinearSolver<dim>::get_solution(){

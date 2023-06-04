@@ -89,7 +89,6 @@ int main(int argc, char* argv[]){
 
     std::cout << "Mesh file: " << mesh_filepath << std::endl;
 
-
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
@@ -114,6 +113,7 @@ int main(int argc, char* argv[]){
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> nu_map;
     std::unordered_map<int, double> dc_map;
+    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 
     // Add boundary values to dc_map
     for (auto& boundary_el_data : boundary_id_data.items()) {
@@ -121,6 +121,12 @@ int main(int argc, char* argv[]){
         auto boundary_value = boundary_data.at(boundary_el_data.value().at("boundary"));
         if (boundary_value.is_number())
             dc_map.insert({boundary_id, boundary_value});
+        if (boundary_value.is_string())
+            per_map[boundary_value].push_back(boundary_id);
+    }
+
+    for (auto [key, val] : per_map){
+        std::cout << "Boundary: " << key << "[ " << val[0] << ", " << val[1] << "]" << std::endl;
     }
 
     // Add material coefficients to 'nu_map' and sources to 'f_map'
@@ -180,14 +186,16 @@ int main(int argc, char* argv[]){
     }
 
     // Initialize Solver and solver
-    LinearSolver<2> solver;
-    solver.read_mesh(mesh_filepath);
-    solver.set_nu_map(nu_map);
-    solver.set_f_map(f_map);
-    solver.set_dc_map(dc_map);
-    solver.setup_system();
-    solver.assemble_system();
-    solver.solve();
+    try{
+        LinearSolver<2> solver;
+        solver.read_mesh(mesh_filepath);
+        solver.set_nu_map(nu_map);
+        solver.set_f_map(f_map);
+        solver.set_dc_map(dc_map);
+        solver.set_per_map(per_map);
+        solver.setup_system();
+        solver.assemble_system();
+        solver.solve();
 
     // Visualization
     // Export
@@ -202,17 +210,17 @@ int main(int argc, char* argv[]){
         user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value());
     }
 
-    std::vector<double> e_cells;
-    e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
-    auto E_total = std::reduce(e_cells.begin(), e_cells.end());
-    std::cout << "E total: " << E_total << std::endl;
+        std::vector<double> e_cells;
+        e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
+        auto E_total = std::reduce(e_cells.begin(), e_cells.end());
+        std::cout << "E total: " << E_total << std::endl;
 
-    ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
-    export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
-    export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
-    export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
-    export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
+        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+        export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
+        export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
+        export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
+        export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
+        export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
 
     for (auto [key, val] : user_expr_postprocessors){
         export_vtu.attach_postprocessor(val, key);
@@ -221,5 +229,18 @@ int main(int argc, char* argv[]){
     export_vtu.write(output);
     std::cout << "Output written to " << output.concat(".vtu") << std::endl;
 
-    return 0;
+        return 0;
+
+
+    } catch (std::exception &exc){
+        std::cerr << "Excpetion throw:" << std:: endl;
+        std::cerr << exc.what() << std::endl;
+        return 1;
+    }
+    catch (...){
+        std::cerr << "Unknown exception! " << std::endl;
+        return 1;
+    }
+
+
 }

@@ -43,6 +43,7 @@ public:
     void set_nu_map(std::unordered_map<int, double>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
+    void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
@@ -66,6 +67,7 @@ private:
     std::unordered_map<int, double> nu_map;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
+    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 };
 
 #endif //SOLVER_LINEARSOLVER_H
