@@ -48,14 +48,6 @@ void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
     std::ifstream input_file(mesh_filepath);
     grid_in.read_msh(input_file);
 
-//    std::vector<GridTools::PeriodicFacePair<typename Triangulation<dim>::cell_iterator>> periodic_faces;
-//    FullMatrix<double> rotation_matrix(dim);
-//    rotation_matrix[0][1] = 1.0;
-//    rotation_matrix[1][0] = -1.0;
-//    GridTools::collect_periodic_faces(triangulation, 518, 519, 1, periodic_faces, Tensor<1, dim>(), rotation_matrix);
-//
-//    triangulation.add_periodicity(periodic_faces);
-
 }
 
 template<int dim>
@@ -74,12 +66,6 @@ void LinearSolver<dim>::setup_system() {
         std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
         VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
     }
-
-//    // Collect periodic faces and make periodicity constraints
-//    FullMatrix<double> rotation_matrix(dim);
-//    rotation_matrix[0][1] = 1.0;
-//    rotation_matrix[1][0] = -1.0;
-//    Tensor<1, dim> offset;
 
     const IndexSet boundary_dofs_519 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {518});
     const IndexSet boundary_dofs_520 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {519});
@@ -128,15 +114,17 @@ void LinearSolver<dim>::setup_system() {
     constraints.close();
 
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
+
+    // TODO: Investigate condensing DynamicSparsityPattern
+//    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
 
     sparsity_pattern.copy_from(dsp);
-//    constraints.condense(dsp);
 
     system_matrix.reinit(sparsity_pattern);
-
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
+
 
 }
 
@@ -177,7 +165,7 @@ void LinearSolver<dim>::assemble_system() {
             Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
         }
         else{
-            std::cout << "SOmething else?" << std::endl;
+            std::cout << "Something else?" << std::endl;
         }
 
 
@@ -218,6 +206,8 @@ void LinearSolver<dim>::assemble_system() {
 template<int dim>
 void LinearSolver<dim>::solve(){
 
+    // TODO: Investigate what happens here with constraints condense system_matrix and system_rhs.
+    //  Whatever it is, it breaks periodicity
 //    constraints.condense(system_matrix);
 //    constraints.condense(system_rhs);
 
