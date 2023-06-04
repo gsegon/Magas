@@ -11,9 +11,6 @@
     },
     "Magnet_NdFe": {
       "nu": 795774.715025
-    },
-    "Magnet_NdFe2": {
-      "nu": 795774.715025
     }
   },
 
@@ -30,7 +27,7 @@
     "-Jb": 0.0,
     "-Jc": 0.0,
     "Magnet_NdFe": 956180.0,
-    "Magnet_NdFe2": 0
+    "Magnet_Null": 0.0
   },
 
 

@@ -7,7 +7,7 @@
       "nu": 795774.715025
     },
     "copper": {
-      "nu": 795774.715025
+      "nu": 7957.74715025
     },
     "Magnet_NdFe": {
       "nu": 795774.715025
@@ -31,10 +31,12 @@
     "Magnet_NdFe": 956180.0
   },
 
-  "mesh_id": {
-
+  "boundary_id": {
     "505": {
-      "boundary": "A=0"},
+      "boundary": "A=0"}
+  },
+
+  "mesh_id": {
 
     "1": {
       "material": "core"},

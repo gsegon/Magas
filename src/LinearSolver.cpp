@@ -122,15 +122,16 @@ void LinearSolver<dim>::setup_system() {
         constraints.add_entry(first, second, 1);
     }
 
-//    constraints.print(std::cout);
-//    std::ofstream dot_out("at_print.dot");
-//    constraints.write_dot(dot_out);
+    constraints.print(std::cout);
+    std::ofstream dot_out("at_print.dot");
+    constraints.write_dot(dot_out);
     constraints.close();
 
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
-    constraints.condense(dsp);
+
     sparsity_pattern.copy_from(dsp);
+//    constraints.condense(dsp);
 
     system_matrix.reinit(sparsity_pattern);
 
@@ -150,8 +151,6 @@ void LinearSolver<dim>::assemble_system() {
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double> cell_rhs(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-
 
     // Iterate over cells and assemble to local and move to global
     for (const auto &cell : dof_handler.active_cell_iterators()){
@@ -219,8 +218,8 @@ void LinearSolver<dim>::assemble_system() {
 template<int dim>
 void LinearSolver<dim>::solve(){
 
-    constraints.condense(system_matrix);
-    constraints.condense(system_rhs);
+//    constraints.condense(system_matrix);
+//    constraints.condense(system_rhs);
 
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
