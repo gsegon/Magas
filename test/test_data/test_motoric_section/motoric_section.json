@@ -30,18 +30,15 @@
     "Magnet_Null": 0.0
   },
 
+  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh",
 
   "boundary_id": {
     "505": {
       "boundary": "A=0"},
-
     "518": {
-      "boundary": "per1"
-    },
-
+      "boundary": "per1"},
     "519": {
-      "boundary": "per1"
-    }
+      "boundary": "per1"}
   },
 
   "mesh_id": {
@@ -101,8 +98,8 @@
     "517": {
       "name": "Airgap",
       "material": "air"}
-  },
+  }
 
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh"
+
 
 }
