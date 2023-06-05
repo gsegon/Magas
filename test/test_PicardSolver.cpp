@@ -72,11 +72,10 @@ TEST(PicardSolver, assemble_system){
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
-    solver.setup_system();
-
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
 
     solver.reinit_system();
     solver.assemble_system();
@@ -93,11 +92,10 @@ TEST(PicardSolver, solve_system){
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
-    solver.setup_system();
-
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.initialize_cell_nu_history(1);
 
     solver.reinit_system();
@@ -118,10 +116,10 @@ TEST(PicardSolver, solve_nonlinear){
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.initialize_cell_nu_history(1);
     solver.solve_nonlinear(3);
 
@@ -160,11 +158,11 @@ TEST(PicardSolver, EI_core){
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
-    solver.setup_system();
-    solver.reinit_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
+    solver.reinit_system();
     solver.initialize_cell_nu_history(nu_core);
     solver.solve_nonlinear(3);
 

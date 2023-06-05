@@ -47,7 +47,6 @@
     "B_min_max": "max(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))-min(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
     "|Bminq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  min(Babs1, Babs2, Babs3, Babs4)",
     "|Bmaxq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  max(Babs1, Babs2, Babs3, Babs4)"
-
   },
 
   "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh"

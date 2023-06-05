@@ -33,13 +33,17 @@ include_directories(${GTEST_INCLUDE_DIRS})
 # test solver
 add_executable(test_solver
         test/test_LinearSolver.cpp
-        test/test_PicardSolver.cpp test/test_MagnetComputations.cpp)
+        test/test_PicardSolver.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 
 # test export
 add_executable(test_export
-        test/test_ExportVtu.cpp test/test_MagneticFluxPostprocessor.cpp test/test_MagneticEnergyPostprocessor.cpp test/test_MagneticEnergyDensityPostprocessor.cpp test/test_ExpressionPostprocessor.cpp)
+        test/test_ExportVtu.cpp
+        test/test_MagneticFluxPostprocessor.cpp
+        test/test_MagneticEnergyPostprocessor.cpp
+        test/test_MagneticEnergyDensityPostprocessor.cpp
+        test/test_ExpressionPostprocessor.cpp)
 target_link_libraries(test_export ${GTEST_LIBRARIES} gtest_main pthread solver)
 
 # test mesh

@@ -25,10 +25,10 @@ TEST(ExportVtu, initialize_unit){
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
 
@@ -70,10 +70,10 @@ TEST(ExportVtu, initialize_EI_core){
     // Solve
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system();
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system();
     solver.assemble_system();
     solver.solve();
 

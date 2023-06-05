@@ -73,7 +73,6 @@
       "material": "copper",
       "source": "-Jc"},
 
-
     "512": {
       "material": "Magnet_NdFe",
       "source": "Magnet_NdFe",
@@ -98,8 +97,15 @@
     "517": {
       "name": "Airgap",
       "material": "air"}
+  },
+
+  "postprocess": {
+    "user1 [T]": "sqrt(avg(Bx_q1 + Bx_q2 + Bx_q3 + Bx_q4)^2 + avg(By_q1 + By_q2 + By_q3 + By_q4)^2)",
+    "Shamalalala [T^2]": "Bx_q1*By_q1",
+    "Bx_q1_0.05 [-]": "if(Bx_q1 >0.05, 1, 0)",
+    "Babs_q1_0.1 [-]": "if(sqrt(Bx_q1^2 + By_q1^2) > 0.1, 1, 0)",
+    "B_min_max": "max(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))-min(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
+    "|Bminq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  min(Babs1, Babs2, Babs3, Babs4)",
+    "|Bmaxq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  max(Babs1, Babs2, Babs3, Babs4)"
   }
-
-
-
 }
