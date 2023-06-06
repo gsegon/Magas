@@ -41,3 +41,4 @@ femm website SlidingBand
 [13] Solving Nonlinear Magnetic Problems Using Newton Trust Region Methods
 [14] Rotational Motion Modelling for Nunerical Anslysis of Electric Machines, D. Marcsa
 [15] CMPT 373: Software Development Methods Fall 2022
+[16] blog.acolyer.org the morning paper.
