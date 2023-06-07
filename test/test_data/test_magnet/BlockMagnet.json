@@ -17,6 +17,15 @@
     "Hc": 10e3
   },
 
+  "postprocess" : {},
+
+  "postprocess_sum": {},
+
+  "boundary_id": {
+    "505": {
+      "boundary": "A=0"}
+  },
+
   "mesh_id": {
     "1": {
       "material": "air"},
@@ -24,10 +33,7 @@
       "material": "magnet",
       "source":  "Hc",
       "angle": 1.57079632679
-    },
-
-    "505": {
-      "boundary": "A=0"}
+    }
   },
 
   "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_magnet/BlockMagnet.msh"

@@ -23,6 +23,15 @@
     "0": 0.0
   },
 
+  "postprocess" : {},
+
+  "postprocess_sum": {},
+
+  "boundary_id": {
+    "100": {
+      "boundary": "A=0"}
+  },
+
   "mesh_id": {
     "1": {
       "material": "copper",
@@ -31,9 +40,6 @@
       "material": "copper",
       "source": "J2"},
     "3": {
-      "material": "air"},
-    "100": {
-      "boundary": "A=0"}
+      "material": "air"}
   }
-
 }

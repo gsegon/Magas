@@ -31,10 +31,21 @@
     "-Jc": 500.0
   },
 
-  "mesh_id": {
 
+  "postprocess": {
+    "|B_q1 [T]|": "sqrt(Bx_q1^2 + By_q1^2)"
+  },
+
+  "postprocess_sum": {
+    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4"
+  },
+
+  "boundary_id": {
     "505": {
-      "boundary": "A=0"},
+      "boundary": "A=0"}
+  },
+
+  "mesh_id": {
 
     "1": {
       "material": "core"},
