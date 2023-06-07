@@ -11,11 +11,8 @@
 #include <vector>
 
 #include "ExportVtu.h"
-#include "MagneticFluxPostprocessor.h"
-#include "MatIDPostprocessor.h"
-#include "MagneticEnergyDensityPostprocessor.h"
-#include "MagneticEnergyPostprocessor.h"
 #include "ExpressionPostprocessor.h"
+#include "ExpressionPostprocessorSum.h"
 #include "misc.h"
 #include "exprtk.hpp"
 
@@ -93,6 +90,7 @@ int main(int argc, char* argv[]){
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
     auto postprocess_data = input_data.at("postprocess");
+    auto postprocess_sum_data = input_data.at("postprocess_sum");
 
     auto boundary_id_data = input_data.at("boundary_id");
     auto mesh_id_data = input_data.at("mesh_id");
@@ -182,7 +180,6 @@ int main(int argc, char* argv[]){
         else{
             f_map.insert({mat_id, 0.0});
         }
-
     }
 
     // Initialize Solver and solver
@@ -197,40 +194,34 @@ int main(int argc, char* argv[]){
         solver.assemble_system();
         solver.solve();
 
-    // Visualization
-    // Export
-    MagneticFluxPostprocessor<2> bx_postprocessor(0, 0);
-    MagneticFluxPostprocessor<2> by_postprocessor(0, 1);
-    MagneticFluxPostprocessor<2> b_abs_postprocessor(0);
-    MagneticEnergyDensityPostprocessor<2> e_density(nu_map);
-    MagneticEnergyPostprocessor<2> e_cell(nu_map);
-    MatIDPostprocessor<2> mat_id_postprocessor;
-    std::map<std::string, ExpressionPostprocessor<2>*> user_expr_postprocessors; // expression_post("sqrt(x_q1^2 + y_q1^2)");
-    for (auto& user_post_data : postprocess_data.items()) {
-        user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value());
-    }
+        // Export
+        std::map<std::string, ExpressionPostprocessor<2>*> user_expr_postprocessors;
+        for (auto& user_post_data : postprocess_data.items())
+            user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value());
 
-        std::vector<double> e_cells;
-        e_cell.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), e_cells);
-        auto E_total = std::reduce(e_cells.begin(), e_cells.end());
-        std::cout << "E total: " << E_total << std::endl;
+        std::map<std::string, ExpressionPostprocessorSum<2>*> user_expr_sum_postprocessors;
+        for (auto& user_post_sum_data : postprocess_sum_data.items())
+            user_expr_sum_postprocessors[user_post_sum_data.key()] = new ExpressionPostprocessorSum<2>(user_post_sum_data.value(), nu_map);
 
         ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-        export_vtu.attach_postprocessor(&mat_id_postprocessor, "MatID");
-        export_vtu.attach_postprocessor(&b_abs_postprocessor, "|B| [T]");
-        export_vtu.attach_postprocessor(&bx_postprocessor, "Bx [T]");
-        export_vtu.attach_postprocessor(&by_postprocessor, "By [T]");
-        export_vtu.attach_postprocessor(&e_density, "E [J/m3]");
 
-    for (auto [key, val] : user_expr_postprocessors){
-        export_vtu.attach_postprocessor(val, key);
-    }
+        for (auto [key, val] : user_expr_postprocessors)
+            export_vtu.attach_postprocessor(val, key);
 
-    export_vtu.write(output);
-    std::cout << "Output written to " << output.concat(".vtu") << std::endl;
+        std::unordered_map<std::string, double> results_map;
+        double result_sum = 0;
+        for (auto [key, val] : user_expr_sum_postprocessors){
+            val->process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_sum);
+            results_map[key] = result_sum;
+        }
+
+        export_vtu.write(output);
+        std::cout << "Output written to " << output.concat(".vtu") << std::endl;
+        for (auto [key, val] : results_map){
+            std::cout << key << " = " << val << std::endl;
+        }
 
         return 0;
-
 
     } catch (std::exception &exc){
         std::cerr << "Excpetion throw:" << std:: endl;

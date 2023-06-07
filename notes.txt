@@ -34,11 +34,11 @@ TODO References:
     [7] Preconditioners: https://www.hindawi.com/journals/isrn/2012/127647/
     [8] ADvanced Linear Algebra: https://www.youtube.com/@advancedlaff6453
     [9] Moving boundary: https://ieeexplore.ieee.org/document/1284468, https://ieeexplore.ieee.org/document/1064185
-femm website SlidingBand
-[10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
-[11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
-[12] Mathematical models for eddy currents and Magnetostatics, Rachid Tauzani
-[13] Solving Nonlinear Magnetic Problems Using Newton Trust Region Methods
-[14] Rotational Motion Modelling for Nunerical Anslysis of Electric Machines, D. Marcsa
-[15] CMPT 373: Software Development Methods Fall 2022
-[16] blog.acolyer.org the morning paper.
+    femm website SlidingBand
+    [10] physics behind the magnetic hysteresis loop - a survey of misconceptions in magnetism literature
+    [11] Multiphysics Simulation by Design for Elecrical Machines, Power Electronics and Drives.
+    [12] Mathematical models for eddy currents and Magnetostatics, Rachid Tauzani
+    [13] Solving Nonlinear Magnetic Problems Using Newton Trust Region Methods
+    [14] Rotational Motion Modelling for Nunerical Anslysis of Electric Machines, D. Marcsa
+    [15] CMPT 373: Software Development Methods Fall 2022
+    [16] blog.acolyer.org the morning paper.
