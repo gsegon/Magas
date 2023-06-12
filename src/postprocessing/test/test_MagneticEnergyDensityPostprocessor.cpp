@@ -8,10 +8,10 @@
 #include <any>
 #include <fstream>
 
-#include "LinearSolver.h"
-#include "MagneticFluxPostprocessor.h"
+#include "../../solver/include/LinearSolver.h"
+#include "MagneticEnergyDensityPostprocessor.h"
 
-TEST(MagneticFluxPostprocessor, unit_square){
+TEST(MagneticEnergyDensityPostprocessor, unit_square){
 
     std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
     std::unordered_map<int, double> nu_map{{6, 1}};
@@ -27,11 +27,10 @@ TEST(MagneticFluxPostprocessor, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    MagneticFluxPostprocessor<2> flux_postprocessor0{0, 0};
-    MagneticFluxPostprocessor<2> flux_postprocessor1{0, 1};
-    MagneticFluxPostprocessor<2> flux_postprocessor{0};
+    MagneticEnergyDensityPostprocessor<2> mag_energy_density_postprocessor{nu_map};
+
     std::vector<double> result;
-    flux_postprocessor.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
+    mag_energy_density_postprocessor.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
 
     for (auto res: result)
         std::cout << res << ", " << std::endl;

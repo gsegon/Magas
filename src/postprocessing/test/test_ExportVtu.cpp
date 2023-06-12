@@ -7,7 +7,7 @@
 #include <any>
 #include <fstream>
 
-#include "LinearSolver.h"
+#include "../../solver/include/LinearSolver.h"
 #include "ExportVtu.h"
 #include "MagneticFluxPostprocessor.h"
 #include "MatIDPostprocessor.h"

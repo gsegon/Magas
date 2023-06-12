@@ -31,7 +31,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 
-#include "LinearSolver.h"
+#include "include/LinearSolver.h"
 using namespace dealii;
 
 

@@ -10,7 +10,7 @@
 #include <deal.II/base/quadrature_lib.h>
 #include "exprtk.hpp"
 
-#include "ExpressionPostprocessorSum.h"
+#include "include/ExpressionPostprocessorSum.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;

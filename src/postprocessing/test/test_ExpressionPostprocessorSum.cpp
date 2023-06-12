@@ -8,7 +8,7 @@
 #include <any>
 #include <fstream>
 
-#include "LinearSolver.h"
+#include "../../solver/include/LinearSolver.h"
 #include "ExpressionPostprocessorSum.h"
 
 TEST(ExpressionPostprocessorSum, unit_square){

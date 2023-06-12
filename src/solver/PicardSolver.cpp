@@ -25,7 +25,7 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/function_cspline.h>
 
-#include "PicardSolver.h"
+#include "include/PicardSolver.h"
 using namespace dealii;
 
 

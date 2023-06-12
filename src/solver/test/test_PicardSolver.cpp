@@ -8,7 +8,7 @@
 #include <any>
 #include <fstream>
 
-#include "PicardSolver.h"
+#include "../include/PicardSolver.h"
 
 TEST(PicardSolver, instantiation){
 
