@@ -7,6 +7,7 @@ add_library(postprocessor OBJECT
         ExpressionPostprocessor.cpp
         ExpressionPostprocessorSum.cpp)
 
+target_compile_options(postprocessor PRIVATE -Wall -Wextra)
 target_include_directories(postprocessor PUBLIC include)
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
 target_include_directories(postprocessor PUBLIC ${deallii_dir}/include/)

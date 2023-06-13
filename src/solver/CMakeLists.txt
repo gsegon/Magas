@@ -3,6 +3,7 @@ add_library(solver OBJECT
         LinearSolver.cpp
         PicardSolver.cpp)
 
+target_compile_options(solver PRIVATE -Wall -Wextra)
 target_include_directories(solver PUBLIC include)
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
 target_include_directories(solver PUBLIC ${deallii_dir}/include/)
