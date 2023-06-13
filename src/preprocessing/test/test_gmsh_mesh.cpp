@@ -89,7 +89,7 @@ void print_mesh_info(const Triangulation<dim> &triangulation,
 
 TEST(GmshMesh, unit_square){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_gmsh_mesh/unit_square.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/gmsh_mesh/unit_square.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -102,7 +102,7 @@ TEST(GmshMesh, unit_square){
 
 TEST(GmshMesh, two_conductors){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_gmsh_mesh/2_conductors_x.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/gmsh_mesh/2_conductors_x.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -116,7 +116,7 @@ TEST(GmshMesh, two_conductors){
 
 TEST(GmshMesh, test_n){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_gmsh_mesh/test_n.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/gmsh_mesh/test_n.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -129,7 +129,7 @@ TEST(GmshMesh, test_n){
 
 TEST(GmshMesh, EI_core){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/EI_core/EI_core.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -142,7 +142,7 @@ TEST(GmshMesh, EI_core){
 
 TEST(GmshMesh, motoric){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric/motoric.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/motoric/motoric.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -155,7 +155,7 @@ TEST(GmshMesh, motoric){
 
 TEST(GmshMesh, motoric_section){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_motoric_section/motoric_section.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/motoric_section/motoric_section.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;
@@ -168,7 +168,7 @@ TEST(GmshMesh, motoric_section){
 
 TEST(GmshMesh, block_magnet) {
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_magnet/BlockMagnet.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/magnet/BlockMagnet.msh";
 
     Triangulation<2> triangulation;
     GridIn<2> grid_in;

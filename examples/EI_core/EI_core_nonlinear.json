@@ -39,6 +39,6 @@
       "boundary": "A=0"}
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_EI_core/EI_core.msh"
+  "mesh_path": "/home/gordan/Programs/solver/examples/EI_core/EI_core.msh"
 
 }

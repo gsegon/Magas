@@ -1,15 +1,15 @@
 {
   "material": {
     "core": {
-      "nu": 7957.74715025
+      "nu": 79577.4715025
     },
     "air": {
       "nu": 795774.715025
     },
     "copper": {
-      "nu": 7957.74715025
+      "nu": 795774.715025
     },
-    "Magnet_NdFe": {
+    "magnet": {
       "nu": 795774.715025
     },
     "nonmagnetic-steel": {
@@ -22,13 +22,22 @@
   },
 
   "source": {
-    "Ja": 0.0,
-    "Jb": 0.0,
-    "Jc": 0.0,
-    "-Ja": 0.0,
-    "-Jb": 0.0,
-    "-Jc": 0.0,
-    "Magnet_NdFe": 956180.0
+    "Ja": 1000.0,
+    "Jb": -500.0,
+    "Jc": -500.0,
+
+    "-Ja": -1000.0,
+    "-Jb": 500.0,
+    "-Jc": 500.0
+  },
+
+
+  "postprocess": {
+    "|Bavg [T]|": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2)"
+  },
+
+  "postprocess_sum": {
+    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4"
   },
 
   "boundary_id": {
@@ -119,71 +128,10 @@
       "material": "copper",
       "source": "-Jc"},
 
-    "651": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 1.1344640137963142},
-    "652": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 2.007128639793479},
-    "653": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 5.061454830783555},
-    "654": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 5.934119456780721},
-    "655": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 2.705260340591211},
-    "656": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 3.5779249665883754},
-    "657": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 6.632251157578452},
-    "658": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 7.504915783575617},
-    "659": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 4.276056667386108},
-    "660": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 5.148721293383272},
-    "661": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 8.203047484373348},
-    "662": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 9.075712110370514},
-    "663": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 5.846852994181004},
-    "664": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 6.719517620178168},
-    "665": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 9.773843811168245},
-    "666": {
-      "material": "Magnet_NdFe",
-      "source": "Magnet_NdFe",
-      "angle": 10.64650843716541},
-
+    "125": {
+      "material": "magnet"},
+    "126": {
+      "material": "magnet"},
 
     "127": {
       "material": "air"},
@@ -197,6 +145,6 @@
       "material": "air"}
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_motoric/motoric_magnets.msh"
+  "mesh_path": "/home/gordan/Programs/solver/examples/motoric/motoric.msh"
 
 }

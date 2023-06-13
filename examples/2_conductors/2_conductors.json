@@ -1,5 +1,5 @@
 {
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_2_conductors/2_conductors_x.msh",
+  "mesh_path": "/home/gordan/Programs/solver/examples/2_conductors/2_conductors_x.msh",
 
   "material": {
     "core": {

@@ -36,6 +36,6 @@
     }
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/test/test_data/test_magnet/BlockMagnet.msh"
+  "mesh_path": "/home/gordan/Programs/solver/examples/magnet/BlockMagnet.msh"
 
 }

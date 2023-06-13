@@ -13,7 +13,7 @@
 
 TEST(ExpressionPostprocessorSum, unit_square){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/test/test_data/test_unit_square/unit_square.msh";
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/unit_square/unit_square.msh";
     std::unordered_map<int, double> nu_map{{6, 1}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
