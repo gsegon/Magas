@@ -52,12 +52,32 @@ public:
 
 private:
 
+
     Triangulation<dim> triangulation;
     FE_Q<dim> fe;
     DoFHandler<dim> dof_handler;
     QGauss<dim> quadrature_formula;
 
     AffineConstraints<double> constraints;
+
+    struct AssemblyScratchData{
+        AssemblyScratchData(const FiniteElement<dim> &fe);
+        AssemblyScratchData(const AssemblyScratchData &scratch_data);
+
+        FEValues<dim> fe_values;
+        std::vector<double> rhs_values;
+    };
+
+    struct AssemblyCopyData{
+        FullMatrix<double> cell_matrix;
+        Vector<double> cell_rhs;
+        std::vector<types::global_dof_index> local_dof_indices;
+    };
+
+    void local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator& cell,
+                               AssemblyScratchData& scratch,
+                               AssemblyCopyData& copy_data);
+    void copy_local_to_global(const AssemblyCopyData &copy_data);
 
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;

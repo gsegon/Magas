@@ -30,6 +30,9 @@
 #include <deal.II/fe/mapping_q1.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/base/work_stream.h>
+#include <deal.II/base/multithread_info.h>
+
 
 #include "include/LinearSolver.h"
 using namespace dealii;
@@ -101,7 +104,7 @@ void LinearSolver<dim>::setup_system() {
         std::sort(dofs_1.begin(), dofs_1.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
         std::sort(dofs_2.begin(), dofs_2.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
 
-        for (int i =0; i < dofs_1.size(); i++){
+        for (int i =0; i < (int)dofs_1.size(); i++){
 
             first = std::get<0>(dofs_1[i]);
             second = std::get<0>(dofs_2[i]);
@@ -140,77 +143,92 @@ void LinearSolver<dim>::setup_system() {
 template<int dim>
 void LinearSolver<dim>::assemble_system() {
 
-    FEValues<dim> fe_values(fe, quadrature_formula, update_values | update_gradients | update_quadrature_points |
-                                                    update_JxW_values);
+    WorkStream::run(dof_handler.begin_active(),
+                    dof_handler.end(),
+                    *this,
+                    &LinearSolver::local_assemble_system,
+                    &LinearSolver::copy_local_to_global,
+                    AssemblyScratchData(fe),
+                    AssemblyCopyData());
+}
+
+template<int dim>
+LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const FiniteElement<dim> &fe):
+    fe_values(fe, QGauss<dim>(fe.degree + 1), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+    rhs_values(fe_values.get_quadrature().size())
+    {}
+
+template<int dim>
+LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const AssemblyScratchData& scratch_data):
+    fe_values(scratch_data.fe_values.get_fe(), scratch_data.fe_values.get_quadrature(), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+    rhs_values(scratch_data.rhs_values.size())
+{}
+
+template<int dim>
+void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                              LinearSolver::AssemblyScratchData &scratch_data,
+                                              LinearSolver::AssemblyCopyData &copy_data) {
+
+    double nu = 0;
+    double f = 0;
+    Tensor<1, dim> Hc({0, 0});
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    const unsigned int n_q_points = scratch_data.fe_values.get_quadrature().size();
 
-    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-    Vector<double> cell_rhs(dofs_per_cell);
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+    copy_data.cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
+    copy_data.cell_rhs.reinit(dofs_per_cell);
+    copy_data.local_dof_indices.resize(dofs_per_cell);
 
-    // Iterate over cells and assemble to local and move to global
-    for (const auto &cell : dof_handler.active_cell_iterators()){
+    scratch_data.fe_values.reinit(cell);
 
-        double nu = 0;
-        double f = 0;
-        Tensor<1, dim> Hc({0, 0});
-
-        cell_matrix = 0.0;
-        cell_rhs = 0.0;
-
-        fe_values.reinit(cell);
-
-        nu = nu_map.at(cell->material_id());
-        auto f_variant = f_map.at(cell->material_id());
-        if(std::holds_alternative<double>(f_variant)){
-            f = std::get<double>(f_variant);
-            Hc[0] = 0;
-            Hc[1] = 0;
-        }
-        else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
-            f = 0;
-            Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
-            Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
-        }
-        else{
-            std::cout << "Something else?" << std::endl;
-        }
-
-
-        // Ass. into a local system
-        for (const unsigned int q : fe_values.quadrature_point_indices()){
-            for (const unsigned int i : fe_values.dof_indices()){
-                for (const unsigned int j : fe_values.dof_indices()){
-                    cell_matrix(i, j) += nu*                      // nu at cell
-                            fe_values.shape_grad(i, q)*        // grad phi_i(x_q)
-                            fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
-                            fe_values.JxW(q);                 // dx
-                }
-
-                // Current contribution
-                cell_rhs(i) += f*                               // f at cell
-                        fe_values.shape_value(i, q)*            // phi_i(x_q)
-                        fe_values.JxW(q);
-
-                // Magnet contribution
-                cell_rhs(i) += Hc*fe_values.shape_grad(i, q)*fe_values.JxW(q);
-
-            }
-        }
-
-        // Ass. local system into global
-        cell->get_dof_indices(local_dof_indices);
-        constraints.distribute_local_to_global(cell_matrix,
-                                               cell_rhs,
-                                               local_dof_indices,
-                                               system_matrix,
-                                               system_rhs);
+    nu = nu_map.at(cell->material_id());
+    auto f_variant = f_map.at(cell->material_id());
+    if(std::holds_alternative<double>(f_variant)){
+        f = std::get<double>(f_variant);
+        Hc[0] = 0;
+        Hc[1] = 0;
+    }
+    else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
+        f = 0;
+        Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
+        Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
+    }
+    else{
+        std::cout << "Something else?" << std::endl;
     }
 
-    std::cout << "Number of dofs: " << dof_handler.n_dofs() << std::endl;
+    for (unsigned int q = 0; q < n_q_points; q++)
+        for (unsigned int i = 0; i < dofs_per_cell; i++){
+            const auto &sd = scratch_data;
+            for (unsigned int j = 0; j < dofs_per_cell; j++){
+                copy_data.cell_matrix(i, j) += nu*              // nu at cell
+                            sd.fe_values.shape_grad(i, q)*      // grad phi_i(x_q)
+                            sd.fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
+                            sd.fe_values.JxW(q);               // dx
+            }
+            // Current contribution
+                copy_data.cell_rhs(i) += f*                         // f at cell
+                        sd.fe_values.shape_value(i, q)*            // phi_i(x_q)
+                        sd.fe_values.JxW(q);                        // dx
 
+            // Magnet contribution
+                copy_data.cell_rhs(i) += Hc*sd.fe_values.shape_grad(i, q)*sd.fe_values.JxW(q);
+        }
+
+    cell->get_dof_indices(copy_data.local_dof_indices);
 }
+
+template<int dim>
+void LinearSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) {
+    constraints.distribute_local_to_global(
+            copy_data.cell_matrix,
+            copy_data.cell_rhs,
+            copy_data.local_dof_indices,
+            system_matrix,
+            system_rhs);
+}
+
 
 template<int dim>
 void LinearSolver<dim>::solve(){
