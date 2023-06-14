@@ -90,8 +90,13 @@ void ExpressionPostprocessor<dim>::process(const Triangulation<dim>&  triangulat
     double u_q3 = 0;
     double u_q4 = 0;
 
+    double JxW_q1 = 0;
+    double JxW_q2 = 0;
+    double JxW_q3 = 0;
+    double JxW_q4 = 0;
+
     double J = 0;
-//    double nu = 0;
+    double nu = 0;
 
     symbol_table.add_variable("mat_id", mat_id);
 
@@ -115,6 +120,11 @@ void ExpressionPostprocessor<dim>::process(const Triangulation<dim>&  triangulat
     symbol_table.add_variable("By_q3", By_q3);
     symbol_table.add_variable("By_q4", By_q4);
 
+    symbol_table.add_variable("JxW_q1", JxW_q1);
+    symbol_table.add_variable("JxW_q2", JxW_q2);
+    symbol_table.add_variable("JxW_q3", JxW_q3);
+    symbol_table.add_variable("JxW_q4", JxW_q4);
+
     symbol_table.add_variable("u_q1", u_q1);
     symbol_table.add_variable("u_q2", u_q2);
     symbol_table.add_variable("u_q3", u_q3);
@@ -122,6 +132,9 @@ void ExpressionPostprocessor<dim>::process(const Triangulation<dim>&  triangulat
 
     if (f_map_ptr)
         symbol_table.add_variable("J", J);
+
+    if (nu_map_ptr)
+        symbol_table.add_variable("nu", nu);
 
     symbol_table.add_constants();
     expression.register_symbol_table(symbol_table);
@@ -174,10 +187,18 @@ void ExpressionPostprocessor<dim>::process(const Triangulation<dim>&  triangulat
         y_q3 = q_points[2][1];
         y_q4 = q_points[3][1];
 
+        JxW_q1 = fe_values.JxW(0);
+        JxW_q2 = fe_values.JxW(1);
+        JxW_q3 = fe_values.JxW(2);
+        JxW_q4 = fe_values.JxW(3);
+
         u_q1 = solution_at_cell[0];
         u_q2 = solution_at_cell[0];
         u_q3 = solution_at_cell[0];
         u_q4 = solution_at_cell[0];
+
+        if (nu_map_ptr)
+            nu = (*nu_map_ptr).at(cell->material_id());
 
         result.push_back(expression.value());
 

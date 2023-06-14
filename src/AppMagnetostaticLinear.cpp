@@ -197,7 +197,7 @@ int main(int argc, char* argv[]){
         // Export
         std::map<std::string, ExpressionPostprocessor<2>*> user_expr_postprocessors;
         for (auto& user_post_data : postprocess_data.items())
-            user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value(), f_map);
+            user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value(), nu_map, f_map);
 
         std::map<std::string, ExpressionPostprocessorSum<2>*> user_expr_sum_postprocessors;
         for (auto& user_post_sum_data : postprocess_sum_data.items())
