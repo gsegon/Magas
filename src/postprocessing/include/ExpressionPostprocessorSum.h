@@ -18,7 +18,11 @@ template <int dim>
 class ExpressionPostprocessorSum {
 
 public:
+    ExpressionPostprocessorSum(const std::string&);
     ExpressionPostprocessorSum(const std::string&, const std::unordered_map<int, double>&);
+    ExpressionPostprocessorSum(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionPostprocessorSum(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
                  const FE_Q<dim>&           fe,
@@ -31,6 +35,7 @@ private:
 
     std::string user_expression;
     const std::unordered_map<int, double>* nu_map_ptr = nullptr;
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>>* f_map_ptr = nullptr;
 
 };
 

@@ -52,7 +52,6 @@ public:
 
 private:
 
-
     Triangulation<dim> triangulation;
     FE_Q<dim> fe;
     DoFHandler<dim> dof_handler;
