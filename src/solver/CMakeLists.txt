@@ -8,7 +8,7 @@ target_include_directories(solver PUBLIC include)
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
 target_include_directories(solver PUBLIC ${deallii_dir}/include/)
 target_link_libraries(solver debug
-        /home/gordan/Programs/dealii/dealii-install/lib/libdeal_II.so
+        ${deallii_dir}/lib/libdeal_II.so
         tbb)
 
 # test solver

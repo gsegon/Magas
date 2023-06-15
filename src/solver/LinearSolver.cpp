@@ -75,6 +75,7 @@ void LinearSolver<dim>::setup_system() {
         const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
         const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
 
+        //TODO: Move periodic mapping outside, in a separate class/utility.
         double weight = 0;
         if (per_type == "periodic")
             weight = 1;
@@ -91,14 +92,35 @@ void LinearSolver<dim>::setup_system() {
         std::vector<Point<dim>> nodes(dof_handler.n_dofs());
         DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
 
+        // Calculate centeroids
+        Point<dim> centeroid_1{0, 0};
+        Point<dim> centeroid_2{0, 0};
+
+        for(auto dof : b_dofs_1){
+            centeroid_1[0] += nodes[dof][0];
+            centeroid_1[1] += nodes[dof][1];
+        }
+        centeroid_1[0] /= b_dofs_1.size();
+        centeroid_1[1] /= b_dofs_1.size();
+
+        for(auto dof : b_dofs_2){
+            centeroid_2[0] += nodes[dof][0];
+            centeroid_2[1] += nodes[dof][1];
+        }
+        centeroid_2[0] /= b_dofs_2.size();
+        centeroid_2[1] /= b_dofs_2.size();
+
+        std::cout << "Centeroid 1: " << centeroid_1 << std::endl;
+        std::cout << "Centeroid 2: " << centeroid_2 << std::endl;
+
         std::vector<std::pair<unsigned int, double>> dofs_1;
         for(auto dof : b_dofs_1){
-            dofs_1.push_back({dof, nodes[dof].norm_square()});
+            dofs_1.push_back({dof, (nodes[dof]-centeroid_1).norm_square()});
         }
 
         std::vector<std::pair<unsigned int, double>> dofs_2;
         for(auto dof : b_dofs_2){
-            dofs_2.push_back({dof, nodes[dof].norm_square()});
+            dofs_2.push_back({dof, (nodes[dof]-centeroid_2).norm_square()});
         }
 
         std::sort(dofs_1.begin(), dofs_1.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
@@ -116,9 +138,7 @@ void LinearSolver<dim>::setup_system() {
             constraints.add_line(first);
             constraints.add_entry(first, second, weight);
         }
-
     }
-
 
 //    constraints.print(std::cout);
 //    std::ofstream dot_out("at_print.dot");
@@ -136,8 +156,7 @@ void LinearSolver<dim>::setup_system() {
     system_matrix.reinit(sparsity_pattern);
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
-
-
+    Point<dim> a{0, 0};
 }
 
 template<int dim>
