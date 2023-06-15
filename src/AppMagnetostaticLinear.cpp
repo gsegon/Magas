@@ -185,13 +185,18 @@ int main(int argc, char* argv[]){
     // Initialize Solver and solver
     try{
         LinearSolver<2> solver;
+        std::cout << "Reading mesh..." << std::endl;
         solver.read_mesh(mesh_filepath);
+        std::cout << "Setting up maps..." << std::endl;
         solver.set_nu_map(nu_map);
         solver.set_f_map(f_map);
         solver.set_dc_map(dc_map);
         solver.set_per_map(per_map);
+        std::cout << "Setting up system..." << std::endl;
         solver.setup_system();
+        std::cout << "Assembling system..." << std::endl;
         solver.assemble_system();
+        std::cout << "Solving system..." << std::endl;
         solver.solve();
 
         // Export

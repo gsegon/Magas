@@ -1,0 +1,34 @@
+{
+  "mesh_path": "/home/gordan/Programs/solver/examples/unit_square/unit_square.msh",
+
+  "material": {
+    "air": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0
+  },
+
+  "source": {
+    "one": 1.0
+  },
+
+  "postprocess" : {
+  },
+
+  "postprocess_sum": {
+  },
+
+  "boundary_id": {
+    "5": {
+      "boundary": "A=0"}
+  },
+
+  "mesh_id": {
+    "6": {
+      "material": "air",
+      "source": "one"}
+  }
+}

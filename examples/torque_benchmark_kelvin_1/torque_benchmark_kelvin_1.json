@@ -1,0 +1,61 @@
+{
+  "material": {
+    "air": {
+      "nu": 795774.715025
+    },
+    "magnet": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0,
+    "per1": "periodic"
+  },
+
+  "source": {
+    "MagHC": 956180.0
+  },
+
+  "postprocess": {
+  },
+
+  "postprocess_sum": {
+  },
+
+  "mesh_path": "/home/gordan/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh",
+
+  "boundary_id": {
+    "1": {
+      "boundary": "A=0"},
+    "2": {
+      "boundary": "per1"},
+    "3": {
+      "boundary": "per1"}
+  },
+
+  "mesh_id": {
+    "4": {
+      "name": "Magnet part",
+      "material": "magnet",
+      "source": "MagHC",
+      "angle":  1.57079632679
+    },
+    "5": {
+      "name": "Air 1",
+      "material": "air"
+    },
+    "6": {
+      "name": "Air 2",
+      "material": "air"
+    },
+    "7": {
+      "name": "Air 3",
+      "material": "air"
+    },
+    "8": {
+      "name": "Air 4",
+      "material": "air"
+    }
+  }
+}
