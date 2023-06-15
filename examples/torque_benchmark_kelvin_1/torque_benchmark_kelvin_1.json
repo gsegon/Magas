@@ -26,30 +26,30 @@
   "mesh_path": "/home/gordan/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh",
 
   "boundary_id": {
-    "1": {
+    "7": {
       "boundary": "A=0"},
-    "2": {
+    "1": {
       "boundary": "per1"},
-    "3": {
+    "2": {
       "boundary": "per1"}
   },
 
   "mesh_id": {
-    "4": {
+    "3": {
       "name": "Magnet part",
       "material": "magnet",
       "source": "MagHC",
       "angle":  1.57079632679
     },
-    "5": {
+    "4": {
       "name": "Air 1",
       "material": "air"
     },
-    "6": {
+    "5": {
       "name": "Air 2",
       "material": "air"
     },
-    "7": {
+    "6": {
       "name": "Air 3",
       "material": "air"
     },
