@@ -1,5 +1,5 @@
 add_library(preprocessing OBJECT
-        PeriodicityMapper.cpp)
+        Dummy.cpp)
 
 target_include_directories(preprocessing PUBLIC include)
 set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")

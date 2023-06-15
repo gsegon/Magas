@@ -33,10 +33,10 @@
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/multithread_info.h>
 
+#include "LinearSolver.h"
+#include "PeriodicityMapper.h"
 
-#include "include/LinearSolver.h"
 using namespace dealii;
-
 
 template class LinearSolver<2>;
 
@@ -100,47 +100,49 @@ void LinearSolver<dim>::setup_system() {
             centeroid_1[0] += nodes[dof][0];
             centeroid_1[1] += nodes[dof][1];
         }
-        centeroid_1[0] /= b_dofs_1.size();
-        centeroid_1[1] /= b_dofs_1.size();
+        centeroid_1[0] /= b_dofs_1.n_elements();
+        centeroid_1[1] /= b_dofs_1.n_elements();
 
         for(auto dof : b_dofs_2){
             centeroid_2[0] += nodes[dof][0];
             centeroid_2[1] += nodes[dof][1];
         }
-        centeroid_2[0] /= b_dofs_2.size();
-        centeroid_2[1] /= b_dofs_2.size();
+        centeroid_2[0] /= b_dofs_2.n_elements();
+        centeroid_2[1] /= b_dofs_2.n_elements();
 
         std::cout << "Centeroid 1: " << centeroid_1 << std::endl;
         std::cout << "Centeroid 2: " << centeroid_2 << std::endl;
 
-        std::vector<std::pair<unsigned int, double>> dofs_1;
+        std::vector<Point<dim>> firsts;
+        std::vector<Point<dim>> seconds;
+
+        std::vector<unsigned int> dofs_1;
+        std::vector<unsigned int> dofs_2;
+
         for(auto dof : b_dofs_1){
-            dofs_1.push_back({dof, (nodes[dof]-centeroid_1).norm_square()});
+            dofs_1.push_back(dof);
+            firsts.push_back(static_cast<Point<dim>>(nodes[dof]-centeroid_1));
         }
 
-        std::vector<std::pair<unsigned int, double>> dofs_2;
         for(auto dof : b_dofs_2){
-            dofs_2.push_back({dof, (nodes[dof]-centeroid_2).norm_square()});
+            dofs_2.push_back(dof);
+            seconds.push_back(static_cast<Point<dim>>(nodes[dof]-centeroid_2));
         }
 
-        std::sort(dofs_1.begin(), dofs_1.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
-        std::sort(dofs_2.begin(), dofs_2.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+        PeriodicityMapper<Point<dim>> per_mapper{firsts, seconds};
+        per_mapper.map_points();
+        auto matched_pairs = per_mapper.get_matched_pair_indices();
+        for (auto matched_pair: matched_pairs){
 
-        for (int i =0; i < (int)dofs_1.size(); i++){
-
-            first = std::get<0>(dofs_1[i]);
-            second = std::get<0>(dofs_2[i]);
-
-//            std::cout << "Setting dof " << first << " to dof " << second  << std::endl;
-            if (abs(std::get<1>(dofs_1[i]) - std::get<1>(dofs_2[i])) > 1e-9)
-                std::cerr << "Warning: Tol > 1e-8 " << std::endl;
+            first = dofs_1[matched_pair.first];
+            second = dofs_2[matched_pair.second];
 
             constraints.add_line(first);
             constraints.add_entry(first, second, weight);
         }
     }
 
-//    constraints.print(std::cout);
+    constraints.print(std::cout);
 //    std::ofstream dot_out("at_print.dot");
 //    constraints.write_dot(dot_out);
     constraints.close();

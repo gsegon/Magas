@@ -7,18 +7,18 @@
 
 TEST(PeriodicityMapper, basic){
 
-    std::vector<std::tuple<double, double>> firsts{{0, 0},
+    std::vector<std::vector<double>> firsts{{0, 0},
                                                    {0, 1},
                                                    {0.3, 0.2},
                                                    {0.5, 0.5},
                                                    {1, 1}};
 
-    std::vector<std::tuple<double, double>> seconds{{0, 1},
+    std::vector<std::vector<double>> seconds{{0, 1},
                                                     {0.3, 0.2},
                                                     {0, 0},
                                                     {0.5, 0.5},
                                                     {1, 1}};
-    PeriodicityMapper<std::tuple<double, double>> pm{firsts, seconds};
+    PeriodicityMapper<std::vector<double>> pm{firsts, seconds};
 
     pm.map_points();
     auto matched_pairs = pm.get_matched_pair_indices();
