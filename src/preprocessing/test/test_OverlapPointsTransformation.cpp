@@ -9,83 +9,17 @@
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/base/logstream.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/grid/grid_in.h>
-#include <deal.II/base/work_stream.h>
-#include <deal.II/base/multithread_info.h>
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/mapping_q1.h>
 
+#include "OverlapPointsTransformation.h"
 
 
 using namespace Eigen;
 using namespace std;
 using namespace dealii;
-
-template<typename T>
-class OverLapPointsTransformation{
-
-public:
-    OverLapPointsTransformation(std::vector<T> dataset_a, std::vector<T> dataset_b){
-        // Calculates R and t such that RA+t = B. So, for A->B.
-
-        firsts = dataset_a;
-        seconds = dataset_b;
-
-        auto centeroid_firsts = calc_centeriod(firsts);
-        auto centeroid_seconds = calc_centeriod(seconds);
-
-        A.resize(2, firsts.size());
-        B.resize(2, firsts.size());
-        Ca.resize(2, seconds.size());
-        Cb.resize(2, seconds.size());
-
-        for (int i=0; i < firsts.size(); i++){
-            A.col(i) = (Vector2d){firsts[i][0], firsts[i][1]};
-            B.col(i) = (Vector2d){seconds[i][0], seconds[i][1]};
-            Ca.col(i) = centeroid_firsts;
-            Cb.col(i) = centeroid_seconds;
-        }
-
-        auto Ap = A-Ca;
-        auto Bp = B-Cb;
-        auto H = Ap*Bp.transpose();
-        JacobiSVD<Matrix2d, ComputeFullV | ComputeFullU> svd(H);
-        R = svd.matrixV()*svd.matrixU().transpose();
-        t = Cb-R*Ca;
-
-    }
-
-    Vector2d calc_centeriod(std::vector<T> points){
-        Vector2d centeroid{0,0};
-        for (auto point : points){
-            centeroid[0] += point[0];
-            centeroid[1] += point[1];
-        }
-        centeroid[0] /= points.size();
-        centeroid[1] /= points.size();
-
-        return centeroid;
-    }
-
-    void apply_transform(std::vector<T>& a_transformed){
-        auto A_transformed = R*A+t;
-        for (int i=0; i<A_transformed.cols(); i++)
-            a_transformed[i] = {A_transformed.col(i)[0],  A_transformed.col(i)[1]};
-    }
-
-
-private:
-    std::vector<T> firsts;
-    std::vector<T> seconds;
-
-    MatrixXd A, B;
-    MatrixXd Ca, Cb;
-
-    Matrix2d R;
-    Matrix2Xd t;
-};
 
 
 TEST(OverlapPointsTransformation, basic){
@@ -94,7 +28,9 @@ TEST(OverlapPointsTransformation, basic){
     vector<Vector2f> tocke1{{-1, -1},
                             {1, -1},
                             {1, 1},
-                            {-1, 1}};
+                            {-1, 1},
+                            {-0.5, 0.5},
+                            {0.2, 3}};
 
     Rotation2D<float> rot2(-M_PI/2/2);
     auto t = Translation<float, 2>(5, 0);
@@ -114,14 +50,74 @@ TEST(OverlapPointsTransformation, basic){
         b[i] = {tocke2[i][0], tocke2[i][1]};
     }
 
+//    auto tmp = b[2];
+//    b[2] = b[3];
+//    b[3] = tmp;
+//
+//    tmp = b[5];
+//    b[5] = b[4];
+//    b[4] = tmp;
+
     std::vector<temp_def> a_trans(tocke1.size());
     OverLapPointsTransformation<temp_def> olpt{a, b};
     olpt.apply_transform(a_trans);
 
     for (auto val: b)
         cout << val << endl;
+    cout << endl;
     for (auto val: a_trans)
         cout << val << endl;
+
+}
+
+TEST(OverlapPointsTransformation, motoric_section){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/motoric_section/motoric_section.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+
+    DoFHandler<2> dof_handler(triangulation);
+    FE_Q<2> fe(1);
+    dof_handler.distribute_dofs(fe);
+
+    const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {518});
+    const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {519});
+
+    AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
+
+    MappingQ1<2> mapping;
+    std::vector<Point<2>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+
+    std::vector<Point<2>> points_a(b_dofs_1.n_elements());
+    std::vector<Point<2>> points_b(b_dofs_2.n_elements());
+
+    for (auto dof : b_dofs_1){
+        points_a.push_back(nodes[dof]);
+    }
+
+    for (auto dof : b_dofs_2){
+        points_b.push_back(nodes[dof]);
+    }
+
+    std::vector<Point<2>> a_trans(points_a.size());
+    OverLapPointsTransformation<Point<2>> olpt{points_a, points_b};
+    olpt.apply_transform(a_trans);
+
+//    for (int i=0; i < a_trans.size(); i++){
+//        std::cout << "b[" << i << "] = " << points_b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
+//    }
+
+    double x=1.0;
+    double y=1.0;
+    double x2=-1.0;
+    double y2=-1.0;
+    if ((x*x + y*y) < (x2*x2 + y2*y2))
+        std::cout << "1 < 2" << std:: endl;
 
 }
 
