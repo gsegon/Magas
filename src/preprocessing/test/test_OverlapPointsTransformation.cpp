@@ -27,63 +27,83 @@ private:
 
 TEST(OverlapPointsTransformation, basic){
 
-    std::vector<std::vector<double>> firsts{{0, 0},
-                                           {0, 1},
-                                           {0.3, 0.2},
-                                           {0.5, 0.5},
-                                           {1, 1}};
-
-    std::vector<std::vector<double>> seconds{{0, 1},
-                                            {0.3, 0.2},
-                                            {0, 0},
-                                            {0.5, 0.5},
-                                            {1, 1}};
-
-//    MatrixXf m = MatrixXf::Random(3,2);
-//    cout << "Here is the matrix m:" << endl << m << endl;
-//    JacobiSVD<MatrixXf, ComputeThinU | ComputeThinV> svd(m);
-//    cout << "Its singular values are:" << endl << svd.singularValues() << endl;
-//    cout << "Its left singular vectors are the columns of the thin U matrix:" << endl << svd.matrixU() << endl;
-//    cout << "Its right singular vectors are the columns of the thin V matrix:" << endl << svd.matrixV() << endl;
-//    Vector3f rhs(1, 0, 0);
-//    cout << "Now consider this rhs vector:" << endl << rhs << endl;
-//    cout << "A least-squares solution of m*x = rhs is:" << endl << svd.solve(rhs) << endl;
-
     cout << endl << endl;
 
-    vector<Vector2f> tocke1{{-0.5, -0.5},
-                            {0.0, -1.0},
-                            {0.5, 0.8},
-                            {2.5, 1.2}};
+    vector<Vector2f> tocke1{{-1, -1},
+                            {1, -1},
+                            {1, 1},
+                            {-1, 1}};
 
-    cout << "tocke1.size(): " << tocke1.size() << endl;
-    cout << "tocke1:" << endl;
+
     ofstream tocke1_file;
     tocke1_file.open("/home/gordan/Programs/solver/scripts/tocke1.csv");
     tocke1_file << "x" << "," << "y" << endl;
     for (auto tocka : tocke1){
-        cout << tocka << endl << endl;
         tocke1_file << tocka.x() << "," << tocka.y() << endl;
     }
     tocke1_file.close();
 
 
-    Rotation2D<float> rot2(M_PI/4.55);
-    auto t = Translation<float, 2>(4.3, 6.4);
+    Rotation2D<float> rot2(M_PI/2/2);
+    auto t = Translation<float, 2>(5, 0);
 
-    cout << endl;
-    cout << "tocke2:" << endl;
-    cout << "tocke1.size(): " << tocke1.size() << endl;
     vector<Vector2f> tocke2(tocke1.size());
     ofstream tocke2_file;
     tocke2_file.open("/home/gordan/Programs/solver/scripts/tocke2.csv");
     tocke2_file << "x" << "," << "y" << endl;
     for (int i=0; i < tocke1.size(); i++){
-        cout << "i: " << i << endl;
-        tocke2[i] = rot2*t*tocke1[i];
-        cout << tocke2[i] << endl << endl;
+        tocke2[i] = t*rot2*tocke1[i];
         tocke2_file << tocke2[i].x() << "," << tocke2[i].y() << endl;
     }
     tocke2_file.close();
+
+
+    // ----------------------------------
+    Vector2f centeroid_1{0, 0};
+    Vector2f centeroid_2{0, 0};
+
+    for (auto tocka : tocke1){
+        centeroid_1 += tocka;
+    }
+    centeroid_1 /= tocke1.size();
+
+    for (auto tocka : tocke2){
+        centeroid_2 += tocka;
+    }
+    centeroid_2 /= tocke2.size();
+
+    cout << "centeroid 1: " << centeroid_1 << endl;
+    cout << "centeroid 2: " << centeroid_2 << endl;
+
+    MatrixXf A, B;
+    MatrixXf Ca, Cb;
+    A.resize(2, tocke1.size());
+    B.resize(2, tocke2.size());
+    Ca.resize(2, tocke1.size());
+    Cb.resize(2, tocke2.size());
+
+    for (int i=0; i < tocke1.size(); i++){
+        A.col(i) = tocke1[i];
+        B.col(i) = tocke2[i];
+        Ca.col(i) = centeroid_1;
+        Cb.col(i) = centeroid_2;
+    }
+
+    auto Ap = A-Ca;
+    auto Bp = B-Cb;
+    auto H = Ap*Bp.transpose();
+    JacobiSVD<Matrix2f, ComputeFullV | ComputeFullU> svd(H);
+    auto R = svd.matrixV()*svd.matrixU().transpose();
+    auto t_new = Cb-R*Ca;
+
+
+    cout << "R: " << endl << R << endl;
+    cout << "t_new: " << endl << t_new << endl;
+    cout << endl;
+
+    cout << "A: " << endl << A << endl;
+    cout << "B: " << endl << B << endl << endl;
+    cout << "transform(A) = B = R*A+t_new: " << endl << R*A+t_new << endl;
+
 }
 
