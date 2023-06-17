@@ -27,11 +27,6 @@ TEST(ExpressionPostprocessor, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    if((mat_id == 517), ( ((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1
-                         +(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2
-                         +(Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3
-                         +(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4) * nu/(46.4e-3-46.1e-3)), 0)
-
     ExpressionPostprocessor<2> expression_postp{"if(Bx_q1 >0.0, 1, 0)"};
 
     std::vector<double> result;
