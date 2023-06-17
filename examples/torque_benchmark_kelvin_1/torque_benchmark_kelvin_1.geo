@@ -1,15 +1,15 @@
 // Gmsh project created on Thu Jun 15 08:55:07 2023
 SetFactory("OpenCASCADE");
 //+
-Circle(1) = {0, 0, 0, 1, 0, 2*Pi};
+Circle(1) = {0, 0, 0, 1e-2, 0, 2*Pi};
 //+
-Circle(2) = {0, 0, 0, 0.78, 0, 2*Pi};
+Circle(2) = {0, 0, 0, 0.78e-2, 0, 2*Pi};
 //+
-Circle(3) = {0, 0, 0, 0.72, 0, 2*Pi};
+Circle(3) = {0, 0, 0, 0.72e-2, 0, 2*Pi};
 //+
-Circle(4) = {2.25, 0, 0, 1.0, 0, 2*Pi};
+Circle(4) = {2.25e-2, 0, 0, 1.0e-2, 0, 2*Pi};
 //+
-Rectangle(1) = {-0.5, -0.25, 0, 1, 0.5, 0};
+Rectangle(1) = {-0.5e-2, -0.25e-2, 0, 1e-2, 0.5e-2, 0};
 //+
 
 //+
@@ -53,7 +53,7 @@ Periodic Curve {2} = {3};
 
 
 //+
-Circle(9) = {2.25, 0, 0, 0.01, 0, 2*Pi};
+Circle(9) = {2.25e-2, 0, 0, 0.01e-2, 0, 2*Pi};
 //+
 Curve Loop(9) = {4};
 //+
