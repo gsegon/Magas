@@ -35,6 +35,7 @@
 
 #include "LinearSolver.h"
 #include "PeriodicityMapper.h"
+#include "OverlapPointsTransformation.h"
 
 using namespace dealii;
 
@@ -82,8 +83,8 @@ void LinearSolver<dim>::setup_system() {
         else if (per_type == "anti-periodic")
             weight = -1;
 
-        AssertThrow ((per_type == "periodic") or (per_type == "anti-periodic"), ExceptionBase());
-        AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError());
+        AssertThrow ((per_type == "periodic") or (per_type == "anti-periodic"), ExceptionBase())
+        AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
         types::global_dof_index first;
         types::global_dof_index second;
@@ -92,44 +93,32 @@ void LinearSolver<dim>::setup_system() {
         std::vector<Point<dim>> nodes(dof_handler.n_dofs());
         DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
 
-        // Calculate centeroids
-        Point<dim> centeroid_1{0, 0};
-        Point<dim> centeroid_2{0, 0};
-
-        for(auto dof : b_dofs_1){
-            centeroid_1[0] += nodes[dof][0];
-            centeroid_1[1] += nodes[dof][1];
-        }
-        centeroid_1[0] /= b_dofs_1.n_elements();
-        centeroid_1[1] /= b_dofs_1.n_elements();
-
-        for(auto dof : b_dofs_2){
-            centeroid_2[0] += nodes[dof][0];
-            centeroid_2[1] += nodes[dof][1];
-        }
-        centeroid_2[0] /= b_dofs_2.n_elements();
-        centeroid_2[1] /= b_dofs_2.n_elements();
-
-        std::cout << "Centeroid 1: " << centeroid_1 << std::endl;
-        std::cout << "Centeroid 2: " << centeroid_2 << std::endl;
-
-        std::vector<Point<dim>> firsts;
-        std::vector<Point<dim>> seconds;
+        //---
+        std::vector<Point<dim>> points_a; //(b_dofs_1.n_elements());
+        std::vector<Point<dim>> points_b; //(b_dofs_2.n_elements());
 
         std::vector<unsigned int> dofs_1;
         std::vector<unsigned int> dofs_2;
 
-        for(auto dof : b_dofs_1){
+        for (auto dof : b_dofs_1){
+            points_a.push_back(nodes[dof]);
             dofs_1.push_back(dof);
-            firsts.push_back(static_cast<Point<dim>>(nodes[dof]-centeroid_1));
         }
 
-        for(auto dof : b_dofs_2){
+        for (auto dof : b_dofs_2){
+            points_b.push_back(nodes[dof]);
             dofs_2.push_back(dof);
-            seconds.push_back(static_cast<Point<dim>>(nodes[dof]-centeroid_2));
         }
 
-        PeriodicityMapper<Point<dim>> per_mapper{firsts, seconds};
+        std::vector<Point<dim>> a_trans(points_a.size());
+        OverLapPointsTransformation<Point<2>> olpt{points_a, points_b};
+        olpt.apply_transform(a_trans);
+
+
+
+        //---
+
+        PeriodicityMapper<Point<dim>> per_mapper{a_trans, points_b};
         per_mapper.map_points();
         auto matched_pairs = per_mapper.get_matched_pair_indices();
         for (auto matched_pair: matched_pairs){

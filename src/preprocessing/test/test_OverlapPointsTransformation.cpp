@@ -62,12 +62,18 @@ TEST(OverlapPointsTransformation, basic){
     OverLapPointsTransformation<temp_def> olpt{a, b};
     olpt.apply_transform(a_trans);
 
-    for (auto val: b)
-        cout << val << endl;
-    cout << endl;
-    for (auto val: a_trans)
-        cout << val << endl;
+//    for (auto val: b)
+//        cout << val << endl;
+//    cout << endl;
+//    for (auto val: a_trans)
+//        cout << val << endl;
 
+    double sum = 0;
+    for (int i=0; i < a_trans.size(); i++){
+        std::cout << "b[" << i << "] = " << b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
+        sum += abs(b[i][0]- a_trans[i][0]) + abs(b[i][1]- a_trans[i][1]);
+    }
+    ASSERT_LT(sum, 1e-6);
 }
 
 TEST(OverlapPointsTransformation, motoric_section){
@@ -93,31 +99,75 @@ TEST(OverlapPointsTransformation, motoric_section){
     std::vector<Point<2>> nodes(dof_handler.n_dofs());
     DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
 
-    std::vector<Point<2>> points_a(b_dofs_1.n_elements());
-    std::vector<Point<2>> points_b(b_dofs_2.n_elements());
+    std::vector<Point<2>> points_a;//(b_dofs_1.n_elements());
+    std::vector<Point<2>> b;//(b_dofs_2.n_elements());
 
     for (auto dof : b_dofs_1){
         points_a.push_back(nodes[dof]);
     }
 
     for (auto dof : b_dofs_2){
-        points_b.push_back(nodes[dof]);
+        b.push_back(nodes[dof]);
     }
 
     std::vector<Point<2>> a_trans(points_a.size());
-    OverLapPointsTransformation<Point<2>> olpt{points_a, points_b};
+    OverLapPointsTransformation<Point<2>> olpt{points_a, b};
     olpt.apply_transform(a_trans);
 
-//    for (int i=0; i < a_trans.size(); i++){
-//        std::cout << "b[" << i << "] = " << points_b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
-//    }
+    double sum = 0;
+    for (int i=0; i < a_trans.size(); i++){
+        std::cout << "b[" << i << "] = " << b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
+        sum += abs(b[i][0]- a_trans[i][0]) + abs(b[i][1]- a_trans[i][1]);
+    }
+    ASSERT_LT(sum, 1e-6);
 
-    double x=1.0;
-    double y=1.0;
-    double x2=-1.0;
-    double y2=-1.0;
-    if ((x*x + y*y) < (x2*x2 + y2*y2))
-        std::cout << "1 < 2" << std:: endl;
+}
+
+TEST(OverlapPointsTransformation, torque_benchmark_kelvin_1){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+
+    DoFHandler<2> dof_handler(triangulation);
+    FE_Q<2> fe(1);
+    dof_handler.distribute_dofs(fe);
+
+    const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {1});
+    const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {2});
+
+    AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
+
+    MappingQ1<2> mapping;
+    std::vector<Point<2>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+
+    std::vector<Point<2>> points_a;//(b_dofs_1.n_elements());
+    std::vector<Point<2>> b;//(b_dofs_2.n_elements());
+
+    for (auto dof : b_dofs_1){
+        points_a.push_back(nodes[dof]);
+    }
+
+    for (auto dof : b_dofs_2){
+        b.push_back(nodes[dof]);
+    }
+
+    std::vector<Point<2>> a_trans(points_a.size());
+    OverLapPointsTransformation<Point<2>> olpt{points_a, b};
+    olpt.apply_transform(a_trans);
+
+    double sum = 0;
+    for (int i=0; i < a_trans.size(); i++){
+        std::cout << "b[" << i << "] = " << b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
+        sum += abs(b[i][0]- a_trans[i][0]) + abs(b[i][1]- a_trans[i][1]);
+    }
+    ASSERT_LT(sum, 1e-6);
+
 
 }
 

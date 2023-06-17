@@ -9,7 +9,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Core>
 
-using namespace Eigen;
+//using namespace Eigen;
 
 template<typename T>
 class OverLapPointsTransformation{
@@ -30,8 +30,8 @@ public:
         Cb.resize(2, seconds.size());
 
         for (int i=0; i < firsts.size(); i++){
-            A.col(i) = (Vector2d){firsts[i][0], firsts[i][1]};
-            B.col(i) = (Vector2d){seconds[i][0], seconds[i][1]};
+            A.col(i) = (Eigen::Vector2d){firsts[i][0], firsts[i][1]};
+            B.col(i) = (Eigen::Vector2d){seconds[i][0], seconds[i][1]};
             Ca.col(i) = centeroid_firsts;
             Cb.col(i) = centeroid_seconds;
         }
@@ -39,14 +39,14 @@ public:
         auto Ap = A-Ca;
         auto Bp = B-Cb;
         auto H = Ap*Bp.transpose();
-        JacobiSVD<Matrix2d, ComputeFullV | ComputeFullU> svd(H);
+        Eigen::JacobiSVD<Eigen::Matrix2d, Eigen::ComputeFullV | Eigen::ComputeFullU> svd(H);
         R = svd.matrixV()*svd.matrixU().transpose();
         t = Cb-R*Ca;
 
     }
 
-    Vector2d calc_centeriod(std::vector<T> points){
-        Vector2d centeroid{0,0};
+    Eigen::Vector2d calc_centeriod(std::vector<T> points){
+        Eigen::Vector2d centeroid{0,0};
         for (auto point : points){
             centeroid[0] += point[0];
             centeroid[1] += point[1];
@@ -74,11 +74,11 @@ private:
     std::vector<T> firsts;
     std::vector<T> seconds;
 
-    MatrixXd A, B;
-    MatrixXd Ca, Cb;
+    Eigen::MatrixXd A, B;
+    Eigen::MatrixXd Ca, Cb;
 
-    Matrix2d R;
-    Matrix2Xd t;
+    Eigen::Matrix2d R;
+    Eigen::Matrix2Xd t;
 };
 
 
