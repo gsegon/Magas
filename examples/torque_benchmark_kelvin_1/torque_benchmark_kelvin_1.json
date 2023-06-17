@@ -14,8 +14,8 @@
   },
 
   "source": {
-    "MagHC": "1000000",
-    "MagAir": "1591549.43091895"
+    "MagHC": 1000000,
+    "MagAir": 1591549.43091895
   },
 
   "postprocess": {
@@ -66,7 +66,7 @@
       "name": "Air 4",
       "material": "air",
       "source": "MagAir",
-      "angle":  3.14159265359
+      "angle":  2.26892802759
     }
   }
 }
