@@ -27,3 +27,4 @@ add_executable(test_postprocessor
         test/test_ExpressionPostprocessorSum.cpp)
 target_link_libraries(test_postprocessor ${GTEST_LIBRARIES} gtest_main pthread solver postprocessor)
 
+add_test(test_postprocessor_gtest test_postprocessor)

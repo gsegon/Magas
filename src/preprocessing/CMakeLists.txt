@@ -24,3 +24,5 @@ add_executable(test_preprocessing
 target_include_directories(test_preprocessing PUBLIC include)
 target_include_directories(test_preprocessing PUBLIC .)
 target_link_libraries(test_preprocessing ${GTEST_LIBRARIES} gtest_main pthread preprocessing)
+
+add_test(test_preprocessing_gtest test_preprocessing)
