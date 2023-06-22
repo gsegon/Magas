@@ -10,6 +10,7 @@ target_include_directories(preprocessing PUBLIC ${deallii_dir}/include)
 set(eigen_dir "/home/gordan/Programs/eigen-install")
 target_include_directories(preprocessing PUBLIC ${eigen_dir}/include/eigen3)
 
+target_include_directories(preprocessing PUBLIC /home/gordan/Programs/vtu11)
 target_link_libraries(preprocessing debug
         ${deallii_dir}/lib/libdeal_II.so
         tbb)

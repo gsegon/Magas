@@ -73,9 +73,7 @@ void ExportVtu<dim>::write(const std::string& filename){
             connectivity.push_back(point_index+3);
             connectivity.push_back(point_index+2);
             point_index+=4;
-
         }
-
     }
 
     std::vector<vtu11::VtkIndexType> offsets(triangulation_ptr->n_active_cells());
