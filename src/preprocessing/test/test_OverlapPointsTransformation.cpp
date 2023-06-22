@@ -15,7 +15,7 @@
 #include <deal.II/fe/mapping_q1.h>
 
 #include "OverlapPointsTransformation.h"
-
+#include "vtu11/vtu11.hpp"
 
 using namespace Eigen;
 using namespace std;
@@ -50,23 +50,11 @@ TEST(OverlapPointsTransformation, basic){
         b[i] = {tocke2[i][0], tocke2[i][1]};
     }
 
-//    auto tmp = b[2];
-//    b[2] = b[3];
-//    b[3] = tmp;
-//
-//    tmp = b[5];
-//    b[5] = b[4];
-//    b[4] = tmp;
+    std::rotate(b.begin(), b.begin(), b.end());
 
     std::vector<temp_def> a_trans(tocke1.size());
     OverLapPointsTransformation<temp_def> olpt{a, b};
     olpt.apply_transform(a_trans);
-
-//    for (auto val: b)
-//        cout << val << endl;
-//    cout << endl;
-//    for (auto val: a_trans)
-//        cout << val << endl;
 
     double sum = 0;
     for (int i=0; i < a_trans.size(); i++){
@@ -110,6 +98,22 @@ TEST(OverlapPointsTransformation, motoric_section){
         b.push_back(nodes[dof]);
     }
 
+
+    ofstream points_a_file;
+    points_a_file.open("/home/gordan/Programs/solver/scripts/points_a_file.csv");
+    for (auto dof : b_dofs_1){
+        points_a_file << nodes[dof][0] << "," << nodes[dof][1] << endl;
+    }
+    points_a_file.close();
+
+    ofstream points_b_file;
+    points_b_file.open("/home/gordan/Programs/solver/scripts/points_b_file.csv");
+    for (auto dof : b_dofs_2){
+        points_b_file << nodes[dof][0] << "," << nodes[dof][1] << endl;
+    }
+    points_b_file.close();
+
+
     std::vector<Point<2>> a_trans(points_a.size());
     OverLapPointsTransformation<Point<2>> olpt{points_a, b};
     olpt.apply_transform(a_trans);
@@ -119,6 +123,9 @@ TEST(OverlapPointsTransformation, motoric_section){
         std::cout << "b[" << i << "] = " << b[i] << "\t\t\ta_trans[" << i << "] = " << a_trans[i] << std::endl;
         sum += abs(b[i][0]- a_trans[i][0]) + abs(b[i][1]- a_trans[i][1]);
     }
+
+
+
     ASSERT_LT(sum, 1e-6);
 
 }
@@ -168,6 +175,63 @@ TEST(OverlapPointsTransformation, torque_benchmark_kelvin_1){
     }
     ASSERT_LT(sum, 1e-6);
 
+
+}
+
+TEST(OverlapPointsTransformation, torque_benchmark_kelvin_1_export_points){
+
+    std::string test_mesh = "/home/gordan/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+
+    Triangulation<2> triangulation;
+    GridIn<2> grid_in;
+    grid_in.attach_triangulation(triangulation);
+    std::ifstream input_file(test_mesh);
+    grid_in.read_msh(input_file);
+
+    DoFHandler<2> dof_handler(triangulation);
+    FE_Q<2> fe(1);
+    dof_handler.distribute_dofs(fe);
+
+    // Points
+    std::vector<double> points_a;
+    std::vector<double> points_b;
+
+    const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {1});
+    const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {2});
+
+    AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
+
+    MappingQ1<2> mapping;
+    std::vector<Point<2>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+
+    std::vector<Point<2>> a, b;
+
+    for (auto dof : b_dofs_1){
+        points_a.push_back(nodes[dof][0]);
+        points_a.push_back(nodes[dof][1]);
+        points_a.push_back(0.0);
+    }
+
+    for (auto dof : b_dofs_2){
+        points_b.push_back(nodes[dof][0]);
+        points_b.push_back(nodes[dof][1]);
+        points_b.push_back(0.0);
+    }
+
+    ofstream points_a_file;
+    points_a_file.open("/home/gordan/Programs/solver/scripts/points_a_file.csv");
+    for (auto dof : b_dofs_1){
+        points_a_file << nodes[dof][0] << "," << nodes[dof][1] << endl;
+    }
+    points_a_file.close();
+
+    ofstream points_b_file;
+    points_b_file.open("/home/gordan/Programs/solver/scripts/points_b_file.csv");
+    for (auto dof : b_dofs_2){
+        points_b_file << nodes[dof][0] << "," << nodes[dof][1] << endl;
+    }
+    points_b_file.close();
 
 }
 
