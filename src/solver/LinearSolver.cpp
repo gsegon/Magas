@@ -34,8 +34,9 @@
 #include <deal.II/base/multithread_info.h>
 
 #include "LinearSolver.h"
-#include "PeriodicityMapper.h"
-#include "OverlapPointsTransformation.h"
+//#include "CirclePeriodicityMapper.h"
+#include "LinePeriodicityMapper.h"
+//#include "OverlapPointsTransformation.h"
 
 using namespace dealii;
 
@@ -86,45 +87,30 @@ void LinearSolver<dim>::setup_system() {
         AssertThrow ((per_type == "periodic") or (per_type == "anti-periodic"), ExceptionBase())
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
-        types::global_dof_index first;
-        types::global_dof_index second;
-
-        MappingQ1<dim> mapping;
         std::vector<Point<dim>> nodes(dof_handler.n_dofs());
-        DoFTools::map_dofs_to_support_points(mapping, dof_handler, nodes);
+        DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
 
-        //---
-        std::vector<Point<dim>> points_a; //(b_dofs_1.n_elements());
-        std::vector<Point<dim>> points_b; //(b_dofs_2.n_elements());
-
+        std::map<unsigned int, std::vector<double>> dof_to_node;
         std::vector<unsigned int> dofs_1;
         std::vector<unsigned int> dofs_2;
 
         for (auto dof : b_dofs_1){
-            points_a.push_back(nodes[dof]);
             dofs_1.push_back(dof);
+            dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
         }
 
         for (auto dof : b_dofs_2){
-            points_b.push_back(nodes[dof]);
             dofs_2.push_back(dof);
+            dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
         }
 
-        std::vector<Point<dim>> a_trans(points_a.size());
-        OverLapPointsTransformation<Point<2>> olpt{points_a, points_b};
-        olpt.apply_transform(a_trans);
+        LinePeriodicityMapper lpm{dofs_1, dofs_2, dof_to_node};
+        auto matched_pairs = lpm.get_matched_pair_indices();
 
-
-
-        //---
-
-        PeriodicityMapper<Point<dim>> per_mapper{a_trans, points_b};
-        per_mapper.map_points();
-        auto matched_pairs = per_mapper.get_matched_pair_indices();
         for (auto matched_pair: matched_pairs){
 
-            first = dofs_1[matched_pair.first];
-            second = dofs_2[matched_pair.second];
+            auto first = matched_pair.first;
+            auto second = matched_pair.second;
 
             constraints.add_line(first);
             constraints.add_entry(first, second, weight);
