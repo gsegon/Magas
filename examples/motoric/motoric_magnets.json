@@ -31,6 +31,15 @@
     "Magnet_NdFe": 956180.0
   },
 
+  "postprocess": {
+    "|Bavg [T]|": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
+    "J [A/m2]": "J"
+  },
+
+  "postprocess_sum": {
+    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4"
+  },
+
   "boundary_id": {
     "505": {
       "boundary": "A=0"}
