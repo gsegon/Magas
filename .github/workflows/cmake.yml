@@ -20,6 +20,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install OpenMPI
+      run: |
+        sudo apt install libopenmpi-dev
+  
+
     - name: Install GTest
       run: |
         sudo apt-get install libgtest-dev
