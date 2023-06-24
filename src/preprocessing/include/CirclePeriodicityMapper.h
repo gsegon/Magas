@@ -94,7 +94,9 @@ CirclePeriodicityMapper::CirclePeriodicityMapper(vector<unsigned int> a_dofs,
 
     for (auto pair: matched_pairs){
         auto e_distance = sqrt(pow((a_points[pair.first][0]-b_points[pair.second][0]), 2) + pow((a_points[pair.first][1]-b_points[pair.second][1]), 2));
-        assert(e_distance < 1e-8 && "Distance between matched points too big.");
+        if (e_distance > 1e-8){
+            throw runtime_error("Distance of matched points too big.");
+        }
     }
 
 }

@@ -100,19 +100,7 @@ TEST(GmshMesh, unit_square){
 
 }
 
-TEST(GmshMesh, two_conductors){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/examples/gmsh_mesh/2_conductors_x.msh";
-
-    Triangulation<2> triangulation;
-    GridIn<2> grid_in;
-    grid_in.attach_triangulation(triangulation);
-    std::ifstream input_file(test_mesh);
-    grid_in.read_msh(input_file);
-    print_mesh_info(triangulation, "grid-out-two_conductors.eps");
-
-
-}
 
 TEST(GmshMesh, test_n){
 

@@ -11,54 +11,64 @@
 #include <map>
 #include "IPeriodicityMapper.h"
 
+using namespace std;
 
 class LinePeriodicityMapper : public IPeriodicityMapper{
 
 public:
-    LinePeriodicityMapper(std::vector<unsigned int>,
-                            std::vector<unsigned int>,
-                            std::map<unsigned int, std::vector<double>>);
+    LinePeriodicityMapper(vector<unsigned int>,
+                            vector<unsigned int>,
+                            map<unsigned int, vector<double>>);
 
-    std::set<std::pair<unsigned int, unsigned int>> get_matched_pair_indices() override;
+    set<pair<unsigned int, unsigned int>> get_matched_pair_indices() override;
 
 };
 
 
-LinePeriodicityMapper::LinePeriodicityMapper(   std::vector<unsigned int> a_dofs,
-                                                std::vector<unsigned int> b_dofs,
-                                                std::map<unsigned int, std::vector<double>> dof_to_nodes){
+LinePeriodicityMapper::LinePeriodicityMapper(   vector<unsigned int> a_dofs,
+                                                vector<unsigned int> b_dofs,
+                                                map<unsigned int, vector<double>> dof_to_nodes){
     this->a_dofs = a_dofs;
     this->b_dofs = b_dofs;
     this->dof_to_nodes = dof_to_nodes;
 
     assert(a_dofs.size() == b_dofs.size() && "Number of dofs 'a' not equal to number dofs 'b'.");
 
-    std::vector<std::vector<double>> a_points;
-    std::vector<std::vector<double>> b_points;
+    vector<vector<double>> a_points;
+    vector<vector<double>> b_points;
 
-    std::vector<std::pair<unsigned int, double>> dofs_1;
+    vector<pair<unsigned int, double>> dofs_1;
     dofs_1.reserve(a_dofs.size());
     for(auto dof : a_dofs){
-        dofs_1.emplace_back(dof, std::pow(dof_to_nodes[dof][0], 2) + std::pow(dof_to_nodes[dof][1], 2));
+        dofs_1.emplace_back(dof, pow(dof_to_nodes[dof][0], 2) + pow(dof_to_nodes[dof][1], 2));
     }
 
-    std::vector<std::pair<unsigned int, double>> dofs_2;
+    vector<pair<unsigned int, double>> dofs_2;
     dofs_2.reserve(b_dofs.size());
     for(auto dof : b_dofs){
-        dofs_2.emplace_back(dof, std::pow(dof_to_nodes[dof][0], 2) + std::pow(dof_to_nodes[dof][1], 2));
+        dofs_2.emplace_back(dof, pow(dof_to_nodes[dof][0], 2) + pow(dof_to_nodes[dof][1], 2));
     }
 
-    std::sort(dofs_1.begin(), dofs_1.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
-    std::sort(dofs_2.begin(), dofs_2.end(), [](std::pair<unsigned int, double> a, std::pair<unsigned int, double> b) {return std::get<1>(a) < std::get<1>(b);});
+    sort(dofs_1.begin(), dofs_1.end(), [](pair<unsigned int, double> a, pair<unsigned int, double> b) {return get<1>(a) < get<1>(b);});
+    sort(dofs_2.begin(), dofs_2.end(), [](pair<unsigned int, double> a, pair<unsigned int, double> b) {return get<1>(a) < get<1>(b);});
 
     for (int i =0; i < (int)dofs_1.size(); i++) {
-        auto pair = std::pair<unsigned int, unsigned int>(std::get<0>(dofs_1[i]), std::get<0>(dofs_2[i]));
-        matched_pairs.insert(pair);
+        auto math_pair = pair<unsigned int, unsigned int>(get<0>(dofs_1[i]), get<0>(dofs_2[i]));
+        matched_pairs.insert(math_pair);
+    }
+
+    for (auto pair: matched_pairs){
+        auto r1 = sqrt(pow(dof_to_nodes[pair.first][0], 2) + pow(dof_to_nodes[pair.first][1], 2));
+        auto r2 = sqrt(pow(dof_to_nodes[pair.second][0], 2) + pow(dof_to_nodes[pair.second][1], 2));
+        auto e_distance = abs(r1-r2);
+        if (e_distance > 1e-8){
+            throw runtime_error("Radius of matched points too big.");
+        }
     }
 
 }
 
-std::set<std::pair<unsigned int, unsigned int>> LinePeriodicityMapper::get_matched_pair_indices() {
+set<pair<unsigned int, unsigned int>> LinePeriodicityMapper::get_matched_pair_indices() {
     return this->matched_pairs;
 }
 

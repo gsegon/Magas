@@ -63,9 +63,14 @@ TEST(CirclePeriodicityMapper, distance_too_big) {
     std::vector<unsigned int> a_dofs{1, 0, 2, 3};
     std::vector<unsigned int> b_dofs{4, 5, 6, 7};
 
-    CirclePeriodicityMapper lpm{a_dofs, b_dofs, dof_to_nodes};
-    auto pairs = lpm.get_matched_pair_indices();
-
-    ASSERT_EQ(pairs, truth);
+    try{
+        CirclePeriodicityMapper lpm{a_dofs, b_dofs, dof_to_nodes};
+        auto pairs = lpm.get_matched_pair_indices();
+        ASSERT_TRUE(0);
+    }
+    catch(const runtime_error& error){
+        cout << "Exception thrown (expected): " << error.what() << endl;
+        ASSERT_TRUE(1);
+    }
 
 }
