@@ -17,7 +17,7 @@
 
   "boundary": {
     "A=0": 0.0,
-    "per1": "periodic"
+    "per1": "periodic-line"
   },
 
   "source": {
