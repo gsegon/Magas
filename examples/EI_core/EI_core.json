@@ -56,6 +56,6 @@
     "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4"
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/examples/EI_core/EI_core.msh"
+  "mesh_path": "EI_core.msh"
 
 }

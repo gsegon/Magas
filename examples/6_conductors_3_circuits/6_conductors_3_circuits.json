@@ -62,6 +62,6 @@
     "Psi_3": "if(((mat_id==5) or (mat_id==6)), u_q1*J*JxW_q1 + u_q2*J*JxW_q2 +u_q3*J*JxW_q3 + u_q4*J*JxW_q4, 0)"
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/examples/6_conductors_3_circuits/6_conductors_3_circuits.msh"
+  "mesh_path": "6_conductors_3_circuits.msh"
 
 }

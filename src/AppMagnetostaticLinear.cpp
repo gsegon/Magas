@@ -50,6 +50,8 @@ int main(int argc, char* argv[]){
     }
 
     std::filesystem::path input = result["input"].as<std::string>();
+    std::filesystem::path json_dir = input.parent_path();
+
     std::filesystem::path output = input.filename().replace_extension();
     if (result.count("output")){
         output = result["output"].as<std::string>();
@@ -82,9 +84,15 @@ int main(int argc, char* argv[]){
 
     // Parse JSON
     json input_data = json::parse(ifs_input);
-    std::string mesh_filepath{input_data.at("mesh_path")};
+    std::string mesh_filepath_string_input{input_data.at("mesh_path")};
 
-    std::cout << "Mesh file: " << mesh_filepath << std::endl;
+    std::filesystem::path mesh_path{mesh_filepath_string_input};
+
+    if (mesh_path.is_relative()){
+        mesh_path = json_dir / mesh_path;
+    }
+
+    std::cout << "Mesh file: " << mesh_path << std::endl;
 
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
@@ -186,7 +194,7 @@ int main(int argc, char* argv[]){
     try{
         LinearSolver<2> solver;
         std::cout << "Reading mesh..." << std::endl;
-        solver.read_mesh(mesh_filepath);
+        solver.read_mesh(mesh_path);
         std::cout << "Setting up maps..." << std::endl;
         solver.set_nu_map(nu_map);
         solver.set_f_map(f_map);

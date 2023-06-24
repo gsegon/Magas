@@ -146,6 +146,6 @@
       "material": "air"}
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/examples/motoric/motoric.msh"
+  "mesh_path": "motoric.msh"
 
 }

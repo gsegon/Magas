@@ -206,6 +206,6 @@
       "material": "air"}
   },
 
-  "mesh_path": "/home/gordan/Programs/solver/examples/motoric/motoric_magnets.msh"
+  "mesh_path": "motoric_magnets.msh"
 
 }
