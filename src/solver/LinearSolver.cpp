@@ -36,6 +36,8 @@
 #include "LinearSolver.h"
 //#include "CirclePeriodicityMapper.h"
 #include "LinePeriodicityMapper.h"
+#include "CirclePeriodicityMapper.h"
+#include "IPeriodicityMapper.h"
 //#include "OverlapPointsTransformation.h"
 
 using namespace dealii;
@@ -79,12 +81,15 @@ void LinearSolver<dim>::setup_system() {
 
         //TODO: Move periodic mapping outside, in a separate class/utility.
         double weight = 0;
-        if (per_type == "periodic")
+        if (per_type == "periodic-line" or per_type == "periodic-circle")
             weight = 1;
-        else if (per_type == "anti-periodic")
+        else if (per_type == "anti-periodic-line" or per_type == "anti-periodic-circle")
             weight = -1;
 
-        AssertThrow ((per_type == "periodic") or (per_type == "anti-periodic"), ExceptionBase())
+        AssertThrow (   (per_type == "periodic-line") or
+                        (per_type == "anti-periodic-line") or
+                        (per_type == "periodic-circle") or
+                        (per_type == "anti-periodic-circle"), ExceptionBase())
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
         std::vector<Point<dim>> nodes(dof_handler.n_dofs());
@@ -104,8 +109,14 @@ void LinearSolver<dim>::setup_system() {
             dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
         }
 
-        LinePeriodicityMapper lpm{dofs_1, dofs_2, dof_to_node};
-        auto matched_pairs = lpm.get_matched_pair_indices();
+
+        IPeriodicityMapper* pm = nullptr;
+        if (per_type == "periodic-line" or per_type == "anti-periodic-line")
+            pm = new LinePeriodicityMapper{dofs_1, dofs_2, dof_to_node};
+        else if(per_type == "periodic-circle" or per_type == "anti-periodic-circle")
+            pm = new CirclePeriodicityMapper{dofs_1, dofs_2, dof_to_node};
+
+        auto matched_pairs = pm->get_matched_pair_indices();
 
         for (auto matched_pair: matched_pairs){
 
