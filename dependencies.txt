@@ -1,0 +1,6 @@
+dealii
+cxxopts
+vtu11
+json
+exprtk
+eigen3
