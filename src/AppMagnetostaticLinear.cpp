@@ -216,7 +216,6 @@ int main(int argc, char* argv[]){
             user_expr_sum_postprocessors[user_post_sum_data.key()] = new ExpressionScalarPostprocessor<2>(user_post_sum_data.value(), nu_map, f_map);
 
         ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-
         for (auto [key, val] : user_expr_postprocessors)
             export_vtu.attach_postprocessor(val, key);
 
