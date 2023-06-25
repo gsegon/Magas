@@ -10,7 +10,6 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
-#include "CellPostprocessor.h"
 
 using namespace dealii;
 
