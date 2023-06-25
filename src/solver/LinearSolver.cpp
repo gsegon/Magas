@@ -34,11 +34,10 @@
 #include <deal.II/base/multithread_info.h>
 
 #include "LinearSolver.h"
-//#include "CirclePeriodicityMapper.h"
 #include "LinePeriodicityMapper.h"
 #include "CirclePeriodicityMapper.h"
 #include "IPeriodicityMapper.h"
-//#include "OverlapPointsTransformation.h"
+
 
 using namespace dealii;
 
@@ -128,7 +127,7 @@ void LinearSolver<dim>::setup_system() {
         }
     }
 
-    constraints.print(std::cout);
+//    constraints.print(std::cout);
 //    std::ofstream dot_out("at_print.dot");
 //    constraints.write_dot(dot_out);
     constraints.close();
@@ -202,7 +201,7 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
         Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
     }
     else{
-        std::cout << "Something else?" << std::endl;
+        throw std::runtime_error("Invalid source input for material_id=" + std::to_string(cell->material_id()) + ". Check problem definition file.");
     }
 
     for (unsigned int q = 0; q < n_q_points; q++)

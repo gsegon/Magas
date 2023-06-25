@@ -1,10 +1,10 @@
 
 
 add_library(postprocessor OBJECT
-        ExportVtu.cpp
-        MatIDPostprocessor.cpp
-        ExpressionPostprocessor.cpp
-        ExpressionPostprocessorSum.cpp)
+        src/export/ExportVtu.cpp
+        src/processors/MatIDPostprocessor.cpp
+        src/processors/ExpressionPostprocessor.cpp
+        src/processors/ExpressionPostprocessorSum.cpp)
 
 target_include_directories(postprocessor PUBLIC include)
 target_compile_options(postprocessor PRIVATE -Wall -Wextra)
