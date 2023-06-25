@@ -11,7 +11,7 @@
 #include "LinearSolver.h"
 #include "processors/ExpressionScalarPostprocessor.h"
 
-TEST(ExpressionPostprocessorSum, unit_square){
+TEST(ExpressionScalarPostprocessor, unit_square){
 
     std::string test_mesh = "/home/gordan/Programs/solver/examples/unit_square/unit_square.msh";
     std::unordered_map<int, double> nu_map{{6, 1}};
