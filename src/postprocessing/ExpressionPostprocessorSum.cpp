@@ -11,7 +11,7 @@
 #include <deal.II/base/quadrature_lib.h>
 #include "exprtk.hpp"
 
-#include "include/ExpressionPostprocessorSum.h"
+#include "processors/ExpressionScalarPostprocessor.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -19,28 +19,28 @@ typedef exprtk::parser<double>       parser_t;
 
 using namespace dealii;
 
-template class ExpressionPostprocessorSum<2>;
+template class ExpressionScalarPostprocessor<2>;
 
 
 template <int dim>
-ExpressionPostprocessorSum<dim>::ExpressionPostprocessorSum(const std::string& user_expr) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr) {
     user_expression = user_expr;
 }
 
 template <int dim>
-ExpressionPostprocessorSum<dim>::ExpressionPostprocessorSum(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
 
 template <int dim>
-ExpressionPostprocessorSum<dim>::ExpressionPostprocessorSum(const std::string& user_expr, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     f_map_ptr = &f_map;
 }
 
 template <int dim>
-ExpressionPostprocessorSum<dim>::ExpressionPostprocessorSum(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -48,10 +48,10 @@ ExpressionPostprocessorSum<dim>::ExpressionPostprocessorSum(const std::string& u
 
 
 template<int dim>
-void ExpressionPostprocessorSum<dim>::process(const Triangulation<dim>&  triangulation,
-                                             const Vector<double>&      solution,
-                                             const FE_Q<dim>&           fe,
-                                             double& result) {
+void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
+                                                 const Vector<double>&      solution,
+                                                 const FE_Q<dim>&           fe,
+                                                 double& result) {
 
     triangulation_ptr = &triangulation;
     solution_ptr = &solution;

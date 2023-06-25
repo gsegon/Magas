@@ -3,7 +3,7 @@
 //
 
 #include <fstream>
-#include "include/ExportVtu.h"
+#include "export/ExportVtu.h"
 #include "vtu11/vtu11.hpp"
 
 #include <deal.II/lac/vector.h>
@@ -32,7 +32,7 @@ ExportVtu<dim>::ExportVtu(const Triangulation<dim> &triangulation, const Vector<
 }
 
 template<int dim>
-void ExportVtu<dim>::attach_postprocessor(Postprocessor<dim>* post_processor, std::string name) {
+void ExportVtu<dim>::attach_postprocessor(CellPostprocessor<dim>* post_processor, std::string name) {
     post_processors[name] = post_processor;
 }
 

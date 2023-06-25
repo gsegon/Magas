@@ -12,7 +12,7 @@
 #include <deal.II/base/quadrature_lib.h>
 #include "exprtk.hpp"
 
-#include "include/ExpressionPostprocessor.h"
+#include "processors/ExpressionCellPostprocessor.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -20,28 +20,28 @@ typedef exprtk::parser<double>       parser_t;
 
 using namespace dealii;
 
-template class ExpressionPostprocessor<2>;
+template class ExpressionCellPostprocessor<2>;
 
 
 template <int dim>
-ExpressionPostprocessor<dim>::ExpressionPostprocessor(const std::string& user_expr) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr) {
     user_expression = user_expr;
 }
 
 template <int dim>
-ExpressionPostprocessor<dim>::ExpressionPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
 
 template <int dim>
-ExpressionPostprocessor<dim>::ExpressionPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     f_map_ptr = &f_map;
 }
 
 template <int dim>
-ExpressionPostprocessor<dim>::ExpressionPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -49,10 +49,10 @@ ExpressionPostprocessor<dim>::ExpressionPostprocessor(const std::string& user_ex
 
 
 template<int dim>
-void ExpressionPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
-                                             const Vector<double>&      solution,
-                                             const FE_Q<dim>&           fe,
-                                             std::vector<double>& result) {
+void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
+                                               const Vector<double>&      solution,
+                                               const FE_Q<dim>&           fe,
+                                               std::vector<double>& result) {
 
     triangulation_ptr = &triangulation;
     solution_ptr = &solution;

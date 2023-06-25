@@ -8,10 +8,10 @@
 #include <any>
 #include <fstream>
 
-#include "../../solver/include/LinearSolver.h"
-#include "MagneticEnergyDensityPostprocessor.h"
+#include "LinearSolver.h"
+#include "processors/ExpressionCellPostprocessor.h"
 
-TEST(MagneticEnergyDensityPostprocessor, unit_square){
+TEST(ExpressionPostprocessor, unit_square){
 
     std::string test_mesh = "/home/gordan/Programs/solver/examples/unit_square/unit_square.msh";
     std::unordered_map<int, double> nu_map{{6, 1}};
@@ -27,10 +27,10 @@ TEST(MagneticEnergyDensityPostprocessor, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    MagneticEnergyDensityPostprocessor<2> mag_energy_density_postprocessor{nu_map};
+    ExpressionCellPostprocessor<2> expression_postp{"if(Bx_q1 >0.0, 1, 0)"};
 
     std::vector<double> result;
-    mag_energy_density_postprocessor.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
+    expression_postp.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
 
     for (auto res: result)
         std::cout << res << ", " << std::endl;

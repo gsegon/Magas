@@ -2,26 +2,26 @@
 // Created by gordan on 5/16/23.
 //
 
-#ifndef SOLVER_EXPRESSIONPOSTPROCESSOR_H
-#define SOLVER_EXPRESSIONPOSTPROCESSOR_H
+#ifndef SOLVER_EXPRESSIONCELLPOSTPROCESSOR_H
+#define SOLVER_EXPRESSIONCELLPOSTPROCESSOR_H
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
-#include "Postprocessor.h"
+#include "CellPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class ExpressionPostprocessor : public Postprocessor<dim> {
+class ExpressionCellPostprocessor : public CellPostprocessor<dim> {
 
 public:
-    ExpressionPostprocessor(const std::string&);
-    ExpressionPostprocessor(const std::string&, const std::unordered_map<int, double>&);
-    ExpressionPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
-    ExpressionPostprocessor(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionCellPostprocessor(const std::string&);
+    ExpressionCellPostprocessor(const std::string&, const std::unordered_map<int, double>&);
+    ExpressionCellPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionCellPostprocessor(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif //SOLVER_EXPRESSIONPOSTPROCESSOR_H
+#endif //SOLVER_EXPRESSIONCELLPOSTPROCESSOR_H

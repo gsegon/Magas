@@ -8,13 +8,8 @@
 #include <fstream>
 #include <variant>
 
-#include "../include/LinearSolver.h"
-#include "../../postprocessing/include/MagneticFluxPostprocessor.h"
-#include "../../postprocessing/include/MagneticEnergyPostprocessor.h"
-#include "../../postprocessing/include/MagneticEnergyDensityPostprocessor.h"
-#include "../../postprocessing/include/ExportVtu.h"
-#include "../../postprocessing/include/MatIDPostprocessor.h"
-#include <deal.II/numerics/data_out.h>
+#include "LinearSolver.h"
+
 
 using namespace dealii;
 
@@ -192,7 +187,7 @@ TEST(LinearSolver, motoric_section){
     std::unordered_map<int, double> nu_map{{1, nu_core},            // Core rotor
                                            {2, nu_core},            // Core stator
 
-                                           {506, nu_0},         // copper
+                                           {506, nu_0},             // copper
                                            {507, nu_0},
                                            {508, nu_0},
                                            {509, nu_0},

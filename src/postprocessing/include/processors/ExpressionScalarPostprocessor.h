@@ -2,26 +2,26 @@
 // Created by gordan on 5/16/23.
 //
 
-#ifndef SOLVER_EXPRESSIONPOSTPROCESSORSUM_H
-#define SOLVER_EXPRESSIONPOSTPROCESSORSUM_H
+#ifndef SOLVER_EXPRESSIONSCALARPOSTPROCESSOR_H
+#define SOLVER_EXPRESSIONSCALARPOSTPROCESSOR_H
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
-#include "Postprocessor.h"
+#include "CellPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class ExpressionPostprocessorSum {
+class ExpressionScalarPostprocessor {
 
 public:
-    ExpressionPostprocessorSum(const std::string&);
-    ExpressionPostprocessorSum(const std::string&, const std::unordered_map<int, double>&);
-    ExpressionPostprocessorSum(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
-    ExpressionPostprocessorSum(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionScalarPostprocessor(const std::string&);
+    ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&);
+    ExpressionScalarPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif //SOLVER_EXPRESSIONPOSTPROCESSORSUM_H
+#endif //SOLVER_EXPRESSIONSCALARPOSTPROCESSOR_H

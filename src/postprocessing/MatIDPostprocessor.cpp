@@ -9,7 +9,7 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/base/quadrature_lib.h>
 
-#include "include/MatIDPostprocessor.h"
+#include "processors/MatIDPostprocessor.h"
 
 using namespace dealii;
 

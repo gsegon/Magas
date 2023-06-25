@@ -10,9 +10,9 @@
 #include <cxxopts.hpp>
 #include <vector>
 
-#include "ExportVtu.h"
-#include "ExpressionPostprocessor.h"
-#include "ExpressionPostprocessorSum.h"
+#include "export/ExportVtu.h"
+#include "processors/ExpressionCellPostprocessor.h"
+#include "processors/ExpressionScalarPostprocessor.h"
 #include "misc.h"
 #include "exprtk.hpp"
 
@@ -208,13 +208,13 @@ int main(int argc, char* argv[]){
         solver.solve();
 
         // Export
-        std::map<std::string, ExpressionPostprocessor<2>*> user_expr_postprocessors;
+        std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
         for (auto& user_post_data : postprocess_data.items())
-            user_expr_postprocessors[user_post_data.key()] = new ExpressionPostprocessor<2>(user_post_data.value(), nu_map, f_map);
+            user_expr_postprocessors[user_post_data.key()] = new ExpressionCellPostprocessor<2>(user_post_data.value(), nu_map, f_map);
 
-        std::map<std::string, ExpressionPostprocessorSum<2>*> user_expr_sum_postprocessors;
+        std::map<std::string, ExpressionScalarPostprocessor<2>*> user_expr_sum_postprocessors;
         for (auto& user_post_sum_data : postprocess_sum_data.items())
-            user_expr_sum_postprocessors[user_post_sum_data.key()] = new ExpressionPostprocessorSum<2>(user_post_sum_data.value(), nu_map, f_map);
+            user_expr_sum_postprocessors[user_post_sum_data.key()] = new ExpressionScalarPostprocessor<2>(user_post_sum_data.value(), nu_map, f_map);
 
         ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
 

@@ -8,8 +8,8 @@
 #include <any>
 #include <fstream>
 
-#include "../../solver/include/LinearSolver.h"
-#include "ExpressionPostprocessorSum.h"
+#include "LinearSolver.h"
+#include "processors/ExpressionScalarPostprocessor.h"
 
 TEST(ExpressionPostprocessorSum, unit_square){
 
@@ -27,8 +27,8 @@ TEST(ExpressionPostprocessorSum, unit_square){
     solver.assemble_system();
     solver.solve();
 
-    ExpressionPostprocessorSum<2> expression_postp_count_elem{"1", nu_map};
-    ExpressionPostprocessorSum<2> expression_postp_energy{"(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + "
+    ExpressionScalarPostprocessor<2> expression_postp_count_elem{"1", nu_map};
+    ExpressionScalarPostprocessor<2> expression_postp_energy{"(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + "
                                                           "(Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + "
                                                           "(Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + "
                                                           "(Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4", nu_map};
