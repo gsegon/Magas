@@ -189,9 +189,9 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
         JxW_q4 = fe_values.JxW(3);
 
         u_q1 = solution_at_cell[0];
-        u_q2 = solution_at_cell[0];
-        u_q3 = solution_at_cell[0];
-        u_q4 = solution_at_cell[0];
+        u_q2 = solution_at_cell[1];
+        u_q3 = solution_at_cell[2];
+        u_q4 = solution_at_cell[3];
 
         if (nu_map_ptr)
             nu = (*nu_map_ptr).at(cell->material_id());
