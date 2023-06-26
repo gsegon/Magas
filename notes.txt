@@ -42,3 +42,11 @@ TODO References:
     [14] Rotational Motion Modelling for Nunerical Anslysis of Electric Machines, D. Marcsa
     [15] CMPT 373: Software Development Methods Fall 2022
     [16] blog.acolyer.org the morning paper.
+
+Dependencies:
+dealii
+cxxopts
+vtu11
+json
+exprtk
+eigen3
