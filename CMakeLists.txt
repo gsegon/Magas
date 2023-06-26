@@ -8,3 +8,5 @@ add_subdirectory(src/preprocessing)
 add_subdirectory(src/postprocessing)
 add_subdirectory(src/solver)
 add_subdirectory(src)
+
+add_subdirectory(examples)
