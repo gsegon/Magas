@@ -53,7 +53,6 @@ void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(mesh_filepath);
     grid_in.read_msh(input_file);
-
 }
 
 template<int dim>
