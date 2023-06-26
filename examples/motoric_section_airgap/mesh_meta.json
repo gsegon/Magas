@@ -1,0 +1,74 @@
+{
+
+  "mesh_path": "motoric_section_airgap.msh",
+
+  "boundary_id": {
+    "505": {
+      "boundary": "A=0"},
+    "518": {
+      "boundary": "per1"},
+    "519": {
+      "boundary": "per1"}
+  },
+
+  "mesh_id": {
+
+    "601": {
+      "name": "Rotor Core",
+      "material": "core"},
+    "602": {
+      "name": "Stator core",
+      "material": "core"},
+    "506": {
+      "Name": "Coil_A+",
+      "material": "copper",
+      "source": "Ja"},
+    "507": {
+      "Name": "Coil_A-",
+      "material": "copper",
+      "source": "-Ja"},
+    "508": {
+      "Name": "Coil_B-",
+      "material": "copper",
+      "source": "-Jb"},
+    "509": {
+      "Name": "Coil_C+",
+      "material": "copper",
+      "source": "Jc"},
+    "510": {
+      "Name": "Coil_B+",
+      "material": "copper",
+      "source": "Jb"},
+    "511": {
+      "Name": "Coil_C-",
+      "material": "copper",
+      "source": "-Jc"},
+    "512": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 0.74176493209 },
+    "513": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 1.61442955809 },
+    "514": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 3.09795942229  },
+    "515": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": 3.97062404829  },
+    "516": {
+      "name": "Air pockets",
+      "material": "air"},
+    "517": {
+      "name": "Airgap",
+      "material": "air"},
+    "518": {
+      "name": "Air",
+      "material": "air"}
+  }
+
+
+}

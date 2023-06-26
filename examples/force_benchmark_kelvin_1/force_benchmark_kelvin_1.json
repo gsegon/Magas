@@ -26,7 +26,9 @@
     "By [T] (avg)": "avg(By_q1, By_q2, By_q3, By_q4)",
     "J": "J",
     "mat_id": "mat_id",
-    "Torque_section": "if((mat_id==5), ((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2 + (Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4)*nu/(46.4-46.1),0)"
+    "Torque_section": "if((mat_id==5), ((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2 + (Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4)*nu/(46.4-46.1),0)",
+    "F_lorentz_y": "if((mat_id == 3), 4e-2*(Bx_q1*J*JxW_q1+Bx_q2*J*JxW_q2+Bx_q3*J*JxW_q3+Bx_q4*J*JxW_q4), 0)",
+    "F_lorentz_x": "if((mat_id == 3), 4e-2*(By_q1*J*JxW_q1+By_q2*J*JxW_q2+By_q3*J*JxW_q3+By_q4*J*JxW_q4), 0)"
   },
 
   "postprocess_sum": {

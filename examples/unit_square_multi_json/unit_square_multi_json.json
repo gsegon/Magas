@@ -1,0 +1,23 @@
+{
+  "material": {
+    "air": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0
+  },
+
+  "source": {
+    "one": 1.0
+  },
+
+  "postprocess" : {
+  },
+
+  "postprocess_sum": {
+  },
+
+  "include_1" : "mesh_specific.json"
+}

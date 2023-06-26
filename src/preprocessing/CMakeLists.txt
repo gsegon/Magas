@@ -2,7 +2,7 @@ add_library(preprocessing OBJECT
         Dummy.cpp
         include/IPeriodicityMapper.h
         include/LinePeriodicityMapper.h
-        include/CirclePeriodicityMapper.h)
+        include/CirclePeriodicityMapper.h include/ConfigParser.h)
 
 target_include_directories(preprocessing PUBLIC include)
 
@@ -24,7 +24,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_preprocessing
         test/test_gmsh_mesh.cpp
         test/test_LinePeriodicityMapper.cpp
-        test/test_CirclePeriodicityMapper.cpp)
+        test/test_CirclePeriodicityMapper.cpp test/test_ConfigParser.cpp)
 target_include_directories(test_preprocessing PUBLIC include)
 target_include_directories(test_preprocessing PUBLIC .)
 target_link_libraries(test_preprocessing ${GTEST_LIBRARIES} gtest_main pthread preprocessing)

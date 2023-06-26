@@ -1,0 +1,14 @@
+{
+  "mesh_path": "unit_square_multi_json.msh",
+
+  "boundary_id": {
+    "5": {
+      "boundary": "A=0"}
+  },
+
+  "mesh_id": {
+    "6": {
+      "material": "air",
+      "source": "one"}
+  }
+}

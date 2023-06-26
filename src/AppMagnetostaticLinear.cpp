@@ -15,6 +15,7 @@
 #include "processors/ExpressionScalarPostprocessor.h"
 #include "misc.h"
 #include "exprtk.hpp"
+#include "ConfigParser.h"
 
 
 using json = nlohmann::json;
@@ -50,8 +51,6 @@ int main(int argc, char* argv[]){
     }
 
     std::filesystem::path input = result["input"].as<std::string>();
-    std::filesystem::path json_dir = input.parent_path();
-
     std::filesystem::path output = input.filename().replace_extension();
     if (result.count("output")){
         output = result["output"].as<std::string>();
@@ -83,11 +82,11 @@ int main(int argc, char* argv[]){
         }
 
     // Parse JSON
-    json input_data = json::parse(ifs_input);
-    std::string mesh_filepath_string_input{input_data.at("mesh_path")};
+    ConfigParser cp{input};
+    json input_data = cp.get_top_data();
+    auto json_dir = cp.get_root();
 
-    std::filesystem::path mesh_path{mesh_filepath_string_input};
-
+    std::filesystem::path mesh_path{input_data.at("mesh_path")};
     if (mesh_path.is_relative()){
         mesh_path = json_dir / mesh_path;
     }
