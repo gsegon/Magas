@@ -7,13 +7,17 @@
 #include <string>
 #include <any>
 #include <fstream>
+#include <filesystem>
 
 #include "LinearSolver.h"
 #include "processors/ExpressionCellPostprocessor.h"
 
 TEST(ExpressionCellPostprocessor, unit_square){
 
-    std::string test_mesh = "~/Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
+
     std::unordered_map<int, double> nu_map{{6, 1}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};

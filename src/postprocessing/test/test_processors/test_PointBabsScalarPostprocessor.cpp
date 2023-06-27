@@ -7,13 +7,17 @@
 #include <string>
 #include <any>
 #include <fstream>
+#include <filesystem>
 
 #include "LinearSolver.h"
 #include "processors/PointBabsScalarPostprocessor.h"
 
 TEST(PointBabsScalarPostprocessor, torque_benchmark_kelvin_1){
 
-    std::string test_mesh = "~/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
+
     std::unordered_map<int, double> nu_map{{3, 795774.715025},
                                            {4, 795774.715025},
                                            {5, 795774.715025},

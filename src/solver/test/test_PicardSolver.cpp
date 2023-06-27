@@ -7,6 +7,7 @@
 #include <string>
 #include <any>
 #include <fstream>
+#include <filesystem>
 
 #include "../include/PicardSolver.h"
 
@@ -18,8 +19,9 @@ TEST(PicardSolver, instantiation){
 
 TEST(PicardSolver, read_mesh){
 
-    std::string test_mesh = "~/Programs/solver/examples/EI_core/EI_core.msh";
-
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
 
@@ -28,8 +30,9 @@ TEST(PicardSolver, read_mesh){
 
 TEST(PicardSolver, setup_cell_nu_history){
 
-    std::string test_mesh = "~/Programs/solver/examples/EI_core/EI_core.msh";
-
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
@@ -38,8 +41,9 @@ TEST(PicardSolver, setup_cell_nu_history){
 
 TEST(PicardSolver, setup_system){
 
-    std::string test_mesh = "~/Programs/solver/examples/EI_core/EI_core.msh";
-
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     PicardSolver<2> solver;
     solver.read_mesh(test_mesh);
     solver.setup_cell_nu_history();
@@ -49,7 +53,9 @@ TEST(PicardSolver, setup_system){
 
 TEST(PicardSolver, reinit_system){
 
-    std::string test_mesh = "~/Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
     std::unordered_map<int, double> f_map{{6, 1.0}};
     std::unordered_map<int, double> dc_map{{5, 0.0}};
@@ -64,7 +70,9 @@ TEST(PicardSolver, reinit_system){
 
 TEST(PicardSolver, assemble_system){
 
-    std::string test_mesh = "~/Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
     std::unordered_map<int, double> f_map{{6, 1.0}};
     std::unordered_map<int, double> dc_map{{5, 0.0}};
@@ -84,7 +92,9 @@ TEST(PicardSolver, assemble_system){
 
 TEST(PicardSolver, solve_system){
 
-    std::string test_mesh = "~/Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
     std::unordered_map<int, double> f_map{{6, 1.0}};
     std::unordered_map<int, double> dc_map{{5, 0.0}};
@@ -108,7 +118,9 @@ TEST(PicardSolver, solve_system){
 
 TEST(PicardSolver, solve_nonlinear){
 
-    std::string test_mesh = "~/Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     std::unordered_map<int, std::any> nu_map{{6, "Nonlinear"}};
     std::unordered_map<int, double> f_map{{6, 1.0}};
     std::unordered_map<int, double> dc_map{{5, 0.0}};
@@ -135,8 +147,9 @@ TEST(PicardSolver, EI_core){
     double J2 = -30*66/8.0645e-05;
 
 
-    std::string test_mesh = "~/Programs/solver/examples/EI_core/EI_core.msh";
-
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
+    std::filesystem::path test_mesh = home/rel_mesh;
     std::unordered_map<int, std::any> nu_map{{200, "Nonlinear"},       // Core1
                                              {201, "Nonlinear"},       // Core2
                                              {202, nu_0},       // Copper
