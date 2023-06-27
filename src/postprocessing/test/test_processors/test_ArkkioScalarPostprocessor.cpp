@@ -13,7 +13,7 @@
 
 TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+    std::string test_mesh = "~/Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
     std::unordered_map<int, double> nu_map{{3, 795774.715025},
                                            {4, 795774.715025},
                                            {5, 795774.715025},

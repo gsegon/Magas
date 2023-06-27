@@ -7,7 +7,7 @@
 
 TEST(TestConfigParser, basic) {
 
-    std::string input_json{"/home/gordan/Programs/solver/examples/unit_square/unit_square.json"};
+    std::string input_json{"~/Programs/solver/examples/unit_square/unit_square.json"};
 
     ConfigParser cp{input_json};
 
@@ -15,7 +15,7 @@ TEST(TestConfigParser, basic) {
 
 TEST(TestConfigParser, unit_square_multi_json) {
 
-    std::string input_json{"/home/gordan/Programs/solver/examples/unit_square_multi_json/unit_square_multi_json.json"};
+    std::string input_json{"~/Programs/solver/examples/unit_square_multi_json/unit_square_multi_json.json"};
 
     ConfigParser cp{input_json};
 

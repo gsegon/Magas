@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 if __name__ == '__main__':
-    tocke1 = pd.read_csv('/home/gordan/Programs/solver/scripts/tocke1.csv')
-    tocke2 = pd.read_csv('/home/gordan/Programs/solver/scripts/tocke2.csv')
+    tocke1 = pd.read_csv('~/Programs/solver/scripts/tocke1.csv')
+    tocke2 = pd.read_csv('~/Programs/solver/scripts/tocke2.csv')
 
     colors = ['r', 'g', 'b', 'm']
 
