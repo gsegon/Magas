@@ -15,6 +15,7 @@ target_include_directories(postprocessor PUBLIC include)
 target_compile_options(postprocessor PRIVATE -Wall -Wextra)
 target_include_directories(postprocessor PUBLIC ~/Programs/vtu11)
 target_include_directories(postprocessor PUBLIC ~/Programs/exprtk)
+target_compile_features(postprocessor PRIVATE cxx_std_17)
 
 # test export
 find_package(GTest REQUIRED)
@@ -26,5 +27,6 @@ add_executable(test_postprocessor
         test/test_processors/test_ExpressionScalarPostprocessor.cpp test/test_processors/test_ArkkioScalarPostprocessor.cpp test/test_processors/test_PointBabsScalarPostprocessor.cpp)
 target_link_libraries(test_postprocessor ${GTEST_LIBRARIES} gtest_main pthread solver postprocessor)
 DEAL_II_SETUP_TARGET(test_postprocessor)
+target_compile_features(test_postprocessor PRIVATE cxx_std_17)
 
 add_test(test_postprocessor_gtest test_postprocessor)
