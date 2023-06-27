@@ -7,9 +7,7 @@
 
 TEST(TestConfigParser, basic) {
 
-    std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path json = "Programs/solver/examples/unit_square/unit_square.json";
-    std::string input_json{home/json};
+    std::filesystem::path input_json = "../../../examples/unit_square/unit_square.json";
 
     ConfigParser cp{input_json};
 
@@ -17,9 +15,8 @@ TEST(TestConfigParser, basic) {
 
 TEST(TestConfigParser, unit_square_multi_json) {
 
-    std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path json = "Programs/solver/examples/unit_square/unit_square.json";
-    std::string input_json{home/json};
+
+    std::filesystem::path input_json = "../../../examples/unit_square/unit_square.json";
 
     ConfigParser cp{input_json};
 
