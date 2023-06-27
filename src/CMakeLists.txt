@@ -14,6 +14,7 @@ target_compile_options(aml PRIVATE -Wall -Wextra)
 target_include_directories(aml PUBLIC ~/Programs/cxxopts/include)
 target_include_directories(aml PUBLIC ~/Programs/exprtk)
 target_include_directories(aml PUBLIC ~/Programs/json/include)
+target_compile_features(aml PRIVATE cxx_std_17)
 
 # amp
 add_executable(amp AppMagnetostaticPicard.cpp)
@@ -28,4 +29,5 @@ target_compile_options(amp PRIVATE -Wall -Wextra)
 target_include_directories(amp PUBLIC ~/Programs/cxxopts/include)
 target_include_directories(amp PUBLIC ~/Programs/exprtk)
 target_include_directories(amp PUBLIC ~/Programs/json/include)
+target_compile_features(amp PRIVATE cxx_std_17)
 
