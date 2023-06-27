@@ -61,12 +61,12 @@ TEST(ExportVtu, initialize_EI_core){
                                            {205, nu_0},         // Air
     };
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, 0},        // Core1
-                                           {201, 0},        // Core2
-                                           {202, J1},       // Copper
-                                           {203, J2},       // Copper
-                                           {204, 0},        // Air
-                                           {205, 0},        // Air
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, (double) 0},        // Core1
+                                           {201, (double) 0},        // Core2
+                                           {202, (double)J1},       // Copper
+                                           {203, (double)J2},       // Copper
+                                           {204, (double)0},        // Air
+                                           {205, (double)0},        // Air
     };
 
     std::unordered_map<int, double> dc_map{{44, 0}} ;      // Air
