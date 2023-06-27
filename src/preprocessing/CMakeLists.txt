@@ -5,11 +5,6 @@ add_library(preprocessing OBJECT
         include/CirclePeriodicityMapper.h include/ConfigParser.h)
 
 target_include_directories(preprocessing PUBLIC include)
-
-
-#set(eigen_dir "/home/gordan/Programs/eigen-install")
-#target_include_directories(preprocessing PUBLIC ${eigen_dir}/include/eigen3)
-
 target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
 target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
 target_link_libraries(preprocessing optimized

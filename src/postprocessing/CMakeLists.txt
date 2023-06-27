@@ -6,7 +6,8 @@ add_library(postprocessor OBJECT
         src/processors/ArkkioScalarPostprocessor.cpp
         src/processors/PointBabsScalarPostprocessor.cpp)
 
-find_package(deal.II 9.4.0 REQUIRED)
+set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
+find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
 DEAL_II_INITIALIZE_CACHED_VARIABLES()
 DEAL_II_SETUP_TARGET(postprocessor)
 
