@@ -6,23 +6,20 @@ add_library(preprocessing OBJECT
 
 target_include_directories(preprocessing PUBLIC include)
 
-set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
-target_include_directories(preprocessing PUBLIC ${deallii_dir}/include)
 
+#set(eigen_dir "/home/gordan/Programs/eigen-install")
+#target_include_directories(preprocessing PUBLIC ${eigen_dir}/include/eigen3)
 
-set(eigen_dir "/home/gordan/Programs/eigen-install")
-target_include_directories(preprocessing PUBLIC ${eigen_dir}/include/eigen3)
-
-target_include_directories(preprocessing PUBLIC /home/gordan/Programs/vtu11)
-target_link_libraries(preprocessing debug
-        ${deallii_dir}/lib/libdeal_II.so
+target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
+target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
+target_link_libraries(preprocessing optimized
         tbb)
 
 # test preprocessing
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_preprocessing
-        test/test_gmsh_mesh.cpp
+#        test/test_gmsh_mesh.cpp
         test/test_LinePeriodicityMapper.cpp
         test/test_CirclePeriodicityMapper.cpp test/test_ConfigParser.cpp)
 target_include_directories(test_preprocessing PUBLIC include)

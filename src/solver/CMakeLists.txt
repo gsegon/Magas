@@ -3,13 +3,15 @@ add_library(solver OBJECT
         LinearSolver.cpp
         PicardSolver.cpp)
 
+find_package(deal.II 9.4.0 REQUIRED)
+
+DEAL_II_INITIALIZE_CACHED_VARIABLES()
+DEAL_II_SETUP_TARGET(solver)
+
 target_compile_options(solver PRIVATE -Wall -Wextra)
 target_include_directories(solver PUBLIC include)
-set(deallii_dir "/home/gordan/Programs/dealii/dealii-install")
-target_include_directories(solver PUBLIC ${deallii_dir}/include/)
-target_link_libraries(solver debug
+target_link_libraries(solver optimized
         preprocessing
-        ${deallii_dir}/lib/libdeal_II.so
         tbb)
 
 # test solver
@@ -22,5 +24,6 @@ add_executable(test_solver
         test/test_PicardSolver.cpp)
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
+DEAL_II_SETUP_TARGET(test_solver)
 
 add_test(test_solver_gtest test_solver)
