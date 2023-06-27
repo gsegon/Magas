@@ -23,8 +23,8 @@ TEST(LinearSolver, instantiation){
 TEST(LinearSolver, read_mesh){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -34,8 +34,8 @@ TEST(LinearSolver, read_mesh){
 TEST(LinearSolver, setup_system){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -46,8 +46,8 @@ TEST(LinearSolver, setup_system){
 TEST(LinearSolver, assemble_system){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
     std::unordered_map<int, double> nu_map{{6, 1}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
@@ -65,8 +65,8 @@ TEST(LinearSolver, assemble_system){
 TEST(LinearSolver, solve_system){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
     std::unordered_map<int, double> nu_map{{6, 1}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
@@ -105,8 +105,8 @@ TEST(LinearSolver, set_f_map){
 TEST(LinearSolver, setup_system_3){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/2_conductors/2_conductors_x.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/2_conductors/2_conductors_x.msh";
+
 
     LinearSolver<2> solver;
     solver.read_mesh(test_mesh);
@@ -123,8 +123,8 @@ TEST(LinearSolver, 2_conductors){
 
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/2_conductors/2_conductors_x.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/2_conductors/2_conductors_x.msh";
+
 
     std::unordered_map<int, double> nu_map{{1, nu_0},       // Conductor 1
                                            {2, nu_0},       // Conductor 2
@@ -157,8 +157,7 @@ TEST(LinearSolver, EI_core){
     double J2 = -10*66/8.0645e-05;
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/EI_core/EI_core.msh";
 
     std::unordered_map<int, double> nu_map{{200, nu_core},       // Core1
                                              {201, nu_core},       // Core2
@@ -199,8 +198,8 @@ TEST(LinearSolver, motoric_section){
     double J2 = -10*66/8.0645e-05;
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/motoric_section/motoric_section.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/motoric_section/motoric_section.msh";
+
 
     std::unordered_map<int, double> nu_map{{1, nu_core},            // Core rotor
                                            {2, nu_core},            // Core stator
@@ -264,8 +263,8 @@ TEST(LinearSolver, Magnet){
     constexpr double nu_0 = 1/mu_0;
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/magnet/BlockMagnet.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/magnet/BlockMagnet.msh";
+
 
     std::unordered_map<int, double> nu_map{{1, nu_0},       // Air
                                            {2, nu_0},       // Magnet

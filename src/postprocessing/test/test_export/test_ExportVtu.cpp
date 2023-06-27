@@ -17,8 +17,8 @@
 TEST(ExportVtu, initialize_unit){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/unit_square/unit_square.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
 
     std::unordered_map<int, double> nu_map{{6, 1}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
@@ -50,8 +50,8 @@ TEST(ExportVtu, initialize_EI_core){
 
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/EI_core/EI_core.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/EI_core/EI_core.msh";
+
 
     std::unordered_map<int, double> nu_map{{200, nu_core},      // Core1
                                            {201, nu_core},      // Core2

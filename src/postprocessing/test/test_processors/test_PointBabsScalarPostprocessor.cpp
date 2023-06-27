@@ -15,8 +15,8 @@
 TEST(PointBabsScalarPostprocessor, torque_benchmark_kelvin_1){
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path rel_mesh = "Programs/solver/examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
-    std::filesystem::path test_mesh = home/rel_mesh;
+    std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
+
 
     std::unordered_map<int, double> nu_map{{3, 795774.715025},
                                            {4, 795774.715025},
