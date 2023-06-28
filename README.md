@@ -1,5 +1,5 @@
 ![CMake-Build](https://github.com/gsegon/solver/actions/workflows/cmake.yml/badge.svg?event=push)
 
-Magsic - Open Magnetostatic Solver
+Magas - Magnetostatic analysis suite
 
-An open source solver for low frequency magneto-static fields.
+An open source finite element solver for low frequency magneto-static fields.
