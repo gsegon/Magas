@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(solver)
+project(Mag)
 set(CMAKE_CXX_STANDARD 17)
 
 enable_testing()

@@ -1,6 +1,6 @@
 # aml
-add_executable(aml AppMagnetostaticLinear.cpp)
-target_link_libraries(aml optimized
+add_executable(mag AppMagnetostaticLinear.cpp)
+target_link_libraries(mag optimized
         tbb
         solver
         postprocessor)
@@ -8,13 +8,13 @@ target_link_libraries(aml optimized
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
 DEAL_II_INITIALIZE_CACHED_VARIABLES()
-DEAL_II_SETUP_TARGET(aml)
+DEAL_II_SETUP_TARGET(mag)
 
-target_compile_options(aml PRIVATE -Wall -Wextra)
-target_include_directories(aml PUBLIC ~/Programs/cxxopts/include)
-target_include_directories(aml PUBLIC ~/Programs/exprtk)
-target_include_directories(aml PUBLIC ~/Programs/json/include)
-target_compile_features(aml PRIVATE cxx_std_17)
+target_compile_options(mag PRIVATE -Wall -Wextra)
+target_include_directories(mag PUBLIC ~/Programs/cxxopts/include)
+target_include_directories(mag PUBLIC ~/Programs/exprtk)
+target_include_directories(mag PUBLIC ~/Programs/json/include)
+target_compile_features(mag PRIVATE cxx_std_17)
 
 # amp
 add_executable(amp AppMagnetostaticPicard.cpp)
