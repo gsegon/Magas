@@ -22,7 +22,7 @@ using json = nlohmann::json;
 
 int main(int argc, char* argv[]){
 
-    cxxopts::Options options("aml", "Application for magnetostatic simulations.");
+    cxxopts::Options options("magas", "Application for magnetostatic simulations.");
 
     options.add_options()
             ("input", "Input config file (.json)", cxxopts::value<std::string>())
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
     }
 
     if (!result.count("input")){
-        std::cout << "No input file given.\nSee 'aml --help' for usage." << std::endl;
+        std::cout << "No input file given.\nSee 'magas --help' for usage." << std::endl;
         exit(0);
     }
 

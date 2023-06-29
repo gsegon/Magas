@@ -13,7 +13,6 @@ target_include_directories(solver PUBLIC include)
 target_link_libraries(solver optimized
         preprocessing
         tbb)
-target_compile_features(solver PRIVATE cxx_std_17)
 
 # test solver
 # Locate GTest
@@ -26,6 +25,5 @@ add_executable(test_solver
 
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
 DEAL_II_SETUP_TARGET(test_solver)
-target_compile_features(test_solver PRIVATE cxx_std_17)
 
 add_test(test_solver_gtest test_solver)

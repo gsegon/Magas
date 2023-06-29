@@ -9,7 +9,6 @@ target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
 target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
 target_link_libraries(preprocessing optimized
         tbb)
-target_compile_features(preprocessing PRIVATE cxx_std_17)
 
 # test preprocessing
 find_package(GTest REQUIRED)
@@ -21,6 +20,5 @@ add_executable(test_preprocessing
 target_include_directories(test_preprocessing PUBLIC include)
 target_include_directories(test_preprocessing PUBLIC .)
 target_link_libraries(test_preprocessing ${GTEST_LIBRARIES} gtest_main pthread preprocessing)
-target_compile_features(test_preprocessing PRIVATE cxx_std_17)
 
 add_test(test_preprocessing_gtest test_preprocessing)

@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
         sources = {'Ja': Ja, '-Ja': -Ja, 'Jb': Jb, '-Jb': -Jb, 'Jc': Jc, '-Jc': -Jc}
 
-        exc_string = '../cmake-build-debug/aml ../cmake-build-debug/motoric_section.json -o motsec-{:d}'.format(index)
+        exc_string = '../cmake-build-debug/magas ../cmake-build-debug/motoric_section.json -o motsec-{:d}'.format(index)
         for key, val in sources.items():
             exc_string = exc_string + ' -s{:}={:}'.format(key, val)
 
