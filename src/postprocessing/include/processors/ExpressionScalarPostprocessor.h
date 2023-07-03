@@ -10,14 +10,15 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
+#include "ScalarPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class ExpressionScalarPostprocessor {
+class ExpressionScalarPostprocessor : ScalarPostprocessor<dim> {
 
 public:
-    ExpressionScalarPostprocessor(const std::string&);
+    explicit ExpressionScalarPostprocessor(const std::string&);
     ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&);
     ExpressionScalarPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
     ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);

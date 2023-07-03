@@ -45,7 +45,7 @@ template class LinearSolver<2>;
 
 template<int dim>
 LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
-{};
+{}
 
 template<int dim>
 void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
@@ -58,7 +58,7 @@ void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
 template<int dim>
 Triangulation<dim>& LinearSolver<dim>::get_triangulation(){
     return this->triangulation;
-};
+}
 
 template<int dim>
 void LinearSolver<dim>::setup_system() {

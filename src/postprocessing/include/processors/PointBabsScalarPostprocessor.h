@@ -10,14 +10,15 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
+#include "ScalarPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class PointBabsScalarPostprocessor {
+class PointBabsScalarPostprocessor : ScalarPostprocessor<dim> {
 
 public:
-    PointBabsScalarPostprocessor(std::vector<double>);
+    explicit PointBabsScalarPostprocessor(std::vector<double>);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,

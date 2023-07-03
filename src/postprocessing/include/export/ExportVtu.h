@@ -32,8 +32,6 @@ protected:
     const Vector<double>* rhs_ptr = nullptr;
     const FE_Q<dim>* fe_ptr = nullptr;
     std::unordered_map<std::string, CellPostprocessor<dim>*> post_processors;
-
-
 };
 
 

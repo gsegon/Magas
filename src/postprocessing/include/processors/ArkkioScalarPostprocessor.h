@@ -10,14 +10,15 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
+#include "ScalarPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class ArkkioScalarPostprocessor {
+class ArkkioScalarPostprocessor : ScalarPostprocessor<dim> {
 
 public:
-    ArkkioScalarPostprocessor(const unsigned int, const std::unordered_map<int, double>&);
+    ArkkioScalarPostprocessor(unsigned int, const std::unordered_map<int, double>&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -29,7 +30,7 @@ private:
     const Vector<double> *solution_ptr = nullptr;
     const FE_Q<dim> *fe_ptr = nullptr;
 
-    unsigned int mat_id;
+    unsigned int mat_id{};
     const std::unordered_map<int, double>* nu_map_ptr = nullptr;
 
 };

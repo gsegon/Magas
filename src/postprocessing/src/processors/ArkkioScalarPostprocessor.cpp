@@ -50,7 +50,7 @@ void ArkkioScalarPostprocessor<dim>::process(const Triangulation<dim>&  triangul
     std::vector<double> solution_at_cell(quadrature_formula.size());
 
     // Checks
-    double nu;
+    double nu = 0;
     double nu_0 = 795774.715025;
     if (nu_map_ptr)
         nu = (*nu_map_ptr).at(mat_id);
