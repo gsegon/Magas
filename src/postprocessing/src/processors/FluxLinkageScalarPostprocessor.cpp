@@ -16,10 +16,9 @@ using namespace dealii;
 
 template class FluxLinkageScalarPostprocessor<2>;
 
-
 template <int dim>
 FluxLinkageScalarPostprocessor<dim>::FluxLinkageScalarPostprocessor(const unsigned int mat_id, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
-    f_map_ptr = &f_map;
+    this->f_map_ptr = &f_map;
     this->mat_id = mat_id;
 }
 
@@ -29,15 +28,15 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
                                                  const FE_Q<dim>&           fe,
                                                  double& result) {
 
-    triangulation_ptr = &triangulation;
-    solution_ptr = &solution;
-    fe_ptr = &fe;
+    this->triangulation_ptr = &triangulation;
+    this->solution_ptr = &solution;
+    this->fe_ptr = &fe;
 
     std::vector<Point<dim>> q_points;
-    DoFHandler<dim> dof_handler(*triangulation_ptr);
-    dof_handler.distribute_dofs(*fe_ptr);
-    QGauss<dim> quadrature_formula(fe_ptr->degree +1);
-    FEValues<dim> fe_values(*fe_ptr, quadrature_formula, update_values | update_gradients | update_quadrature_points |
+    DoFHandler<dim> dof_handler(*this->triangulation_ptr);
+    dof_handler.distribute_dofs(*this->fe_ptr);
+    QGauss<dim> quadrature_formula(this->fe_ptr->degree +1);
+    FEValues<dim> fe_values(*this->fe_ptr, quadrature_formula, update_values | update_gradients | update_quadrature_points |
                                                          update_JxW_values);
     std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
     std::vector<double> solution_at_cell(quadrature_formula.size());
@@ -55,8 +54,8 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
             }
 
             fe_values.reinit(cell);
-            fe_values.get_function_gradients(*solution_ptr, solution_gradients);
-            fe_values.get_function_values(*solution_ptr, solution_at_cell);
+            fe_values.get_function_gradients(*this->solution_ptr, solution_gradients);
+            fe_values.get_function_values(*this->solution_ptr, solution_at_cell);
             q_points = fe_values.get_quadrature_points();
 
             for (auto q: fe_values.quadrature_point_indices()){

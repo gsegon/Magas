@@ -13,7 +13,7 @@
 
 TEST(FluxLinkageScalarPostprocessor, 6_conductors_3_circuits){
 
-    std::string test_mesh = "/home/gordan/Programs/solver/examples/6_conductors_3_circuits/6_conductors_3_circuits.msh";
+    std::string test_mesh = "../../../examples/6_conductors_3_circuits/6_conductors_3_circuits.msh";
     std::unordered_map<int, double> nu_map{{2, 795774.715025},
                                            {3, 795774.715025},
                                            {4, 795774.715025},
@@ -46,7 +46,6 @@ TEST(FluxLinkageScalarPostprocessor, 6_conductors_3_circuits){
 
     double result_8;
     FluxLinkageScalarPostprocessor<2> flux_linkage_pp_8{8, f_map};
-
 
     flux_linkage_pp_4.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_4);
     flux_linkage_pp_8.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_8);

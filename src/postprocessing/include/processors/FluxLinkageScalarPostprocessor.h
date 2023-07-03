@@ -5,19 +5,23 @@
 #ifndef SOLVER_FLUXLINKAGESCALARPOSTPROCESSOR_H
 #define SOLVER_FLUXLINKAGESCALARPOSTPROCESSOR_H
 
+#include <variant>
+
 #include <deal.II/lac/vector.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
 
+#include "processors/ScalarPostprocessor.h"
+
 using namespace dealii;
 
 template <int dim>
-class FluxLinkageScalarPostprocessor {
+class FluxLinkageScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
-    FluxLinkageScalarPostprocessor(const unsigned int, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    FluxLinkageScalarPostprocessor(unsigned int, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -25,11 +29,7 @@ public:
                  double& result);
 
 private:
-    const Triangulation<dim> *triangulation_ptr = nullptr;
-    const Vector<double> *solution_ptr = nullptr;
-    const FE_Q<dim> *fe_ptr = nullptr;
-
-    unsigned int mat_id;
+    unsigned int mat_id{};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>>* f_map_ptr = nullptr;
 
 };

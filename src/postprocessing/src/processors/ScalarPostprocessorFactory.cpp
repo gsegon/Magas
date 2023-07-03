@@ -9,6 +9,7 @@
 
 #include "processors/ArkkioScalarPostprocessor.h"
 #include "processors/PointBabsScalarPostprocessor.h"
+#include "processors/FluxLinkageScalarPostprocessor.h"
 
 template class ScalarPostprocessorFactory<2>;
 
@@ -27,6 +28,7 @@ ScalarPostprocessor<dim> *ScalarPostprocessorFactory<dim>::create(std::string in
         if (std::regex_match(input_string, sm, std::regex(pattern))) {
             if (sm[1] == "Arkkio") return new ArkkioScalarPostprocessor<dim>(std::stoi(sm[2]), *nu_map_ptr);
             if (sm[1] == "Babs") return new PointBabsScalarPostprocessor<dim>({std::stod(sm[2]), std::stod(sm[3])});
+            if (sm[1] == "Psi") return new FluxLinkageScalarPostprocessor<dim>(std::stoi(sm[2]), *f_map_ptr);
         }
     }
     return new ExpressionScalarPostprocessor<dim>(input_string, *nu_map_ptr, *f_map_ptr);
