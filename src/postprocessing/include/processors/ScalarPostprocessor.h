@@ -16,11 +16,16 @@ using namespace dealii;
 template <int dim>
 class ScalarPostprocessor {
 
-    public:
-        virtual void process(const Triangulation<dim> &triangulation,
-                             const Vector<double>& solution,
-                             const FE_Q<dim>& fe,
-                             double& result) = 0;
+public:
+    virtual void process(const Triangulation<dim> &triangulation,
+                         const Vector<double>& solution,
+                         const FE_Q<dim>& fe,
+                         double& result) = 0;
+
+protected:
+    const Triangulation<dim> *triangulation_ptr = nullptr;
+    const Vector<double> *solution_ptr = nullptr;
+    const FE_Q<dim> *fe_ptr = nullptr;
 
 };
 

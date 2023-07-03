@@ -26,9 +26,9 @@ public:
                  double& result);
 
 private:
-    const Triangulation<dim> *triangulation_ptr = nullptr;
-    const Vector<double> *solution_ptr = nullptr;
-    const FE_Q<dim> *fe_ptr = nullptr;
+//    const Triangulation<dim> *triangulation_ptr = nullptr;
+//    const Vector<double> *solution_ptr = nullptr;
+//    const FE_Q<dim> *fe_ptr = nullptr;
 
     unsigned int mat_id{};
     const std::unordered_map<int, double>* nu_map_ptr = nullptr;
