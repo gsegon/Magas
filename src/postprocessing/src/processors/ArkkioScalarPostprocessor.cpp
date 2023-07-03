@@ -57,7 +57,6 @@ void ArkkioScalarPostprocessor<dim>::process(const Triangulation<dim>&  triangul
 
     AssertThrow(std::abs(nu-nu_0) < 1e-3, ExcInternalError())
 
-    //
     double r1=std::numeric_limits<double>::infinity();
     double r2=-std::numeric_limits<double>::infinity();
     result = 0;

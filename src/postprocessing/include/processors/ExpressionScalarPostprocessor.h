@@ -15,7 +15,7 @@
 using namespace dealii;
 
 template <int dim>
-class ExpressionScalarPostprocessor : ScalarPostprocessor<dim> {
+class ExpressionScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
     explicit ExpressionScalarPostprocessor(const std::string&);
@@ -29,9 +29,6 @@ public:
                  double& result);
 
 private:
-//    const Triangulation<dim> *triangulation_ptr = nullptr;
-//    const Vector<double> *solution_ptr = nullptr;
-//    const FE_Q<dim> *fe_ptr = nullptr;
 
     std::string user_expression;
     const std::unordered_map<int, double>* nu_map_ptr = nullptr;

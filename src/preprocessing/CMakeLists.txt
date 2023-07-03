@@ -2,7 +2,7 @@ add_library(preprocessing OBJECT
         Dummy.cpp
         include/IPeriodicityMapper.h
         include/LinePeriodicityMapper.h
-        include/CirclePeriodicityMapper.h include/ConfigParser.h)
+        include/CirclePeriodicityMapper.h include/ConfigParser.h include/RegexPatterns.h)
 
 target_include_directories(preprocessing PUBLIC include)
 target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)

@@ -12,7 +12,7 @@
 
 #include "export/ExportVtu.h"
 #include "processors/ExpressionCellPostprocessor.h"
-#include "processors/ExpressionScalarPostprocessor.h"
+#include "processors/ScalarPostprocessorFactory.h"
 #include "misc.h"
 #include "exprtk.hpp"
 #include "ConfigParser.h"
@@ -206,19 +206,23 @@ int main(int argc, char* argv[]){
         std::cout << "Solving system..." << std::endl;
         solver.solve();
 
-        // Export
+        // Create vector postprocessors
         std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
         for (auto& user_post_data : postprocess_data.items())
             user_expr_postprocessors[user_post_data.key()] = new ExpressionCellPostprocessor<2>(user_post_data.value(), nu_map, f_map);
 
-        std::map<std::string, ExpressionScalarPostprocessor<2>*> user_expr_sum_postprocessors;
+        // Create scalar postprocessors
+        std::map<std::string, ScalarPostprocessor<2>*> user_expr_sum_postprocessors;
+        ScalarPostprocessorFactory<2> scalar_postprocessor_factory(nu_map, f_map);
         for (auto& user_post_sum_data : postprocess_sum_data.items())
-            user_expr_sum_postprocessors[user_post_sum_data.key()] = new ExpressionScalarPostprocessor<2>(user_post_sum_data.value(), nu_map, f_map);
+            user_expr_sum_postprocessors[user_post_sum_data.key()] = scalar_postprocessor_factory.create(user_post_sum_data.value());
 
+        // Attach vector postprocessors to Exporters
         ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
         for (auto [key, val] : user_expr_postprocessors)
             export_vtu.attach_postprocessor(val, key);
 
+        // Perform postprocessing of scalar postprocessors
         std::unordered_map<std::string, double> results_map;
         double result_sum = 0;
         for (auto [key, val] : user_expr_sum_postprocessors){
@@ -226,6 +230,8 @@ int main(int argc, char* argv[]){
             results_map[key] = result_sum;
         }
 
+        // Perform vector postprocessing and export to vtu.
+        // TODO: separate pefrom and write.
         export_vtu.write(output);
         std::cout << "Output written to " << output.concat(".vtu") << std::endl;
         for (auto [key, val] : results_map){
