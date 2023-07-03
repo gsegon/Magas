@@ -50,6 +50,9 @@ TEST(PointBabsScalarPostprocessor, torque_benchmark_kelvin_1){
     double result;
     point_b_abs.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
     std::cout << "result: " << result << std::endl;
+    ASSERT_NEAR(result, 1.04108, 1e-3);
+
+
 }
 
 

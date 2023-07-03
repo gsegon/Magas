@@ -37,13 +37,13 @@ void PointBabsScalarPostprocessor<dim>::process(const Triangulation<dim>&  trian
                                                  const FE_Q<dim>&           fe,
                                                  double& result) {
 
-    triangulation_ptr = &triangulation;
-    solution_ptr = &solution;
-    fe_ptr = &fe;
+    this->triangulation_ptr = &triangulation;
+    this->solution_ptr = &solution;
+    this->fe_ptr = &fe;
 
     std::vector<Point<dim>> q_points;
-    DoFHandler<dim> dof_handler(*triangulation_ptr);
-    dof_handler.distribute_dofs(*fe_ptr);
+    DoFHandler<dim> dof_handler(*(this->triangulation_ptr));
+    dof_handler.distribute_dofs(*(this->fe_ptr));
 
     Point<dim> deal_point{point[0], point[1]};
 

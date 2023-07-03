@@ -10,14 +10,15 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
+#include "ScalarPostprocessor.h"
 
 using namespace dealii;
 
 template <int dim>
-class ExpressionScalarPostprocessor {
+class ExpressionScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
-    ExpressionScalarPostprocessor(const std::string&);
+    explicit ExpressionScalarPostprocessor(const std::string&);
     ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&);
     ExpressionScalarPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
     ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
@@ -28,9 +29,6 @@ public:
                  double& result);
 
 private:
-    const Triangulation<dim> *triangulation_ptr = nullptr;
-    const Vector<double> *solution_ptr = nullptr;
-    const FE_Q<dim> *fe_ptr = nullptr;
 
     std::string user_expression;
     const std::unordered_map<int, double>* nu_map_ptr = nullptr;

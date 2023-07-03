@@ -54,7 +54,7 @@ template class PicardSolver<2>;
 
 template<int dim>
 PicardSolver<dim>::PicardSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
-{};
+{}
 
 template<int dim>
 void PicardSolver<dim>::read_mesh(const std::string& mesh_filepath) {
@@ -67,7 +67,7 @@ void PicardSolver<dim>::read_mesh(const std::string& mesh_filepath) {
 template<int dim>
 Triangulation<dim>& PicardSolver<dim>::get_triangulation(){
     return this->triangulation;
-};
+}
 
 template<int dim>
 void PicardSolver<dim>::setup_system() {
