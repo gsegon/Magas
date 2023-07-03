@@ -15,7 +15,7 @@
 using namespace dealii;
 
 template <int dim>
-class PointBabsScalarPostprocessor : ScalarPostprocessor<dim> {
+class PointBabsScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
     explicit PointBabsScalarPostprocessor(std::vector<double>);

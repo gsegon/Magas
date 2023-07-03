@@ -15,7 +15,7 @@
 using namespace dealii;
 
 template <int dim>
-class ArkkioScalarPostprocessor : ScalarPostprocessor<dim> {
+class ArkkioScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
     ArkkioScalarPostprocessor(unsigned int, const std::unordered_map<int, double>&);

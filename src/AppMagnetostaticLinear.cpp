@@ -228,6 +228,7 @@ int main(int argc, char* argv[]){
         for (auto [key, val] : user_expr_sum_postprocessors){
             val->process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_sum);
             results_map[key] = result_sum;
+            delete val;
         }
 
         // Perform vector postprocessing and export to vtu.
