@@ -7,7 +7,7 @@
 
 #include "BHCurve.h"
 
-class LinearBHCurve : BHCurve {
+class LinearBHCurve : public BHCurve {
 
 public:
     LinearBHCurve(double nu);

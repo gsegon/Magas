@@ -2,8 +2,8 @@
 // Created by gordan on 7/5/23.
 //
 
-#ifndef MAGAS_LINEARBHCURVE_H
-#define MAGAS_LINEARBHCURVE_H
+#ifndef MAGAS_ANALYTICBHCURVE_H
+#define MAGAS_ANALYTICBHCURVE_H
 
 #include "BHCurve.h"
 
@@ -23,4 +23,4 @@ private:
 };
 
 
-#endif //MAGAS_LINEARBHCURVE_H
+#endif //MAGAS_ANALYTICBHCURVE_H

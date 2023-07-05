@@ -26,6 +26,7 @@ add_executable(test_solver
         test/test_PicardSolver.cpp
         test/test_NewtonSolver.cpp)
 
+#TODO: Remoce dependency to test_solver -> preprocessing
 target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver preprocessing)
 DEAL_II_SETUP_TARGET(test_solver)
 

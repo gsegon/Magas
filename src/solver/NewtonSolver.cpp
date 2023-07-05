@@ -28,6 +28,7 @@
 
 #include "NewtonSolver.h"
 #include "AnalyticBHCurve.h"
+#include "LinearBHCurve.h"
 
 using namespace dealii;
 
@@ -36,7 +37,7 @@ template class NewtonSolver<2>;
 template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
 {
-    bh = new AnalyticBHCurve{};
+    bh = new LinearBHCurve{318.30988601};
 };
 
 template<int dim>
@@ -186,7 +187,6 @@ void NewtonSolver<dim>::solve(const double alpha){
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
     hanging_node_constraints.distribute(newton_update);
-
     current_solution.add(alpha, newton_update);
 
 }
