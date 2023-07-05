@@ -9,7 +9,7 @@
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
 
-#include "BHCurve.h"
+#include "../../solver/include/BHCurve.h"
 
 class InterpolatedBHCurve : public BHCurve {
 
