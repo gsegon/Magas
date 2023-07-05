@@ -23,7 +23,7 @@ add_executable(test_solver
         test/test_LinearSolver.cpp
         test/test_PicardSolver.cpp)
 
-target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver)
+target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver preprocessing)
 DEAL_II_SETUP_TARGET(test_solver)
 
 add_test(test_solver_gtest test_solver)

@@ -7,18 +7,20 @@
 
 
 #include <vector>
+#include <set>
 
 class IPeriodicityMapper{
 
 public:
-//    IPeriodicityMapper(std::vector<unsigned int>, std::vector<unsigned int>, std::vector<std::vector<double>>);
     virtual std::set<std::pair<unsigned int, unsigned int>> get_matched_pair_indices() = 0;
+    virtual double get_weigth() = 0;
 
 protected:
     std::vector<unsigned int> a_dofs;
     std::vector<unsigned int> b_dofs;
     std::map<unsigned int, std::vector<double>> dof_to_nodes;
     std::set<std::pair<unsigned int, unsigned int>> matched_pairs;
+    double weigth;
 
 };
 
