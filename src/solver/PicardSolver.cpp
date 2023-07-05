@@ -28,7 +28,6 @@
 #include "include/PicardSolver.h"
 using namespace dealii;
 
-
 double h_fun_1(double b){
     double alpha = 2077.205761389225;
     double beta = 5.289952851132246;
