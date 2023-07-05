@@ -5,7 +5,7 @@
 
 #include "LinePeriodicityMapper.h"
 
-TEST(LinePeriodicityMapper, basic) {
+TEST(TestLinePeriodicityMapper, basic) {
 
     std::set<std::pair<unsigned int, unsigned int>> truth{
                                                               {1, 5},
@@ -35,7 +35,7 @@ TEST(LinePeriodicityMapper, basic) {
 
 }
 
-TEST(LinePeriodicityMapper, distance_too_big) {
+TEST(TestLinePeriodicityMapper, distance_too_big) {
 
     std::set<std::pair<unsigned int, unsigned int>> truth{
             {1, 5},

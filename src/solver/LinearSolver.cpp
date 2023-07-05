@@ -33,10 +33,9 @@
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/multithread_info.h>
 
-#include "LinearSolver.h"
-#include "LinePeriodicityMapper.h"
-#include "CirclePeriodicityMapper.h"
 #include "IPeriodicityMapper.h"
+#include "PeriodicityMapperFactory.h"
+#include "LinearSolver.h"
 
 
 using namespace dealii;
@@ -77,17 +76,7 @@ void LinearSolver<dim>::setup_system() {
         const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
         const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
 
-        //TODO: Move periodic mapping outside, in a separate class/utility.
-        double weight = 0;
-        if (per_type == "periodic-line" or per_type == "periodic-circle")
-            weight = 1;
-        else if (per_type == "anti-periodic-line" or per_type == "anti-periodic-circle")
-            weight = -1;
 
-        AssertThrow (   (per_type == "periodic-line") or
-                        (per_type == "anti-periodic-line") or
-                        (per_type == "periodic-circle") or
-                        (per_type == "anti-periodic-circle"), ExceptionBase())
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
         std::vector<Point<dim>> nodes(dof_handler.n_dofs());
@@ -107,13 +96,9 @@ void LinearSolver<dim>::setup_system() {
             dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
         }
 
-
-        IPeriodicityMapper* pm = nullptr;
-        if (per_type == "periodic-line" or per_type == "anti-periodic-line")
-            pm = new LinePeriodicityMapper{dofs_1, dofs_2, dof_to_node};
-        else if(per_type == "periodic-circle" or per_type == "anti-periodic-circle")
-            pm = new CirclePeriodicityMapper{dofs_1, dofs_2, dof_to_node};
-
+        // Refactor to factory
+        PeriodicityMapperFactory pmf{dofs_1, dofs_2, dof_to_node};
+        IPeriodicityMapper* pm = pmf.create(per_type);
         auto matched_pairs = pm->get_matched_pair_indices();
 
         for (auto matched_pair: matched_pairs){
@@ -122,7 +107,7 @@ void LinearSolver<dim>::setup_system() {
             auto second = matched_pair.second;
 
             constraints.add_line(first);
-            constraints.add_entry(first, second, weight);
+            constraints.add_entry(first, second, pm->get_weigth());
         }
     }
 
