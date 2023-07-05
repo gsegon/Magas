@@ -33,7 +33,6 @@
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/multithread_info.h>
 
-#include "IPeriodicityMapper.h"
 #include "PeriodicityMapperFactory.h"
 #include "LinearSolver.h"
 
@@ -98,7 +97,7 @@ void LinearSolver<dim>::setup_system() {
 
         // Refactor to factory
         PeriodicityMapperFactory pmf{dofs_1, dofs_2, dof_to_node};
-        IPeriodicityMapper* pm = pmf.create(per_type);
+        auto pm = pmf.create(per_type);
         auto matched_pairs = pm->get_matched_pair_indices();
 
         for (auto matched_pair: matched_pairs){
