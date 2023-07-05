@@ -28,6 +28,7 @@
 
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
+#include "BHCurve.h"
 
 
 using namespace dealii;
@@ -81,6 +82,8 @@ private:
     std::unordered_map<int, std::any> nu_map;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
+
+    BHCurve* bh;
 
 };
 

@@ -27,58 +27,17 @@
 #include <variant>
 
 #include "NewtonSolver.h"
+#include "AnalyticBHCurve.h"
+
 using namespace dealii;
 
-namespace Newton{
-
-    double h_fun_1(double b){
-        double alpha = 2077.205761389225;
-        double beta = 5.289952851132246;
-
-        return alpha*b+std::exp(beta*b)-1;
-    }
-
-    double h_fun(double b){
-
-        double nu_0 = 795774.715025;
-        double b_sat = 2.2530727020352703;
-        double theta = -1638220.518181392;
-
-        if (b < b_sat)
-            return h_fun_1(b);
-        else
-            return nu_0*b + theta;
-
-    }
-
-    double nu_fun(double b){
-        double alpha = 2077.205761389225;
-        if (b == 0)
-            return alpha;
-        else
-            return h_fun(b)/b;
-    }
-
-    double nu_fun_prime(double b){
-        double nu_0 = 795774.715025;
-        double b_sat = 2.2530727020352703;
-        double theta = -1638220.518181392;
-        double beta = 5.289952851132246;
-
-        if (b == 0){
-            return 0;
-        }
-        else if (b < b_sat)
-            return beta*std::exp(beta*b)/b +(1-std::exp(beta*b))/(b*b);
-        else
-            return -theta/(b*b);
-    }
-}
 template class NewtonSolver<2>;
 
 template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
-{};
+{
+    bh = new AnalyticBHCurve{};
+};
 
 template<int dim>
 void NewtonSolver<dim>::read_mesh(const std::string& mesh_filepath) {
@@ -167,7 +126,7 @@ void NewtonSolver<dim>::assemble_system() {
 
             if (nu_map.at(cell->material_id()).type() != typeid(double)){
                 double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
-                no = Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
+                no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
             }
             else
                 no = std::any_cast<double>(nu_map.at(cell->material_id()));
@@ -283,7 +242,7 @@ double NewtonSolver<dim>::compute_residual() const
         for (unsigned int q = 0; q < n_q_points; ++q){
             if (nu_map.at(cell->material_id()).type() != typeid(double)){
                 double b_abs = std::sqrt(std::pow(gradients[q][0],2) + std::pow(gradients[q][1],2));
-                no = Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
+                no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs;
             }
             else
                 no = std::any_cast<double>(nu_map.at(cell->material_id()));
