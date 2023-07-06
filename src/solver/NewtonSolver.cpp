@@ -115,16 +115,22 @@ void NewtonSolver<dim>::setup_system(const bool initial_step) {
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
     sparsity_pattern.copy_from(dsp);
 
-    system_matrix.reinit(sparsity_pattern);
+    // Reset done just before assembly
+//    system_matrix.reinit(sparsity_pattern);
+//    system_rhs.reinit(dof_handler.n_dofs());
 
-    system_rhs.reinit(dof_handler.n_dofs());
-    newton_update.reinit(dof_handler.n_dofs());
+    // newton update reset just before solving
+//    newton_update.reinit(dof_handler.n_dofs());
 
 
 }
 
 template<int dim>
 void NewtonSolver<dim>::assemble_system() {
+
+    // Rest system matrix, system rhs before assembly
+    system_matrix.reinit(sparsity_pattern);
+    system_rhs.reinit(dof_handler.n_dofs());
 
     WorkStream::run(dof_handler.begin_active(),
                     dof_handler.end(),
@@ -234,12 +240,15 @@ void NewtonSolver<dim>::solve(const double alpha){
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
     preconditioner.initialize(system_matrix, 1.2);
 
+    newton_update.reinit(dof_handler.n_dofs());
     solver.solve(system_matrix, newton_update, system_rhs, preconditioner);
     std::cout << "\tnewton_update.norm_sqr()" << newton_update.norm_sqr() << std::endl;
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
-    constraints.distribute(newton_update);
+    // Why is this needed? Is it needed? TODO: Confirm with periodic boundary cases.
+//    constraints.distribute(newton_update);
 
+    // Apply Newton step to current_solution
     current_solution.add(alpha, newton_update);
 
 }

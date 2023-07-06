@@ -116,7 +116,7 @@ TEST(TestNewtonSolver, solve){
     int i = 0;
     double alpha = 0.0;
     while(i++ < 50){
-        solver.setup_system(false);
+//        solver.setup_system(false);
         solver.assemble_system();
         if (i < 5){
             alpha = 0.1;
@@ -135,7 +135,7 @@ TEST(TestNewtonSolver, solve){
 
 }
 
-TEST(NewtonSolver, EI_core){
+TEST(TestNewtonSolver, EI_core){
 
     constexpr double mu_0 = 1.2566370621219e-6;
     constexpr double nu_0 = 1/mu_0;
@@ -173,7 +173,7 @@ TEST(NewtonSolver, EI_core){
     int i = 0;
     double alpha = 0.0;
     while(i++ < 50){
-        solver.setup_system(false);
+//        solver.setup_system(false);
         if (i < 10)
             alpha = 0.1;
         else if (i < 15)
