@@ -38,7 +38,7 @@ template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
 {
     bh = new LinearBHCurve{318.30988601};
-};
+}
 
 template<int dim>
 void NewtonSolver<dim>::read_mesh(const std::string& mesh_filepath) {
@@ -51,7 +51,7 @@ void NewtonSolver<dim>::read_mesh(const std::string& mesh_filepath) {
 template<int dim>
 Triangulation<dim>& NewtonSolver<dim>::get_triangulation(){
     return this->triangulation;
-};
+}
 
 template<int dim>
 void NewtonSolver<dim>::setup_system(const bool initial_step) {

@@ -5,7 +5,7 @@
 #ifndef MAGAS_ANALYTICBHCURVE_H
 #define MAGAS_ANALYTICBHCURVE_H
 
-#include "../../solver/include/BHCurve.h"
+#include "BHCurve.h"
 
 class AnalyticBHCurve : public BHCurve {
 

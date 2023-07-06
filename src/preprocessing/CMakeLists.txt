@@ -2,13 +2,17 @@ add_library(preprocessing OBJECT
         Dummy.cpp
         src/PeriodicityMapperFactory.cpp
         src/LinePeriodicityMapper.cpp
-        src/CirclePeriodicityMapper.cpp)
+        src/CirclePeriodicityMapper.cpp
+        src/LinearBHCurve.cpp
+        src/InterpolatedBHCurve.cpp
+        src/AnalyticBHCurve.cpp)
 
 target_include_directories(preprocessing PUBLIC include)
 target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
 target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
 target_link_libraries(preprocessing optimized
-        tbb)
+        tbb
+        gsl)
 
 # test preprocessing
 find_package(GTest REQUIRED)

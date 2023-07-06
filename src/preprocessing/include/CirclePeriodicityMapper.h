@@ -13,7 +13,7 @@
 #include <cassert>
 #include <algorithm>
 #include <cmath>
-#include "../../solver/include/IPeriodicityMapper.h"
+#include "IPeriodicityMapper.h"
 
 
 using namespace std;
