@@ -34,7 +34,6 @@ TEST(CirclePeriodicityMapper, translated) {
     auto pairs = lpm.get_matched_pair_indices();
 
     ASSERT_EQ(pairs, truth);
-
 }
 
 TEST(CirclePeriodicityMapper, distance_too_big) {
@@ -72,5 +71,4 @@ TEST(CirclePeriodicityMapper, distance_too_big) {
         cout << "Exception thrown (expected): " << error.what() << endl;
         ASSERT_TRUE(1);
     }
-
 }
