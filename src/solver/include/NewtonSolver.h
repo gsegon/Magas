@@ -49,10 +49,10 @@ public:
     void setup_system(const bool initial_step);
     void assemble_system();
     void solve(const double alpha);
-//    void solve_nonlinear(int);
     void set_nu_map(std::unordered_map<int, BHCurve*>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
+    void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
     double compute_residual() const;
 
     Triangulation<dim>& get_triangulation();
@@ -68,12 +68,33 @@ private:
     DoFHandler<dim> dof_handler;
     QGauss<dim> quadrature_formula;
 
+
+
+    AffineConstraints<double> constraints;
+
+    struct AssemblyScratchData{
+        AssemblyScratchData(const FiniteElement<dim> &fe);
+        AssemblyScratchData(const AssemblyScratchData &scratch_data);
+
+        FEValues<dim> fe_values;
+        std::vector<double> rhs_values;
+    };
+
+    struct AssemblyCopyData{
+        FullMatrix<double> cell_matrix;
+        Vector<double> cell_rhs;
+        std::vector<types::global_dof_index> local_dof_indices;
+    };
+
+    void local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator& cell,
+                               AssemblyScratchData& scratch,
+                               AssemblyCopyData& copy_data);
+    void copy_local_to_global(const AssemblyCopyData &copy_data);
+
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
-    AffineConstraints<double> hanging_node_constraints;
-
-    Vector<double> solution;
+//    Vector<double> solution;
     Vector<double> system_rhs;
 
     Vector<double> current_solution;
@@ -82,6 +103,7 @@ private:
     std::unordered_map<int, BHCurve*> nu_map;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
+    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 
 
 };

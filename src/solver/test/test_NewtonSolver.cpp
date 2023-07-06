@@ -16,13 +16,13 @@
 
 using namespace dealii;
 
-TEST(NewtonSolver, instantiation){
+TEST(TestNewtonSolver, instantiation){
 
     NewtonSolver<2> solver;
 
 }
 
-TEST(NewtonSolver, read_mesh){
+TEST(TestNewtonSolver, read_mesh){
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
@@ -32,7 +32,7 @@ TEST(NewtonSolver, read_mesh){
 
 }
 
-TEST(NewtonSolver, setup_system){
+TEST(TestNewtonSolver, setup_system){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
@@ -43,7 +43,7 @@ TEST(NewtonSolver, setup_system){
 
 }
 
-TEST(NewtonSolver, set_maps){
+TEST(TestNewtonSolver, set_maps){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
@@ -53,15 +53,15 @@ TEST(NewtonSolver, set_maps){
 
     NewtonSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system(true);
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system(true);
 
 
 }
 
-TEST(NewtonSolver, assemble){
+TEST(TestNewtonSolver, assemble){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
@@ -71,15 +71,15 @@ TEST(NewtonSolver, assemble){
 
     NewtonSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system(true);
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system(true);
     solver.assemble_system();
 
 }
 
-TEST(NewtonSolver, solve){
+TEST(TestNewtonSolver, solve_initial){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
@@ -89,14 +89,34 @@ TEST(NewtonSolver, solve){
 
     NewtonSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system(true);
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system(true);
+    solver.assemble_system();
+    solver.solve(0.1);
+
+}
+
+TEST(TestNewtonSolver, solve){
+
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
+
+    NewtonSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.set_nu_map(nu_map);
+    solver.set_f_map(f_map);
+    solver.set_dc_map(dc_map);
+    solver.setup_system(true);
 
     int i = 0;
     double alpha = 0.0;
     while(i++ < 50){
+        solver.setup_system(false);
         solver.assemble_system();
         if (i < 5){
             alpha = 0.1;
@@ -145,15 +165,15 @@ TEST(NewtonSolver, EI_core){
 
     NewtonSolver<2> solver;
     solver.read_mesh(test_mesh);
-    solver.setup_system(true);
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
+    solver.setup_system(true);
 
     int i = 0;
     double alpha = 0.0;
     while(i++ < 50){
-
+        solver.setup_system(false);
         if (i < 10)
             alpha = 0.1;
         else if (i < 15)

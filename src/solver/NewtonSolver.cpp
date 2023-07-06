@@ -25,11 +25,13 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/function_cspline.h>
 #include <variant>
+#include <deal.II/base/work_stream.h>
 
 #include "NewtonSolver.h"
 #include "AnalyticBHCurve.h"
 #include "LinearBHCurve.h"
 #include "InterpolatedBHCurve.h"
+#include "PeriodicityMapperFactory.h"
 
 using namespace dealii;
 
@@ -37,9 +39,7 @@ template class NewtonSolver<2>;
 
 template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
-{
-//    bh = new LinearBHCurve{318.30988601};
-}
+{}
 
 template<int dim>
 void NewtonSolver<dim>::read_mesh(const std::string& mesh_filepath) {
@@ -61,119 +61,172 @@ void NewtonSolver<dim>::setup_system(const bool initial_step) {
         dof_handler.distribute_dofs(fe);
         current_solution.reinit(dof_handler.n_dofs());
 
-        hanging_node_constraints.clear();
-        DoFTools::make_hanging_node_constraints(dof_handler, hanging_node_constraints);
+        constraints.clear();
+        // Apply 0 DC boundary conditions
+        for (auto& [mat_id, value] : dc_map){
+            std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
+            VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
+        }
 
-        hanging_node_constraints.close();
+        // Apply periodic or anti-periodic boundary conditions
+        for (auto [per_type, boundary_ids] : per_map){
+            const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
+            const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
+
+
+            AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
+
+            std::vector<Point<dim>> nodes(dof_handler.n_dofs());
+            DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
+
+            std::map<unsigned int, std::vector<double>> dof_to_node;
+            std::vector<unsigned int> dofs_1;
+            std::vector<unsigned int> dofs_2;
+
+            for (auto dof : b_dofs_1){
+                dofs_1.push_back(dof);
+                dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
+            }
+
+            for (auto dof : b_dofs_2){
+                dofs_2.push_back(dof);
+                dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
+            }
+
+            // Refactor to factory
+            PeriodicityMapperFactory pmf{dofs_1, dofs_2, dof_to_node};
+            auto pm = pmf.create(per_type);
+            auto matched_pairs = pm->get_matched_pair_indices();
+
+            for (auto matched_pair: matched_pairs){
+
+                auto first = matched_pair.first;
+                auto second = matched_pair.second;
+
+                constraints.add_line(first);
+                constraints.add_entry(first, second, pm->get_weigth());
+            }
+        }
+        constraints.close();
     }
 
-    newton_update.reinit(dof_handler.n_dofs());
-    system_rhs.reinit(dof_handler.n_dofs());
+
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
-    DoFTools::make_sparsity_pattern(dof_handler, dsp);
+    DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
     sparsity_pattern.copy_from(dsp);
 
     system_matrix.reinit(sparsity_pattern);
+
+    system_rhs.reinit(dof_handler.n_dofs());
+    newton_update.reinit(dof_handler.n_dofs());
+
 
 }
 
 template<int dim>
 void NewtonSolver<dim>::assemble_system() {
 
-    system_matrix = 0;
-    system_rhs = 0;
-
-    FEValues<dim> fe_values(fe, quadrature_formula, update_values | update_gradients | update_quadrature_points |
-                                                    update_JxW_values);
-
-    const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
-    const unsigned n_q_points = quadrature_formula.size();
-
-    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-    Vector<double> cell_rhs(dofs_per_cell);
-
-    std::vector<Tensor<1, dim>> old_solution_gradients(n_q_points);
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    // Iterate over cells and assemble to local and move to global
-    for (const auto &cell : dof_handler.active_cell_iterators()){
-
-        double no = 0;
-        double f = 0;
-        Tensor<1, dim> Hc({0, 0});
-
-        cell_matrix = 0.0;
-        cell_rhs = 0.0;
-
-        fe_values.reinit(cell);
-        fe_values.get_function_gradients(current_solution, old_solution_gradients);
-
-        auto f_variant = f_map.at(cell->material_id());
-        if(std::holds_alternative<double>(f_variant)){
-            f = std::get<double>(f_variant);
-            Hc[0] = 0;
-            Hc[1] = 0;
-        }
-        else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
-            f = 0;
-            Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
-            Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
-        }
-        else{
-            std::cout << "Something else?" << std::endl;
-        }
-
-        // Ass. into a local system
-        for (const unsigned int q : fe_values.quadrature_point_indices()){
-
-            auto bh = nu_map.at(cell->material_id());
-            double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
-            no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
-
-            for (const unsigned int i : fe_values.dof_indices()){
-                for (const unsigned int j : fe_values.dof_indices()){
-                    cell_matrix(i, j) += no*                      // nu at cell
-                                         fe_values.shape_grad(i, q)*        // grad phi_i(x_q)
-                                         fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
-                                         fe_values.JxW(q);                 // dx
-                }
-                cell_rhs(i) += (f*fe_values.shape_value(i, q)                               // (f
-                                -                                   // -
-                                no*                                 // nu at cell*
-                                fe_values.shape_grad(i, q)*       // phi_i(x_q)*
-                                old_solution_gradients[q]           //nabla u_n
-                               )*                                  // )*
-                               fe_values.JxW(q);                   // dx
-            }
-        }
-
-        // Ass. local system into global
-        cell->get_dof_indices(local_dof_indices);
-        for (const unsigned int i : fe_values.dof_indices()){
-            for (const unsigned int j : fe_values.dof_indices()){
-                system_matrix.add(local_dof_indices[i], local_dof_indices[j], cell_matrix(i, j));
-            }
-            system_rhs(local_dof_indices[i]) += cell_rhs(i);
-        }
-    }
-
-    hanging_node_constraints.condense(system_matrix);
-    hanging_node_constraints.condense(system_rhs);
-
-    // Apply boundary conditions
-    std::map<types::global_dof_index, double> boundary_values;
-    for (auto& [mat_id, value] : dc_map){
-        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), boundary_values);
-    }
-
-    MatrixTools::apply_boundary_values(boundary_values,system_matrix,newton_update,system_rhs);
-
-    std::cout << "Number of dofs: " << dof_handler.n_dofs() << std::endl;
-
+    WorkStream::run(dof_handler.begin_active(),
+                    dof_handler.end(),
+                    *this,
+                    &NewtonSolver::local_assemble_system,
+                    &NewtonSolver::copy_local_to_global,
+                    AssemblyScratchData(fe),
+                    AssemblyCopyData());
 }
 
 template<int dim>
+NewtonSolver<dim>::AssemblyScratchData::AssemblyScratchData(const FiniteElement<dim> &fe):
+        fe_values(fe, QGauss<dim>(fe.degree + 1), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+        rhs_values(fe_values.get_quadrature().size())
+{}
+
+template<int dim>
+NewtonSolver<dim>::AssemblyScratchData::AssemblyScratchData(const AssemblyScratchData& scratch_data):
+        fe_values(scratch_data.fe_values.get_fe(), scratch_data.fe_values.get_quadrature(), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+        rhs_values(scratch_data.rhs_values.size())
+{}
+
+template<int dim>
+void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                              NewtonSolver::AssemblyScratchData &scratch_data,
+                                              NewtonSolver::AssemblyCopyData &copy_data) {
+
+    double no = 0;
+    double f = 0;
+    Tensor<1, dim> Hc({0, 0});
+
+    const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    const unsigned int n_q_points = scratch_data.fe_values.get_quadrature().size();
+
+    copy_data.cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
+    copy_data.cell_rhs.reinit(dofs_per_cell);
+    copy_data.local_dof_indices.resize(dofs_per_cell);
+
+    std::vector<Tensor<1, dim>> old_solution_gradients(n_q_points);
+
+    scratch_data.fe_values.reinit(cell);
+    scratch_data.fe_values.get_function_gradients(current_solution, old_solution_gradients);
+
+    auto f_variant = f_map.at(cell->material_id());
+    if(std::holds_alternative<double>(f_variant)){
+        f = std::get<double>(f_variant);
+        Hc[0] = 0;
+        Hc[1] = 0;
+    }
+    else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
+        f = 0;
+        Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
+        Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
+    }
+    else{
+        throw std::runtime_error("Invalid source input for material_id=" + std::to_string(cell->material_id()) + ". Check problem definition file.");
+    }
+
+    for (unsigned int q = 0; q < n_q_points; q++){
+
+        auto bh = nu_map.at(cell->material_id());
+        double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
+        no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
+
+
+        for (unsigned int i = 0; i < dofs_per_cell; i++){
+            const auto &sd = scratch_data;
+            for (unsigned int j = 0; j < dofs_per_cell; j++){
+                copy_data.cell_matrix(i, j) += no*                      // nu at cell
+                                               sd.fe_values.shape_grad(i, q)*        // grad phi_i(x_q)
+                                               sd.fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
+                                               sd.fe_values.JxW(q);                 // dx
+            }
+            // Current + Magnet contribution - (...)
+            copy_data.cell_rhs(i) += ((f*sd.fe_values.shape_value(i, q)+Hc*sd.fe_values.shape_grad(i, q))                               // (f
+                                      -                                   // -
+                                      no*                                 // nu at cell*
+                                      sd.fe_values.shape_grad(i, q)*       // phi_i(x_q)*
+                                      old_solution_gradients[q]           //nabla u_n
+                                     )*                                  // )*
+                                     sd.fe_values.JxW(q);                   // dx
+
+        }
+    }
+
+    cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template<int dim>
+void NewtonSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) {
+    constraints.distribute_local_to_global(
+            copy_data.cell_matrix,
+            copy_data.cell_rhs,
+            copy_data.local_dof_indices,
+            system_matrix,
+            system_rhs);
+}
+
+
+template<int dim>
 void NewtonSolver<dim>::solve(const double alpha){
+
 
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
@@ -182,9 +235,11 @@ void NewtonSolver<dim>::solve(const double alpha){
     preconditioner.initialize(system_matrix, 1.2);
 
     solver.solve(system_matrix, newton_update, system_rhs, preconditioner);
+    std::cout << "\tnewton_update.norm_sqr()" << newton_update.norm_sqr() << std::endl;
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
-    hanging_node_constraints.distribute(newton_update);
+    constraints.distribute(newton_update);
+
     current_solution.add(alpha, newton_update);
 
 }
@@ -193,10 +248,12 @@ template <int dim>
 double NewtonSolver<dim>::compute_residual() const
 {
     Vector<double> residual(dof_handler.n_dofs());
+//    std::cout << "residual.norm_sqr(): " << residual.norm_sqr() << std::endl;
 
     Vector<double> evaluation_point(dof_handler.n_dofs());
     evaluation_point = current_solution;
     //evaluation_point.add(alpha, newton_update);
+//    std::cout << "current_solution.norm_sqr()" << current_solution.norm_sqr() << std::endl;
 
     FEValues<dim>     fe_values(fe,
                                 quadrature_formula,
@@ -243,7 +300,7 @@ double NewtonSolver<dim>::compute_residual() const
             no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                cell_residual(i) += (f*fe_values.shape_value(i, q)
+                cell_residual(i) += ((f*fe_values.shape_value(i, q)+Hc*fe_values.shape_grad(i, q))
                                      - fe_values.shape_grad(i, q)         // \nabla \phi_i
                                        * no                               // * a_n
                                        * gradients[q])                        // * \nabla u_n
@@ -255,27 +312,13 @@ double NewtonSolver<dim>::compute_residual() const
             residual(local_dof_indices[i]) += cell_residual(i);
     }
 
-    hanging_node_constraints.condense(residual);
+    constraints.distribute(residual);
 
-    for (types::global_dof_index i : DoFTools::extract_boundary_dofs(dof_handler))
-        residual(i) = 0;
+//    for (types::global_dof_index i : DoFTools::extract_boundary_dofs(dof_handler))
+//        residual(i) = 0;
 
     return residual.l2_norm();
 }
-
-
-//template<int dim>
-//void NewtonSolver<dim>::solve_nonlinear(int max_iterations){
-//
-//    while(max_iterations--){
-//        assemble_system();
-//        double last_residual_norm = system_rhs.l2_norm();
-//        solve();
-//
-//        std::cout << "  Residual: " << compute_residual(0) << std::endl;
-//    }
-//}
-
 
 template<int dim>
 void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, BHCurve*> map) {
@@ -293,8 +336,13 @@ void NewtonSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
 }
 
 template<int dim>
+void NewtonSolver<dim>::set_per_map(std::unordered_map<std::string, std::vector<unsigned int>> map) {
+    this->per_map = map;
+}
+
+template<int dim>
 Vector<double>& NewtonSolver<dim>::get_solution(){
-    return this->solution;
+    return this->current_solution;
 }
 
 template<int dim>
