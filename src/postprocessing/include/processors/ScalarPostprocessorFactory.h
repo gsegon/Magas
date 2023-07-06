@@ -9,16 +9,17 @@
 #include <variant>
 
 #include "ScalarPostprocessor.h"
+#include "BHCurve.h"
 
 template<int dim>
 class ScalarPostprocessorFactory {
 
 public:
-    ScalarPostprocessorFactory(const std::unordered_map<int, double>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ScalarPostprocessorFactory(const std::unordered_map<int, BHCurve*>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
     ScalarPostprocessor<dim>* create(std::string input_string);
 
 protected:
-    const std::unordered_map<int, double>* nu_map_ptr = nullptr;
+    const std::unordered_map<int, BHCurve*>* nu_map_ptr = nullptr;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>>* f_map_ptr = nullptr;
 
 };

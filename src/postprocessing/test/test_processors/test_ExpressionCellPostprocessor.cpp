@@ -10,15 +10,18 @@
 #include <filesystem>
 
 #include "LinearSolver.h"
+#include "NewtonSolver.h"
 #include "processors/ExpressionCellPostprocessor.h"
+#include "BHCurve.h"
+#include "LinearBHCurve.h"
 
-TEST(ExpressionCellPostprocessor, unit_square){
+TEST(TestExpressionCellPostprocessor, unit_square){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
 
-    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -30,6 +33,35 @@ TEST(ExpressionCellPostprocessor, unit_square){
     solver.setup_system();
     solver.assemble_system();
     solver.solve();
+
+    ExpressionCellPostprocessor<2> expression_postp{"if(Bx_q1 >0.0, 1, 0)"};
+
+    std::vector<double> result;
+    expression_postp.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
+
+    for (auto res: result)
+        std::cout << res << ", " << std::endl;
+
+}
+
+TEST(TestExpressionCellPostprocessorNonlinear, unit_square){
+
+    std::filesystem::path home = std::getenv("HOME");
+    std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
+
+
+    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, double> dc_map{{5, 0}};
+
+    NewtonSolver<2> solver;
+    solver.read_mesh(test_mesh);
+    solver.set_nu_map(nu_map);
+    solver.set_f_map(f_map);
+    solver.set_dc_map(dc_map);
+    solver.setup_system(true);
+    solver.assemble_system();
+    solver.solve(0.5);
 
     ExpressionCellPostprocessor<2> expression_postp{"if(Bx_q1 >0.0, 1, 0)"};
 

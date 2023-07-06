@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include "LinearSolver.h"
+#include "NewtonSolver.h"
 #include "nlohmann/json.hpp"
 #include <cxxopts.hpp>
 #include <vector>
@@ -138,13 +138,16 @@ int main(int argc, char* argv[]){
 
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
+
     BHCurveFactory bhcf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
+
             auto value1 = material_data.at(mesh_el_data.value().at("material")).at("nu");
             if (value1.is_number()) nu_map.insert({mat_id, bhcf.create((double)value1)});
             if (value1.is_string()) nu_map.insert({mat_id, bhcf.create((string)value1)});
+
         }
         if (mesh_el_data.value().contains("source")){
 
@@ -195,7 +198,7 @@ int main(int argc, char* argv[]){
 
     // Initialize Solver and solver
     try{
-        LinearSolver<2> solver;
+        NewtonSolver<2> solver;
         std::cout << "Reading mesh..." << std::endl;
         solver.read_mesh(mesh_path);
         std::cout << "Setting up maps..." << std::endl;
@@ -204,44 +207,58 @@ int main(int argc, char* argv[]){
         solver.set_dc_map(dc_map);
         solver.set_per_map(per_map);
         std::cout << "Setting up system..." << std::endl;
-        solver.setup_system();
-        std::cout << "Assembling system..." << std::endl;
-        solver.assemble_system();
-        std::cout << "Solving system..." << std::endl;
-        solver.solve();
+        solver.setup_system(true);
 
-        // Create vector postprocessors
-        std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
-        for (auto& user_post_data : postprocess_data.items())
-            user_expr_postprocessors[user_post_data.key()] = new ExpressionCellPostprocessor<2>(user_post_data.value(), nu_map, f_map);
+        int i = 0;
+        double alpha;
+        while(i++ < 50){
+            if (i < 5) alpha = 0.1;
+            else if (i < 15) alpha = 0.4;
+            else alpha = 0.5;
 
-        // Create scalar postprocessors
-        std::map<std::string, ScalarPostprocessor<2>*> user_expr_sum_postprocessors;
-        ScalarPostprocessorFactory<2> scalar_postprocessor_factory(nu_map, f_map);
-        for (auto& user_post_sum_data : postprocess_sum_data.items())
-            user_expr_sum_postprocessors[user_post_sum_data.key()] = scalar_postprocessor_factory.create(user_post_sum_data.value());
-
-        // Attach vector postprocessors to Exporters
-        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-        for (auto [key, val] : user_expr_postprocessors)
-            export_vtu.attach_postprocessor(val, key);
-
-        // Perform postprocessing of scalar postprocessors
-        std::unordered_map<std::string, double> results_map;
-        double result_sum = 0;
-        for (auto [key, val] : user_expr_sum_postprocessors){
-            val->process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_sum);
-            results_map[key] = result_sum;
-            delete val;
+            solver.assemble_system();
+            solver.solve(alpha);
+            double res = solver.compute_residual();
+            std::cout << "\tResidual(" << i<< "): " << res << std::endl;
+            if (res < 1e-6){
+                std::cout << "Converged!";
+                break;
+            }
         }
 
-        // Perform vector postprocessing and export to vtu.
-        // TODO: separate pefrom and write.
-        export_vtu.write(output);
-        std::cout << "Output written to " << output.concat(".vtu") << std::endl;
-        for (auto [key, val] : results_map){
-            std::cout << key << " = " << val << std::endl;
-        }
+
+//        // Create vector postprocessors
+//        std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
+//        for (auto& user_post_data : postprocess_data.items())
+//            user_expr_postprocessors[user_post_data.key()] = new ExpressionCellPostprocessor<2>(user_post_data.value(), nu_map, f_map);
+//
+//        // Create scalar postprocessors
+//        std::map<std::string, ScalarPostprocessor<2>*> user_expr_sum_postprocessors;
+//        ScalarPostprocessorFactory<2> scalar_postprocessor_factory(nu_map, f_map);
+//        for (auto& user_post_sum_data : postprocess_sum_data.items())
+//            user_expr_sum_postprocessors[user_post_sum_data.key()] = scalar_postprocessor_factory.create(user_post_sum_data.value());
+//
+//        // Attach vector postprocessors to Exporters
+//        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+//        for (auto [key, val] : user_expr_postprocessors)
+//            export_vtu.attach_postprocessor(val, key);
+//
+//        // Perform postprocessing of scalar postprocessors
+//        std::unordered_map<std::string, double> results_map;
+//        double result_sum = 0;
+//        for (auto [key, val] : user_expr_sum_postprocessors){
+//            val->process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_sum);
+//            results_map[key] = result_sum;
+//            delete val;
+//        }
+//
+//        // Perform vector postprocessing and export to vtu.
+//        // TODO: separate pefrom and write.
+//        export_vtu.write(output);
+//        std::cout << "Output written to " << output.concat(".vtu") << std::endl;
+//        for (auto [key, val] : results_map){
+//            std::cout << key << " = " << val << std::endl;
+//        }
 
         return 0;
 

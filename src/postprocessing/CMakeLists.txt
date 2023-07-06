@@ -19,6 +19,7 @@ target_include_directories(postprocessor PUBLIC include)
 target_compile_options(postprocessor PRIVATE -Wall -Wextra)
 target_include_directories(postprocessor PUBLIC ~/Programs/vtu11)
 target_include_directories(postprocessor PUBLIC ~/Programs/exprtk)
+target_link_libraries(postprocessor PUBLIC preprocessing)
 
 # test export
 find_package(GTest REQUIRED)

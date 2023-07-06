@@ -13,6 +13,8 @@
 #include "LinearSolver.h"
 #include "export/ExportVtu.h"
 #include "processors/MatIDPostprocessor.h"
+#include "BHCurve.h"
+#include "LinearBHCurve.h"
 
 TEST(ExportVtu, initialize_unit){
 
@@ -20,7 +22,7 @@ TEST(ExportVtu, initialize_unit){
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
 
-    std::unordered_map<int, double> nu_map{{6, 1}};
+    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -53,12 +55,12 @@ TEST(ExportVtu, initialize_EI_core){
     std::filesystem::path test_mesh = "../../../examples/EI_core/EI_core.msh";
 
 
-    std::unordered_map<int, double> nu_map{{200, nu_core},      // Core1
-                                           {201, nu_core},      // Core2
-                                           {202, nu_0},         // Copper
-                                           {203, nu_0},         // Copper
-                                           {204, nu_0},         // Air
-                                           {205, nu_0},         // Air
+    std::unordered_map<int, BHCurve*> nu_map{{200, new LinearBHCurve{nu_core}},       // Core1
+                                             {201, new LinearBHCurve{nu_core}},       // Core2
+                                             {202, new LinearBHCurve{nu_0}},       // Copper
+                                             {203, new LinearBHCurve{nu_0}},       // Copper
+                                             {204, new LinearBHCurve{nu_0}},       // Air
+                                             {205, new LinearBHCurve{nu_0}},       // Air
     };
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, (double) 0},        // Core1

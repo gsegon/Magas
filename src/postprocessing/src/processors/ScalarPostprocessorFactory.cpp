@@ -10,11 +10,12 @@
 #include "processors/ArkkioScalarPostprocessor.h"
 #include "processors/PointBabsScalarPostprocessor.h"
 #include "processors/FluxLinkageScalarPostprocessor.h"
+#include "BHCurve.h"
 
 template class ScalarPostprocessorFactory<2>;
 
 template<int dim>
-ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map){
+ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, BHCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map){
     this->nu_map_ptr = &nu_map;
     this->f_map_ptr = &f_map;
 }
