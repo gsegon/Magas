@@ -245,11 +245,12 @@ void NewtonSolver<dim>::solve(const double alpha){
     std::cout << "\tnewton_update.norm_sqr()" << newton_update.norm_sqr() << std::endl;
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
-    // Why is this needed? Is it needed? TODO: Confirm with periodic boundary cases.
-//    constraints.distribute(newton_update);
+    // Distribute constraints (periodic).
+    constraints.distribute(newton_update);
 
     // Apply Newton step to current_solution
     current_solution.add(alpha, newton_update);
+//    constraints.distribute(current_solution);
 
 }
 
@@ -257,12 +258,11 @@ template <int dim>
 double NewtonSolver<dim>::compute_residual() const
 {
     Vector<double> residual(dof_handler.n_dofs());
-//    std::cout << "residual.norm_sqr(): " << residual.norm_sqr() << std::endl;
 
     Vector<double> evaluation_point(dof_handler.n_dofs());
     evaluation_point = current_solution;
     //evaluation_point.add(alpha, newton_update);
-//    std::cout << "current_solution.norm_sqr()" << current_solution.norm_sqr() << std::endl;
+    constraints.distribute(evaluation_point);
 
     FEValues<dim>     fe_values(fe,
                                 quadrature_formula,
@@ -323,8 +323,8 @@ double NewtonSolver<dim>::compute_residual() const
 
     constraints.distribute(residual);
 
-//    for (types::global_dof_index i : DoFTools::extract_boundary_dofs(dof_handler))
-//        residual(i) = 0;
+    for (types::global_dof_index i : DoFTools::extract_boundary_dofs(dof_handler))
+        residual(i) = 0;
 
     return residual.l2_norm();
 }
