@@ -39,26 +39,6 @@ template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
 {
 //    bh = new LinearBHCurve{318.30988601};
-
-    std::vector<double> b{0, 0.2003, 0.3204, 0.40045, 0.50055, 0.5606,
-                          0.7908, 0.931, 1.1014,
-                          1.2016, 1.302, 1.4028,
-                          1.524, 1.626, 1.698,
-                          1.73, 1.87, 1.99,
-                          2.04, 2.07, 2.095,
-                          2.2, 2.4};
-
-    std::vector<double> h{0, 238.7, 318.3,
-                          358.1, 437.7, 477.5,
-                          636.6, 795.8, 1114.1,
-                          1273.2, 1591.5, 2228.2,
-                          3183.1, 4774.6, 6366.2,
-                          7957.7, 15915.5, 31831,
-                          47746.5, 63663, 79577.5,
-                          159155, 318310};
-
-    bh = new InterpolatedBHCurve{b, h};
-
 }
 
 template<int dim>
@@ -146,12 +126,9 @@ void NewtonSolver<dim>::assemble_system() {
         // Ass. into a local system
         for (const unsigned int q : fe_values.quadrature_point_indices()){
 
-            if (nu_map.at(cell->material_id()).type() != typeid(double)){
-                double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
-                no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
-            }
-            else
-                no = std::any_cast<double>(nu_map.at(cell->material_id()));
+            auto bh = nu_map.at(cell->material_id());
+            double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
+            no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 
             for (const unsigned int i : fe_values.dof_indices()){
                 for (const unsigned int j : fe_values.dof_indices()){
@@ -261,12 +238,9 @@ double NewtonSolver<dim>::compute_residual() const
 
 
         for (unsigned int q = 0; q < n_q_points; ++q){
-            if (nu_map.at(cell->material_id()).type() != typeid(double)){
-                double b_abs = std::sqrt(std::pow(gradients[q][0],2) + std::pow(gradients[q][1],2));
-                no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs;
-            }
-            else
-                no = std::any_cast<double>(nu_map.at(cell->material_id()));
+            auto bh = nu_map.at(cell->material_id());
+            double b_abs = std::sqrt(std::pow(gradients[q][0],2) + std::pow(gradients[q][1],2));
+            no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 
             for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 cell_residual(i) += (f*fe_values.shape_value(i, q)
@@ -304,7 +278,7 @@ double NewtonSolver<dim>::compute_residual() const
 
 
 template<int dim>
-void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, std::any> map) {
+void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, BHCurve*> map) {
     this->nu_map = map;
 }
 

@@ -51,5 +51,4 @@ double InterpolatedBHCurve::get_nu_prime(double b) {
     else{
         return InterpolatedBHCurve::get_nu_prime(1e-3);
     }
-
 }

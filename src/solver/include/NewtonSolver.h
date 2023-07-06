@@ -50,7 +50,7 @@ public:
     void assemble_system();
     void solve(const double alpha);
 //    void solve_nonlinear(int);
-    void set_nu_map(std::unordered_map<int, std::any>);
+    void set_nu_map(std::unordered_map<int, BHCurve*>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
     double compute_residual() const;
@@ -79,11 +79,10 @@ private:
     Vector<double> current_solution;
     Vector<double> newton_update;
 
-    std::unordered_map<int, std::any> nu_map;
+    std::unordered_map<int, BHCurve*> nu_map;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
 
-    BHCurve* bh;
 
 };
 
