@@ -29,6 +29,7 @@
 #include "NewtonSolver.h"
 #include "AnalyticBHCurve.h"
 #include "LinearBHCurve.h"
+#include "InterpolatedBHCurve.h"
 
 using namespace dealii;
 
@@ -37,7 +38,27 @@ template class NewtonSolver<2>;
 template<int dim>
 NewtonSolver<dim>::NewtonSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree + 1)
 {
-    bh = new LinearBHCurve{318.30988601};
+//    bh = new LinearBHCurve{318.30988601};
+
+    std::vector<double> b{0, 0.2003, 0.3204, 0.40045, 0.50055, 0.5606,
+                          0.7908, 0.931, 1.1014,
+                          1.2016, 1.302, 1.4028,
+                          1.524, 1.626, 1.698,
+                          1.73, 1.87, 1.99,
+                          2.04, 2.07, 2.095,
+                          2.2, 2.4};
+
+    std::vector<double> h{0, 238.7, 318.3,
+                          358.1, 437.7, 477.5,
+                          636.6, 795.8, 1114.1,
+                          1273.2, 1591.5, 2228.2,
+                          3183.1, 4774.6, 6366.2,
+                          7957.7, 15915.5, 31831,
+                          47746.5, 63663, 79577.5,
+                          159155, 318310};
+
+    bh = new InterpolatedBHCurve{b, h};
+
 }
 
 template<int dim>

@@ -22,7 +22,7 @@ add_executable(test_preprocessing
         test/test_CirclePeriodicityMapper.cpp
         test/test_ConfigParser.cpp
         test/test_PeriodicityMapperFactory.cpp
-        )
+        test/test_InterpolatedBHCurve.cpp test/test_AnalyticBHCurve.cpp test/test_LinearBHCurve.cpp)
 target_include_directories(test_preprocessing PUBLIC include)
 target_include_directories(test_preprocessing PUBLIC .)
 target_link_libraries(test_preprocessing ${GTEST_LIBRARIES} gtest_main pthread preprocessing)

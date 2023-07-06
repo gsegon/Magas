@@ -16,8 +16,6 @@ InterpolatedBHCurve::InterpolatedBHCurve(std::vector<double> b, std::vector<doub
    this->b = b;
    this->h = h;
 
-   std::cout << "size of b: " << b.size() << std::endl;
-   std::cout << "size of h: " << h.size() << std::endl;
    if (this->b.size() != this->h.size()){
        throw std::runtime_error("B entry not the same size as H entry.");
    }
@@ -34,13 +32,24 @@ InterpolatedBHCurve::~InterpolatedBHCurve() {
 }
 
 double InterpolatedBHCurve::get_nu(double b) {
-    double h = gsl_spline_eval(spline, b, acc);
-    std::cout << "H(" << b << ")=" << h << std::endl;
-    return h/b;
+    if (b!=0){
+        double h = gsl_spline_eval(spline, b, acc);
+        return h/b;
+    }
+    else{
+        return InterpolatedBHCurve::get_nu(1e-3);
+    }
+
 }
 
 double InterpolatedBHCurve::get_nu_prime(double b) {
-    double h = gsl_spline_eval(spline, b, acc);
-    double h_prime = gsl_spline_eval_deriv(spline, b, acc);
-    return h_prime/b - h/(b*b);
+    if (b!=0){
+        double h = gsl_spline_eval(spline, b, acc);
+        double h_prime = gsl_spline_eval_deriv(spline, b, acc);
+        return h_prime/b - h/(b*b);
+    }
+    else{
+        return InterpolatedBHCurve::get_nu_prime(1e-3);
+    }
+
 }
