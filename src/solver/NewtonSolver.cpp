@@ -73,7 +73,6 @@ void NewtonSolver<dim>::setup_system(const bool initial_step) {
             const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
             const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
 
-
             AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
             std::vector<Point<dim>> nodes(dof_handler.n_dofs());
@@ -110,18 +109,9 @@ void NewtonSolver<dim>::setup_system(const bool initial_step) {
         constraints.close();
     }
 
-
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
     sparsity_pattern.copy_from(dsp);
-
-    // Reset done just before assembly
-//    system_matrix.reinit(sparsity_pattern);
-//    system_rhs.reinit(dof_handler.n_dofs());
-
-    // newton update reset just before solving
-//    newton_update.reinit(dof_handler.n_dofs());
-
 
 }
 
@@ -233,7 +223,6 @@ void NewtonSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) 
 template<int dim>
 void NewtonSolver<dim>::solve(const double alpha){
 
-
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
 
@@ -242,7 +231,6 @@ void NewtonSolver<dim>::solve(const double alpha){
 
     newton_update.reinit(dof_handler.n_dofs());
     solver.solve(system_matrix, newton_update, system_rhs, preconditioner);
-    std::cout << "\tnewton_update.norm_sqr()" << newton_update.norm_sqr() << std::endl;
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
     // Distribute constraints (periodic).
@@ -250,7 +238,6 @@ void NewtonSolver<dim>::solve(const double alpha){
 
     // Apply Newton step to current_solution
     current_solution.add(alpha, newton_update);
-//    constraints.distribute(current_solution);
 
 }
 
@@ -281,7 +268,6 @@ double NewtonSolver<dim>::compute_residual() const
     double f = 0;
     Tensor<1, dim> Hc({0, 0});
 
-
     for (const auto &cell : dof_handler.active_cell_iterators()){
         cell_residual = 0;
         fe_values.reinit(cell);
@@ -301,7 +287,6 @@ double NewtonSolver<dim>::compute_residual() const
         else{
             std::cout << "Something else?" << std::endl;
         }
-
 
         for (unsigned int q = 0; q < n_q_points; ++q){
             auto bh = nu_map.at(cell->material_id());
