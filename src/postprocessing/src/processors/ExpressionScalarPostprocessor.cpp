@@ -12,6 +12,7 @@
 #include "exprtk.hpp"
 
 #include "processors/ExpressionScalarPostprocessor.h"
+#include "BHCurve.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -28,7 +29,7 @@ ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::str
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
@@ -40,7 +41,7 @@ ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::str
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -95,7 +96,10 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     double u_q4 = 0;
 
     double J = 0;
-    double nu = 0;
+    double nu_q1 = 0;
+    double nu_q2 = 0;
+    double nu_q3 = 0;
+    double nu_q4 = 0;
 
     symbol_table.add_variable("mat_id", mat_id);
     symbol_table.add_variable("x_q1", x_q1);
@@ -131,8 +135,12 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     if (f_map_ptr)
         symbol_table.add_variable("J", J);
 
-    if (nu_map_ptr)
-        symbol_table.add_variable("nu", nu);
+    if (nu_map_ptr){
+        symbol_table.add_variable("nu_q1", nu_q1);
+        symbol_table.add_variable("nu_q2", nu_q2);
+        symbol_table.add_variable("nu_q3", nu_q3);
+        symbol_table.add_variable("nu_q4", nu_q4);
+    }
 
     symbol_table.add_constants();
     expression.register_symbol_table(symbol_table);
@@ -193,8 +201,13 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
         u_q3 = solution_at_cell[2];
         u_q4 = solution_at_cell[3];
 
-        if (nu_map_ptr)
-            nu = (*nu_map_ptr).at(cell->material_id());
+        if (nu_map_ptr){
+            BHCurve* bh = ((*nu_map_ptr).at(cell->material_id()));
+            nu_q1 = bh->get_nu(solution_gradients[0].norm());
+            nu_q2 = bh->get_nu(solution_gradients[1].norm());
+            nu_q3 = bh->get_nu(solution_gradients[2].norm());
+            nu_q4 = bh->get_nu(solution_gradients[3].norm());
+        }
 
         result += expression.value();
 

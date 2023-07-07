@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "InterpolatedBHCurve.h"
+#include "../include/InterpolatedBHCurve.h"
 #include <cmath>
 #include <stdlib.h>
 #include <stdio.h>

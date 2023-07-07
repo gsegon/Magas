@@ -28,9 +28,6 @@
 #include <deal.II/base/work_stream.h>
 
 #include "NewtonSolver.h"
-#include "AnalyticBHCurve.h"
-#include "LinearBHCurve.h"
-#include "InterpolatedBHCurve.h"
 #include "PeriodicityMapperFactory.h"
 
 using namespace dealii;
@@ -181,7 +178,7 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     for (unsigned int q = 0; q < n_q_points; q++){
 
-        auto bh = nu_map.at(cell->material_id());
+        BHCurve* bh = nu_map.at(cell->material_id());
         double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
         no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 

@@ -13,6 +13,7 @@
 #include "exprtk.hpp"
 
 #include "processors/ExpressionCellPostprocessor.h"
+#include "BHCurve.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -29,7 +30,7 @@ ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string&
 }
 
 template <int dim>
-ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
@@ -41,7 +42,7 @@ ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string&
 }
 
 template <int dim>
-ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -96,7 +97,10 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
     double JxW_q4 = 0;
 
     double J = 0;
-    double nu = 0;
+    double nu_q1 = 0;
+    double nu_q2 = 0;
+    double nu_q3 = 0;
+    double nu_q4 = 0;
 
     symbol_table.add_variable("mat_id", mat_id);
 
@@ -133,13 +137,16 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
     if (f_map_ptr)
         symbol_table.add_variable("J", J);
 
-    if (nu_map_ptr)
-        symbol_table.add_variable("nu", nu);
+    if (nu_map_ptr){
+        symbol_table.add_variable("nu_q1", nu_q1);
+        symbol_table.add_variable("nu_q2", nu_q2);
+        symbol_table.add_variable("nu_q3", nu_q3);
+        symbol_table.add_variable("nu_q4", nu_q4);
+    }
 
     symbol_table.add_constants();
     expression.register_symbol_table(symbol_table);
     parser.compile(user_expression, expression);
-
 
     DoFHandler<dim> dof_handler(*triangulation_ptr);
     dof_handler.distribute_dofs(*fe_ptr);
@@ -197,8 +204,14 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
         u_q3 = solution_at_cell[0];
         u_q4 = solution_at_cell[0];
 
-        if (nu_map_ptr)
-            nu = (*nu_map_ptr).at(cell->material_id());
+        if (nu_map_ptr){
+            BHCurve* bh = ((*nu_map_ptr).at(cell->material_id()));
+            nu_q1 = bh->get_nu(solution_gradients[0].norm());
+            nu_q2 = bh->get_nu(solution_gradients[1].norm());
+            nu_q3 = bh->get_nu(solution_gradients[2].norm());
+            nu_q4 = bh->get_nu(solution_gradients[3].norm());
+        }
+
 
         result.push_back(expression.value());
 

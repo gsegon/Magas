@@ -19,19 +19,19 @@
   },
 
   "postprocess": {
-    "Txx_b_q1": "1/(2*nu) * (Bx_q1^2 - By_q1^2 - 0^2)",
-    "Tyy_b_q1": "1/(2*nu) * (By_q1^2 - Bx_q1^2 - 0^2)",
+    "Txx_b_q1": "1/(2*nu_q1) * (Bx_q1^2 - By_q1^2 - 0^2)",
+    "Tyy_b_q1": "1/(2*nu_q1) * (By_q1^2 - Bx_q1^2 - 0^2)",
     "|Bavg [T]|": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
     "Bx [T] (avg)": "avg(Bx_q1, Bx_q2, Bx_q3, Bx_q4)",
     "By [T] (avg)": "avg(By_q1, By_q2, By_q3, By_q4)",
     "J": "J",
     "mat_id": "mat_id",
-    "Torque_section": "if((mat_id==5), ((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2 + (Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4)*nu/(46.4-46.1),0)"
+    "Torque_section": "if((mat_id==5), ((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2 + (Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4)*nu_q1/(46.4-46.1),0)"
   },
 
   "postprocess_sum": {
-    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4",
-    "Torque_section": "if((mat_id == 5), 2e-2*(((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2+(Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4) * nu/(0.78e-2-0.72e-2)), 0)",
+    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu_q1 * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu_q1 * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu_q1 * JxW_q4",
+    "Torque_section": "if((mat_id == 5), 2e-2*(((Bx_q1*By_q1*x_q1^2 +(By_q1^2-Bx_q1^2)*x_q1*y_q1-Bx_q1*By_q1*y_q1^2)/sqrt(x_q1^2+y_q1^2)*JxW_q1+(Bx_q2*By_q2*x_q2^2 +(By_q2^2-Bx_q2^2)*x_q2*y_q2-Bx_q2*By_q2*y_q2^2)/sqrt(x_q2^2+y_q2^2)*JxW_q2+(Bx_q3*By_q3*x_q3^2 +(By_q3^2-Bx_q3^2)*x_q3*y_q3-Bx_q3*By_q3*y_q3^2)/sqrt(x_q3^2+y_q3^2)*JxW_q3+(Bx_q4*By_q4*x_q4^2 +(By_q4^2-Bx_q4^2)*x_q4*y_q4-Bx_q4*By_q4*y_q4^2)/sqrt(x_q4^2+y_q4^2)*JxW_q4) * nu_q1/(0.78e-2-0.72e-2)), 0)",
     "Torque_section_arkkio": "Arkkio(5, (0, 0))",
     "Babs_at_1": "Babs(0, 0.003)"
   },

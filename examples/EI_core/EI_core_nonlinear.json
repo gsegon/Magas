@@ -1,7 +1,7 @@
 {
   "material": {
     "core": {
-      "nu": "NonLinear"
+      "nu": "Analytic"
     },
     "air": {
       "nu": 795774.715025
@@ -11,6 +11,22 @@
     }
   },
 
+
+
+  "postprocess": {
+    "Bavg_all_q [T]": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
+    "Shamalalala [T^2]": "Bx_q1*By_q1",
+    "Bx_q1_0.05 [-]": "if(Bx_q1 >0.05, 1, 0)",
+    "Babs_q1_0.1 [-]": "if(sqrt(Bx_q1^2 + By_q1^2) > 0.1, 1, 0)",
+    "B_min_max": "max(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))-min(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
+    "|Bminq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  min(Babs1, Babs2, Babs3, Babs4)",
+    "|Bmaxq|": " var Babs1 := sqrt(Bx_q1^2 + By_q1^2); var Babs2 := sqrt(Bx_q2^2 + By_q2^2); var Babs3 := sqrt(Bx_q3^2 + By_q3^2); var Babs4 := sqrt(Bx_q4^2 + By_q4^2);  max(Babs1, Babs2, Babs3, Babs4)"
+  },
+
+  "postprocess_sum": {
+    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu_q2 * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu_q3 * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu_q4 * JxW_q4"
+  },
+
   "boundary": {
     "A=0": 0.0
   },
@@ -18,6 +34,12 @@
   "source": {
     "J1": 8184016.36803,
     "J2": -8184016.36803
+  },
+
+
+  "boundary_id": {
+    "44": {
+      "boundary": "A=0"}
   },
 
   "mesh_id": {

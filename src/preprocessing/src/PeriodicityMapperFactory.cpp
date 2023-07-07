@@ -1,13 +1,14 @@
 //
 // Created by gordan on 7/3/23.
 //
+#include <vector>
 #include <regex>
 
 #include "IPeriodicityMapper.h"
 #include "PeriodicityMapperFactory.h"
 #include "LinePeriodicityMapper.h"
 #include "CirclePeriodicityMapper.h"
-#include <vector>
+
 
 using namespace std;
 

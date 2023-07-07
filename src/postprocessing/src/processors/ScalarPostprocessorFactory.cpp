@@ -10,11 +10,12 @@
 #include "processors/ArkkioScalarPostprocessor.h"
 #include "processors/PointBabsScalarPostprocessor.h"
 #include "processors/FluxLinkageScalarPostprocessor.h"
+#include "BHCurve.h"
 
 template class ScalarPostprocessorFactory<2>;
 
 template<int dim>
-ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, double>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map){
+ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, BHCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map){
     this->nu_map_ptr = &nu_map;
     this->f_map_ptr = &f_map;
 }
@@ -24,7 +25,6 @@ ScalarPostprocessor<dim> *ScalarPostprocessorFactory<dim>::create(std::string in
 
     for (auto pattern : RegexPatterns::patterns) {
         std::smatch sm;
-        std::cout << pattern << " ";
         if (std::regex_match(input_string, sm, std::regex(pattern))) {
             if (sm[1] == "Arkkio") return new ArkkioScalarPostprocessor<dim>(std::stoi(sm[2]), *nu_map_ptr);
             if (sm[1] == "Babs") return new PointBabsScalarPostprocessor<dim>({std::stod(sm[2]), std::stod(sm[3])});
