@@ -239,13 +239,13 @@ void NewtonSolver<dim>::solve(const double alpha){
 }
 
 template <int dim>
-double NewtonSolver<dim>::compute_residual() const
+double NewtonSolver<dim>::compute_residual(double alpha) const
 {
     Vector<double> residual(dof_handler.n_dofs());
 
     Vector<double> evaluation_point(dof_handler.n_dofs());
     evaluation_point = current_solution;
-    //evaluation_point.add(alpha, newton_update);
+    evaluation_point.add(alpha, newton_update);
     constraints.distribute(evaluation_point);
 
     FEValues<dim>     fe_values(fe,

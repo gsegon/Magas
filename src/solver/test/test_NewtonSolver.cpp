@@ -129,7 +129,7 @@ TEST(TestNewtonSolver, solve){
         }
 
         solver.solve(alpha);
-        std::cout << "\tResidual(" << i<< "): " << solver.compute_residual() << std::endl;
+        std::cout << "\tResidual(" << i<< "): " << solver.compute_residual(alpha) << std::endl;
     }
 
 
@@ -183,7 +183,7 @@ TEST(TestNewtonSolver, EI_core){
 
         solver.assemble_system();
         solver.solve(alpha);
-        double res = solver.compute_residual();
+        double res = solver.compute_residual(alpha);
         std::cout << "\tResidual(" << i<< "): " << res << std::endl;
         if (res < 1e-6){
             std::cout << "Converged!";

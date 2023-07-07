@@ -53,7 +53,7 @@ public:
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
     void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
-    double compute_residual() const;
+    double compute_residual(double) const;
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();

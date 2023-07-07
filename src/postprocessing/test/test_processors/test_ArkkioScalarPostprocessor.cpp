@@ -106,8 +106,9 @@ TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1_nonlinear){
             alpha = 0.5;
 
         solver.assemble_system();
+
         solver.solve(alpha);
-        double res = solver.compute_residual();
+        double res = solver.compute_residual(alpha);
         std::cout << "\tResidual(" << i<< "): " << res << std::endl;
         if (res < 1e-6){
             std::cout << "Converged!";
