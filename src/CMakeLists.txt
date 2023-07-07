@@ -4,7 +4,8 @@ target_link_libraries(magas optimized
         tbb
         solver
         postprocessor
-        preprocessing)
+        preprocessing
+        material)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
@@ -23,7 +24,8 @@ target_link_libraries(amnl optimized
         tbb
         solver
         postprocessor
-        preprocessing)
+        preprocessing
+        material)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})

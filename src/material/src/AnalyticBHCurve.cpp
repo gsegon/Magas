@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "AnalyticBHCurve.h"
+#include "../include/AnalyticBHCurve.h"
 #include <cmath>
 
 AnalyticBHCurve::AnalyticBHCurve() {

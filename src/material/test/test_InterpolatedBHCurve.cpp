@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 
-#include "InterpolatedBHCurve.h"
+#include "../include/InterpolatedBHCurve.h"
 
 TEST(InterpolatedBHCurve, basic) {
 

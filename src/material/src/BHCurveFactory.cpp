@@ -7,10 +7,10 @@
 #include <variant>
 #include <vector>
 
-#include "BHCurveFactory.h"
-#include "LinearBHCurve.h"
-#include "AnalyticBHCurve.h"
-#include "BHCurve.h"
+#include "../include/BHCurveFactory.h"
+#include "../include/LinearBHCurve.h"
+#include "../include/AnalyticBHCurve.h"
+#include "../include/BHCurve.h"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "LinearBHCurve.h"
+#include "../include/LinearBHCurve.h"
 
 LinearBHCurve::LinearBHCurve(double nu) {
     this->nu = nu;

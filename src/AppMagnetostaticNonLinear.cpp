@@ -211,10 +211,10 @@ int main(int argc, char* argv[]){
 
         int i = 0;
         double alpha;
-        while(i++ < 50){
+        while(i++ < 100){
             if (i < 5) alpha = 0.1;
-            else if (i < 15) alpha = 0.4;
-            else alpha = 0.5;
+            else if (i < 15) alpha = 0.2;
+            else alpha = 0.1;
 
             solver.assemble_system();
             solver.solve(alpha);

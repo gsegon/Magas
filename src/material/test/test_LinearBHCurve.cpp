@@ -3,7 +3,7 @@
 //
 #include <gtest/gtest.h>
 
-#include "LinearBHCurve.h"
+#include "../include/LinearBHCurve.h"
 
 TEST(LinearBHCurve, basic) {
 
