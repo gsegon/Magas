@@ -16,8 +16,8 @@
 #include "misc.h"
 #include "exprtk.hpp"
 #include "ConfigParser.h"
-#include "BHCurveFactory.h"
-#include "BHCurve.h"
+#include "NuCurveFactory.h"
+#include "NuCurve.h"
 
 
 using json = nlohmann::json;
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
             ("o, output", "Visualization output", cxxopts::value<std::string>())
             ("m, mesh", "Mesh file (.gmsh)")
             ("s, sources", "Sources", cxxopts::value<std::vector<std::string>>())
+            ("a, alpha", "Alpha solver options", cxxopts::value<std::vector<std::string>>())
             ("h, help", "Print usage")
     ;
 
@@ -77,6 +78,16 @@ int main(int argc, char* argv[]){
         }
     }
 
+    std::map<int, double> alpha_map;
+    if (result.count("alpha")){
+        for (const auto& src_param_str : result["alpha"].as<std::vector<std::string>>()){
+            std::vector<std::string> v = split(src_param_str, "=");
+            alpha_map[std::stoi(v[0])] = std::stod(v[1]);
+        }
+    } else{
+        alpha_map = {{1, 0.1}, {5, 0.5}, {10, 1}};
+    }
+
     std::ifstream ifs_input;
     ifs_input.open(input);
         if(ifs_input.fail()){
@@ -118,7 +129,7 @@ int main(int argc, char* argv[]){
     }
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
-    std::unordered_map<int, BHCurve*> nu_map;
+    std::unordered_map<int, NuCurve*> nu_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 
@@ -139,7 +150,7 @@ int main(int argc, char* argv[]){
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
 
-    BHCurveFactory bhcf;
+    NuCurveFactory bhcf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
@@ -209,23 +220,34 @@ int main(int argc, char* argv[]){
         std::cout << "Setting up system..." << std::endl;
         solver.setup_system(true);
 
+        double alpha=0.1;
+        double res;
+        double res_trial;
+        std::vector<double> steps{1, 1/2.0, 1/4.0, 1/8.0, 1/16.0, 1/32.0};
+
         int i = 0;
-        double alpha;
         while(i++ < 100){
-            if (i < 5) alpha = 0.1;
-            else if (i < 15) alpha = 0.2;
-            else alpha = 0.1;
+            if (i > 1){
+                for (double alpha_trial : steps){
+                    res_trial = solver.compute_residual(alpha_trial);
+                    if (res_trial < res){
+                        alpha = alpha_trial;
+                        break;
+                    }
+                }
+            }
 
             solver.assemble_system();
+            std::cout << "alpha = " << alpha << std::endl;
             solver.solve(alpha);
-            double res = solver.compute_residual();
-            std::cout << "\tResidual(" << i<< "): " << res << std::endl;
+            res = solver.compute_residual(alpha);
+            std::cout << "\tResidual(" << i << "): " << res << std::endl;
+
             if (res < 1e-6){
                 std::cout << "Converged!";
                 break;
             }
         }
-
 
         // Create vector postprocessors
         std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
@@ -238,11 +260,6 @@ int main(int argc, char* argv[]){
         for (auto& user_post_sum_data : postprocess_sum_data.items())
             user_expr_sum_postprocessors[user_post_sum_data.key()] = scalar_postprocessor_factory.create(user_post_sum_data.value());
 
-        // Attach vector postprocessors to Exporters
-        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-        for (auto [key, val] : user_expr_postprocessors)
-            export_vtu.attach_postprocessor(val, key);
-
         // Perform postprocessing of scalar postprocessors
         std::unordered_map<std::string, double> results_map;
         double result_sum = 0;
@@ -251,6 +268,11 @@ int main(int argc, char* argv[]){
             results_map[key] = result_sum;
             delete val;
         }
+
+        // Attach vector postprocessors to Exporters
+        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+        for (auto [key, val] : user_expr_postprocessors)
+            export_vtu.attach_postprocessor(val, key);
 
         // Perform vector postprocessing and export to vtu.
         // TODO: separate pefrom and write.

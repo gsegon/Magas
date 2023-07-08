@@ -11,8 +11,8 @@
 
 #include "LinearSolver.h"
 #include "processors/PointBabsScalarPostprocessor.h"
-#include "BHCurve.h"
-#include "LinearBHCurve.h"
+#include "NuCurve.h"
+#include "LinearNuCurve.h"
 
 TEST(PointBabsScalarPostprocessor, torque_benchmark_kelvin_1){
 
@@ -20,11 +20,11 @@ TEST(PointBabsScalarPostprocessor, torque_benchmark_kelvin_1){
     std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{3, new LinearBHCurve{795774.715025}},
-                                           {4, new LinearBHCurve{795774.715025}},
-                                           {5, new LinearBHCurve{795774.715025}},
-                                           {6, new LinearBHCurve{795774.715025}},
-                                           {8, new LinearBHCurve{795774.715025}}};
+    std::unordered_map<int, NuCurve*> nu_map{{3, new LinearNuCurve{795774.715025}},
+                                             {4, new LinearNuCurve{795774.715025}},
+                                             {5, new LinearNuCurve{795774.715025}},
+                                             {6, new LinearNuCurve{795774.715025}},
+                                             {8, new LinearNuCurve{795774.715025}}};
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, std::pair<double, double>{0.0, 1000000.0}},
                                                                                    {4, 0},

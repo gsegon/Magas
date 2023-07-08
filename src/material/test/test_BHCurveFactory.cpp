@@ -3,12 +3,12 @@
 //
 #include <gtest/gtest.h>
 
-#include "../include/BHCurveFactory.h"
+#include "../include/NuCurveFactory.h"
 
 TEST(TestBHCurveFactory, basic) {
 
 
-    BHCurveFactory bhcf;
+    NuCurveFactory bhcf;
     auto a = bhcf.create(10);
     a->get_nu(0.5);
 

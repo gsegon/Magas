@@ -14,8 +14,8 @@
 #include "processors/ArkkioScalarPostprocessor.h"
 #include "export/ExportVtu.h"
 
-#include "LinearBHCurve.h"
-#include "BHCurve.h"
+#include "LinearNuCurve.h"
+#include "NuCurve.h"
 
 TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1){
 
@@ -23,11 +23,11 @@ TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1){
     std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{3, new LinearBHCurve{795774.715025}},
-                                           {4, new LinearBHCurve{795774.715025}},
-                                           {5, new LinearBHCurve{795774.715025}},
-                                           {6, new LinearBHCurve{795774.715025}},
-                                           {8, new LinearBHCurve{795774.715025}}};
+    std::unordered_map<int, NuCurve*> nu_map{{3, new LinearNuCurve{795774.715025}},
+                                             {4, new LinearNuCurve{795774.715025}},
+                                             {5, new LinearNuCurve{795774.715025}},
+                                             {6, new LinearNuCurve{795774.715025}},
+                                             {8, new LinearNuCurve{795774.715025}}};
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, std::pair<double, double>{0.0, 1000000.0}},
                                                                                    {4, 0},
@@ -71,11 +71,11 @@ TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1_nonlinear){
     std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{3, new LinearBHCurve{795774.715025}},
-                                             {4, new LinearBHCurve{795774.715025}},
-                                             {5, new LinearBHCurve{795774.715025}},
-                                             {6, new LinearBHCurve{795774.715025}},
-                                             {8, new LinearBHCurve{795774.715025}}};
+    std::unordered_map<int, NuCurve*> nu_map{{3, new LinearNuCurve{795774.715025}},
+                                             {4, new LinearNuCurve{795774.715025}},
+                                             {5, new LinearNuCurve{795774.715025}},
+                                             {6, new LinearNuCurve{795774.715025}},
+                                             {8, new LinearNuCurve{795774.715025}}};
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, std::pair<double, double>{0.0, 1000000.0}},
                                                                                    {4, 0},
@@ -106,8 +106,9 @@ TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1_nonlinear){
             alpha = 0.5;
 
         solver.assemble_system();
+
         solver.solve(alpha);
-        double res = solver.compute_residual();
+        double res = solver.compute_residual(alpha);
         std::cout << "\tResidual(" << i<< "): " << res << std::endl;
         if (res < 1e-6){
             std::cout << "Converged!";

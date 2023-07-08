@@ -10,19 +10,19 @@
 
 #include "LinearSolver.h"
 #include "processors/FluxLinkageScalarPostprocessor.h"
-#include "BHCurve.h"
-#include "LinearBHCurve.h"
+#include "NuCurve.h"
+#include "LinearNuCurve.h"
 
 TEST(FluxLinkageScalarPostprocessor, 6_conductors_3_circuits){
 
     std::string test_mesh = "../../../examples/6_conductors_3_circuits/6_conductors_3_circuits.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{2, new LinearBHCurve{795774.715025}},
-                                           {3, new LinearBHCurve{795774.715025}},
-                                           {4, new LinearBHCurve{795774.715025}},
-                                           {5, new LinearBHCurve{795774.715025}},
-                                           {6, new LinearBHCurve{795774.715025}},
-                                           {7, new LinearBHCurve{795774.715025}},
-                                           {8, new LinearBHCurve{795774.715025}}};
+    std::unordered_map<int, NuCurve*> nu_map{{2, new LinearNuCurve{795774.715025}},
+                                             {3, new LinearNuCurve{795774.715025}},
+                                             {4, new LinearNuCurve{795774.715025}},
+                                             {5, new LinearNuCurve{795774.715025}},
+                                             {6, new LinearNuCurve{795774.715025}},
+                                             {7, new LinearNuCurve{795774.715025}},
+                                             {8, new LinearNuCurve{795774.715025}}};
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{2, 0},
                                                                                    {3, 31.8309886184},

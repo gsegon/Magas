@@ -2,10 +2,10 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/AnalyticBHCurve.h"
+#include "../include/AnalyticNuCurve.h"
 #include <cmath>
 
-AnalyticBHCurve::AnalyticBHCurve() {
+AnalyticNuCurve::AnalyticNuCurve() {
     nu_0 = 795774.715025;
     alpha = 2077.205761389225;
     beta = 5.289952851132246;
@@ -32,7 +32,7 @@ namespace Analytic{
     }
 }
 
-double AnalyticBHCurve::get_nu(double b) {
+double AnalyticNuCurve::get_nu(double b) {
     double alpha = 2077.205761389225;
     if (b == 0)
         return alpha;
@@ -40,7 +40,7 @@ double AnalyticBHCurve::get_nu(double b) {
         return Analytic::h_fun(b)/b;
 }
 
-double AnalyticBHCurve::get_nu_prime(double b) {
+double AnalyticNuCurve::get_nu_prime(double b) {
     double nu_0 = 795774.715025;
     double b_sat = 2.2530727020352703;
     double theta = -1638220.518181392;

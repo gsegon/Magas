@@ -12,7 +12,7 @@
 #include "exprtk.hpp"
 
 #include "processors/ExpressionScalarPostprocessor.h"
-#include "BHCurve.h"
+#include "NuCurve.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -29,7 +29,7 @@ ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::str
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
@@ -41,7 +41,7 @@ ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::str
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, BHCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -202,7 +202,7 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
         u_q4 = solution_at_cell[3];
 
         if (nu_map_ptr){
-            BHCurve* bh = ((*nu_map_ptr).at(cell->material_id()));
+            NuCurve* bh = ((*nu_map_ptr).at(cell->material_id()));
             nu_q1 = bh->get_nu(solution_gradients[0].norm());
             nu_q2 = bh->get_nu(solution_gradients[1].norm());
             nu_q3 = bh->get_nu(solution_gradients[2].norm());

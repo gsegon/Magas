@@ -11,8 +11,8 @@
 
 #include "LinearSolver.h"
 #include "NewtonSolver.h"
-#include "BHCurve.h"
-#include "LinearBHCurve.h"
+#include "NuCurve.h"
+#include "LinearNuCurve.h"
 #include "processors/ExpressionScalarPostprocessor.h"
 
 TEST(ExpressionScalarPostprocessor, unit_square){
@@ -21,7 +21,7 @@ TEST(ExpressionScalarPostprocessor, unit_square){
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -57,7 +57,7 @@ TEST(ExpressionScalarPostprocessorNonlinear, unit_square){
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 

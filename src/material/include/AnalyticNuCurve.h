@@ -2,15 +2,15 @@
 // Created by gordan on 7/5/23.
 //
 
-#ifndef MAGAS_ANALYTICBHCURVE_H
-#define MAGAS_ANALYTICBHCURVE_H
+#ifndef MAGAS_ANALYTICNUCURVE_H
+#define MAGAS_ANALYTICNUCURVE_H
 
-#include "BHCurve.h"
+#include "NuCurve.h"
 
-class AnalyticBHCurve : public BHCurve {
+class AnalyticNuCurve : public NuCurve {
 
 public:
-    AnalyticBHCurve();
+    AnalyticNuCurve();
     double get_nu(double) override;
     double get_nu_prime(double) override;
 
@@ -23,4 +23,4 @@ private:
 };
 
 
-#endif //MAGAS_ANALYTICBHCURVE_H
+#endif //MAGAS_ANALYTICNUCURVE_H

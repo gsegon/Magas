@@ -3,11 +3,11 @@
 //
 #include <gtest/gtest.h>
 
-#include "../include/AnalyticBHCurve.h"
+#include "../include/AnalyticNuCurve.h"
 
 TEST(AnalyticBHCurve, basic) {
 
-    AnalyticBHCurve bhanalytic1;
+    AnalyticNuCurve bhanalytic1;
 
     std::cout << bhanalytic1.get_nu(2.0) << std::endl;
     std::cout << bhanalytic1.get_nu_prime(2.0) << std::endl;
