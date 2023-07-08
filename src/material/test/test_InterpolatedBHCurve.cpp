@@ -52,7 +52,7 @@ TEST(InterpolatedBHCurve, from_csv) {
     std::vector<double> b;
     std::vector<double> h;
 
-    std::string filename{"/home/gordan/Programs/solver/src/material/test/M-45.csv"};
+    std::string filename{"../../../src/material/test/M-45.csv"};
     strtk::token_grid::options options;
     options.column_delimiters =",";
 
