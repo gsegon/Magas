@@ -3,8 +3,11 @@
 //
 #include <gtest/gtest.h>
 #include <cstdio>
+#include <fstream>
 
-#include "../include/InterpolatedNuCurve.h"
+#include "strtk.hpp"
+
+#include "InterpolatedNuCurve.h"
 
 TEST(InterpolatedBHCurve, basic) {
 
@@ -29,6 +32,49 @@ TEST(InterpolatedBHCurve, basic) {
 
 //    std::cout << "nu(0.15): " << ibh.get_nu(0.15) << std::endl;
 //    std::cout << "nu_prime(0.15): " << ibh.get_nu_prime(0.15) << std::endl;
+
+    auto fbh = fopen("bh.dat", "w");
+    auto fnu = fopen("nu.dat", "w");
+    for (double bi=b[0]; bi < b[b.size()-1]; bi += (b[b.size()-1]-b[0])/100){
+        double nui = ibh.get_nu(bi);
+        double hi = nui*bi;
+        fprintf(fbh, "%g %g\n", hi, bi);
+        fprintf(fnu, "%g %g\n", bi, nui);
+    }
+    fclose(fbh);
+    fclose(fnu);
+
+
+}
+
+TEST(InterpolatedBHCurve, from_csv) {
+
+    std::vector<double> b;
+    std::vector<double> h;
+
+    std::string filename{"/home/gordan/Programs/solver/src/material/test/M-45.csv"};
+    strtk::token_grid::options options;
+    options.column_delimiters =",";
+
+    strtk::token_grid bh_grid(filename, options);
+    for (std::size_t r = 0; r < bh_grid.row_count(); ++r){
+        strtk::token_grid::row_type row = bh_grid.row(r);
+
+        if (r==0){
+        }
+        else{
+            b.push_back(std::stod(row.get<std::string>(0)));
+            h.push_back(std::stod(row.get<std::string>(1)));
+        }
+    }
+
+    InterpolatedNuCurve ibh(b, h);
+    std::cout << "nu(0): " << ibh.get_nu(0) << std::endl;
+    std::cout << "nu_prime(0): " << ibh.get_nu_prime(0.0) << std::endl;
+
+
+    std::cout << "nu(b[b.size()]+1): " << ibh.get_nu(b[b.size()-1]+1) << std::endl;
+    std::cout << "nu_prime(b[b.size()-1]+1): " << ibh.get_nu_prime(b[b.size()-1]+1) << std::endl;
 
     auto fbh = fopen("bh.dat", "w");
     auto fnu = fopen("nu.dat", "w");

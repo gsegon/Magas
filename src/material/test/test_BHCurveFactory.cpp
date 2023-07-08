@@ -3,7 +3,7 @@
 //
 #include <gtest/gtest.h>
 
-#include "../include/NuCurveFactory.h"
+#include "NuCurveFactory.h"
 
 TEST(TestBHCurveFactory, basic) {
 

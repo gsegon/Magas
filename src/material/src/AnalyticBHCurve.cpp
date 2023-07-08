@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/AnalyticNuCurve.h"
+#include "AnalyticNuCurve.h"
 #include <cmath>
 
 AnalyticNuCurve::AnalyticNuCurve() {

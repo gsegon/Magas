@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/LinearNuCurve.h"
+#include "LinearNuCurve.h"
 
 LinearNuCurve::LinearNuCurve(double nu) {
     this->nu = nu;

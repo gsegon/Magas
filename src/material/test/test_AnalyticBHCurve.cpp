@@ -3,7 +3,7 @@
 //
 #include <gtest/gtest.h>
 
-#include "../include/AnalyticNuCurve.h"
+#include "AnalyticNuCurve.h"
 
 TEST(AnalyticBHCurve, basic) {
 

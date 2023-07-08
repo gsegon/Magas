@@ -5,6 +5,7 @@ add_library(material OBJECT
         src/BHCurveFactory.cpp)
 
 target_include_directories(material PUBLIC include)
+target_include_directories(material PUBLIC ~/Programs/strtk)
 target_link_libraries(material PUBLIC gsl)
 
 # test material

@@ -150,14 +150,25 @@ int main(int argc, char* argv[]){
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
 
-    NuCurveFactory bhcf;
+    NuCurveFactory bh_factory;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
 
             auto value1 = material_data.at(mesh_el_data.value().at("material")).at("nu");
-            if (value1.is_number()) nu_map.insert({mat_id, bhcf.create((double)value1)});
-            if (value1.is_string()) nu_map.insert({mat_id, bhcf.create((string)value1)});
+            if (value1.is_number()) nu_map.insert({mat_id, bh_factory.create((double)value1)});
+            if (value1.is_string()){
+                if (((std::string)value1).find(".csv") != std::string::npos){
+                    filesystem::path bhpath{value1};
+                    if (bhpath.is_relative()){
+                        bhpath = json_dir / bhpath;
+                    }
+                    nu_map.insert({mat_id, bh_factory.create(bhpath)});
+                }
+                else{
+                    nu_map.insert({mat_id, bh_factory.create((string)value1)});
+                }
+            }
 
         }
         if (mesh_el_data.value().contains("source")){

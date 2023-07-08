@@ -1,7 +1,7 @@
 {
   "material": {
     "core": {
-      "nu": "Analytic"
+      "nu": "M-45.csv"
     },
     "air": {
       "nu": 795774.715025

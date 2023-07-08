@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/InterpolatedNuCurve.h"
+#include "InterpolatedNuCurve.h"
 #include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,18 +32,25 @@ InterpolatedNuCurve::~InterpolatedNuCurve() {
 }
 
 double InterpolatedNuCurve::get_nu(double b) {
-    if (b!=0){
+
+    if (b > this->b[this->b.size()-1]){
+        return 795774.715025;
+    }
+    else if (b!=0){
         double h = gsl_spline_eval(spline, b, acc);
         return h/b;
     }
     else{
         return InterpolatedNuCurve::get_nu(1e-3);
     }
-
 }
 
 double InterpolatedNuCurve::get_nu_prime(double b) {
-    if (b!=0){
+
+    if (b > this->b[this->b.size()-1]){
+        return 0;
+    }
+    else if (b!=0){
         double h = gsl_spline_eval(spline, b, acc);
         double h_prime = gsl_spline_eval_deriv(spline, b, acc);
         return h_prime/b - h/(b*b);
