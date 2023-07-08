@@ -78,7 +78,7 @@ TEST(InterpolatedBHCurve, from_csv) {
 
     auto fbh = fopen("bh.dat", "w");
     auto fnu = fopen("nu.dat", "w");
-    for (double bi=b[0]; bi < b[b.size()-1]; bi += (b[b.size()-1]-b[0])/100){
+    for (double bi=b[0]; bi < 1.5*b[b.size()-1]; bi += (1.5*b[b.size()-1]-b[0])/500){
         double nui = ibh.get_nu(bi);
         double hi = nui*bi;
         fprintf(fbh, "%g %g\n", hi, bi);

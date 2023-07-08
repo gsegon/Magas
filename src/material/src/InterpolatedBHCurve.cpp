@@ -34,7 +34,10 @@ InterpolatedNuCurve::~InterpolatedNuCurve() {
 double InterpolatedNuCurve::get_nu(double b) {
 
     if (b > this->b[this->b.size()-1]){
-        return 795774.715025;
+        double diff_b = b-this->b[this->b.size()-1];
+        double diff_h = 795774.715025*diff_b;
+        double h_new = this->h[this->h.size()-1] + diff_h;
+        return h_new/b;
     }
     else if (b!=0){
         double h = gsl_spline_eval(spline, b, acc);
