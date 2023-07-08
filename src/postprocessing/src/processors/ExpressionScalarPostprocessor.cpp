@@ -101,6 +101,11 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     double nu_q3 = 0;
     double nu_q4 = 0;
 
+    double e_q1 = 0;
+    double e_q2 = 0;
+    double e_q3 = 0;
+    double e_q4 = 0;
+
     symbol_table.add_variable("mat_id", mat_id);
     symbol_table.add_variable("x_q1", x_q1);
     symbol_table.add_variable("x_q2", x_q2);
@@ -140,6 +145,11 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
         symbol_table.add_variable("nu_q2", nu_q2);
         symbol_table.add_variable("nu_q3", nu_q3);
         symbol_table.add_variable("nu_q4", nu_q4);
+
+        symbol_table.add_variable("e_q1", e_q1);
+        symbol_table.add_variable("e_q2", e_q2);
+        symbol_table.add_variable("e_q3", e_q3);
+        symbol_table.add_variable("e_q4", e_q4);
     }
 
     symbol_table.add_constants();
@@ -207,6 +217,11 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
             nu_q2 = bh->get_nu(solution_gradients[1].norm());
             nu_q3 = bh->get_nu(solution_gradients[2].norm());
             nu_q4 = bh->get_nu(solution_gradients[3].norm());
+
+            e_q1 = bh->get_energy(solution_gradients[0].norm());
+            e_q2 = bh->get_energy(solution_gradients[1].norm());
+            e_q3 = bh->get_energy(solution_gradients[2].norm());
+            e_q4 = bh->get_energy(solution_gradients[3].norm());
         }
 
         result += expression.value();

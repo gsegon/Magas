@@ -41,6 +41,11 @@ jobs:
         cd ~/Programs
         git clone https://github.com/ArashPartow/exprtk.git
 
+    - name: Clone strtk
+      run: |
+        cd ~/Programs
+        git clone https://github.com/ArashPartow/strtk.git
+
     - name: Clone nlohmann/json
       run: |
         cd ~/Programs

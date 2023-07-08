@@ -9,7 +9,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "../include/PicardSolver.h"
+#include "PicardSolver.h"
 
 TEST(PicardSolver, instantiation){
 

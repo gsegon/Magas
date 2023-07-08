@@ -8,6 +8,7 @@
 #include <map>
 #include <variant>
 #include <vector>
+#include <filesystem>
 
 #include "NuCurve.h"
 
@@ -18,6 +19,7 @@ class NuCurveFactory {
 public:
     NuCurve* create(double input);
     NuCurve* create(string input);
+    NuCurve* create(filesystem::path input);
 
 };
 

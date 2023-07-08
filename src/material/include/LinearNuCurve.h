@@ -13,6 +13,8 @@ public:
     LinearNuCurve(double nu);
     double get_nu(double) override;
     double get_nu_prime(double) override;
+    double get_energy(double) override;
+    double get_coenergy(double) override;
 
 private:
     double nu;

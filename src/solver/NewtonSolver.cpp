@@ -350,3 +350,4 @@ template<int dim>
 FE_Q<dim>& NewtonSolver<dim>::get_fe(){
     return this->fe;
 }
+
