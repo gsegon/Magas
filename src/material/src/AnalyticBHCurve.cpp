@@ -54,3 +54,12 @@ double AnalyticNuCurve::get_nu_prime(double b) {
     else
         return -theta/(b*b);
 }
+
+double AnalyticNuCurve::get_coenergy(double b) {
+    return 0;
+}
+
+double AnalyticNuCurve::get_energy(double b) {
+    return 0;
+}
+

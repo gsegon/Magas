@@ -58,8 +58,8 @@ double InterpolatedNuCurve::get_nu_prime(double b) {
         double h_prime = gsl_spline_eval_deriv(spline, b, acc);
         return h_prime/b - h/(b*b);
     }
-    else{
-        return InterpolatedNuCurve::get_nu_prime(1e-3);
+    else if(b==0){
+        return 0;
     }
 }
 

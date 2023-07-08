@@ -68,8 +68,6 @@ private:
     DoFHandler<dim> dof_handler;
     QGauss<dim> quadrature_formula;
 
-
-
     AffineConstraints<double> constraints;
 
     struct AssemblyScratchData{
@@ -104,6 +102,8 @@ private:
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
+
+    bool is_initial = true;
 
 
 };

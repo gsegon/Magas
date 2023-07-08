@@ -72,7 +72,6 @@ TEST(InterpolatedBHCurve, from_csv) {
     std::cout << "nu(0): " << ibh.get_nu(0) << std::endl;
     std::cout << "nu_prime(0): " << ibh.get_nu_prime(0.0) << std::endl;
 
-
     std::cout << "nu(b[b.size()]+1): " << ibh.get_nu(b[b.size()-1]+1) << std::endl;
     std::cout << "nu_prime(b[b.size()-1]+1): " << ibh.get_nu_prime(b[b.size()-1]+1) << std::endl;
 

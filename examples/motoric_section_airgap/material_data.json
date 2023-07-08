@@ -1,7 +1,7 @@
 {
   "material": {
     "core": {
-      "nu": "Analytic"
+      "nu": 7957.74715025
     },
     "air": {
       "nu": 795774.715025
