@@ -10,8 +10,8 @@
 #include <filesystem>
 
 #include "NewtonSolver.h"
-#include "LinearBHCurve.h"
-#include "AnalyticBHCurve.h"
+#include "LinearNuCurve.h"
+#include "AnalyticNuCurve.h"
 
 
 using namespace dealii;
@@ -47,7 +47,7 @@ TEST(TestNewtonSolver, set_maps){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -65,7 +65,7 @@ TEST(TestNewtonSolver, assemble){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -83,7 +83,7 @@ TEST(TestNewtonSolver, solve_initial){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -102,7 +102,7 @@ TEST(TestNewtonSolver, solve){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -145,12 +145,12 @@ TEST(TestNewtonSolver, EI_core){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/EI_core/EI_core.msh";
-    std::unordered_map<int, BHCurve*> nu_map{{200, new AnalyticBHCurve{}},       // Core1
-                                             {201, new AnalyticBHCurve{}},       // Core2
-                                             {202, new LinearBHCurve{nu_0}},       // Copper
-                                             {203, new LinearBHCurve{nu_0}},       // Copper
-                                             {204, new LinearBHCurve{nu_0}},       // Air
-                                             {205, new LinearBHCurve{nu_0}},       // Air
+    std::unordered_map<int, NuCurve*> nu_map{{200, new AnalyticNuCurve{}},       // Core1
+                                             {201, new AnalyticNuCurve{}},       // Core2
+                                             {202, new LinearNuCurve{nu_0}},       // Copper
+                                             {203, new LinearNuCurve{nu_0}},       // Copper
+                                             {204, new LinearNuCurve{nu_0}},       // Air
+                                             {205, new LinearNuCurve{nu_0}},       // Air
     };
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, 0.0},        // Core1

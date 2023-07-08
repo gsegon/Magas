@@ -178,7 +178,7 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     for (unsigned int q = 0; q < n_q_points; q++){
 
-        BHCurve* bh = nu_map.at(cell->material_id());
+        NuCurve* bh = nu_map.at(cell->material_id());
         double b_abs = std::sqrt(std::pow(old_solution_gradients[q][0],2) + std::pow(old_solution_gradients[q][1],2));
         no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 
@@ -312,7 +312,7 @@ double NewtonSolver<dim>::compute_residual(double alpha) const
 }
 
 template<int dim>
-void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, BHCurve*> map) {
+void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
     this->nu_map = map;
 }
 

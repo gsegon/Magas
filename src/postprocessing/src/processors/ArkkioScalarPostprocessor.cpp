@@ -24,7 +24,7 @@ template class ArkkioScalarPostprocessor<2>;
 
 
 template <int dim>
-ArkkioScalarPostprocessor<dim>::ArkkioScalarPostprocessor(const unsigned int mat_id, const std::unordered_map<int, BHCurve*>& nu_map) {
+ArkkioScalarPostprocessor<dim>::ArkkioScalarPostprocessor(const unsigned int mat_id, const std::unordered_map<int, NuCurve*>& nu_map) {
     this->nu_map_ptr = &nu_map;
     this->mat_id = mat_id;
 }
@@ -56,7 +56,7 @@ void ArkkioScalarPostprocessor<dim>::process(const Triangulation<dim>&  triangul
     double nu_q4 = 0;
     double nu_0 = 795774.715025;
     if (nu_map_ptr){
-        BHCurve* bh = ((*nu_map_ptr).at(mat_id));
+        NuCurve* bh = ((*nu_map_ptr).at(mat_id));
         nu_q1 = bh->get_nu(solution_gradients[0].norm());
         nu_q2 = bh->get_nu(solution_gradients[1].norm());
         nu_q3 = bh->get_nu(solution_gradients[2].norm());

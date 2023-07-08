@@ -2,16 +2,16 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/LinearBHCurve.h"
+#include "../include/LinearNuCurve.h"
 
-LinearBHCurve::LinearBHCurve(double nu) {
+LinearNuCurve::LinearNuCurve(double nu) {
     this->nu = nu;
 }
 
-double LinearBHCurve::get_nu(double) {
+double LinearNuCurve::get_nu(double) {
     return this->nu;
 }
 
-double LinearBHCurve::get_nu_prime(double) {
+double LinearNuCurve::get_nu_prime(double) {
     return 0;
 }

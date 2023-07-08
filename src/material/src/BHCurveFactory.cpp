@@ -7,19 +7,19 @@
 #include <variant>
 #include <vector>
 
-#include "../include/BHCurveFactory.h"
-#include "../include/LinearBHCurve.h"
-#include "../include/AnalyticBHCurve.h"
-#include "../include/BHCurve.h"
+#include "../include/NuCurveFactory.h"
+#include "../include/LinearNuCurve.h"
+#include "../include/AnalyticNuCurve.h"
+#include "../include/NuCurve.h"
 
 using namespace std;
 
 
-BHCurve* BHCurveFactory::create(double input) {
-    return new LinearBHCurve{input};
+NuCurve* NuCurveFactory::create(double input) {
+    return new LinearNuCurve{input};
 }
 
-BHCurve* BHCurveFactory::create(string input) {
-    if (input == "Analytic") return new AnalyticBHCurve{};
+NuCurve* NuCurveFactory::create(string input) {
+    if (input == "Analytic") return new AnalyticNuCurve{};
     throw runtime_error("No BHCurve can be created for \'" + input + "\' input.");
 }

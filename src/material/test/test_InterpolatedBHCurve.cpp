@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 
-#include "../include/InterpolatedBHCurve.h"
+#include "../include/InterpolatedNuCurve.h"
 
 TEST(InterpolatedBHCurve, basic) {
 
@@ -25,7 +25,7 @@ TEST(InterpolatedBHCurve, basic) {
                           47746.5, 63663, 79577.5,
                           159155, 318310};
 
-    InterpolatedBHCurve ibh(b, h);
+    InterpolatedNuCurve ibh(b, h);
 
 //    std::cout << "nu(0.15): " << ibh.get_nu(0.15) << std::endl;
 //    std::cout << "nu_prime(0.15): " << ibh.get_nu_prime(0.15) << std::endl;

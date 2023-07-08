@@ -171,7 +171,7 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     scratch_data.fe_values.reinit(cell);
 
-    BHCurve* bh = nu_map.at(cell->material_id());
+    NuCurve* bh = nu_map.at(cell->material_id());
     nu = bh->get_nu(0);
     auto f_variant = f_map.at(cell->material_id());
     if(std::holds_alternative<double>(f_variant)){
@@ -242,7 +242,7 @@ void LinearSolver<dim>::solve(){
 }
 
 template<int dim>
-void LinearSolver<dim>::set_nu_map(std::unordered_map<int, BHCurve*> map) {
+void LinearSolver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
     this->nu_map = map;
 }
 

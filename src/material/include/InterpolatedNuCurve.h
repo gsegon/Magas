@@ -2,20 +2,20 @@
 // Created by gordan on 7/5/23.
 //
 
-#ifndef MAGAS_INTERPOLATEDBHCURVE_H
-#define MAGAS_INTERPOLATEDBHCURVE_H
+#ifndef MAGAS_INTERPOLATEDNUCURVE_H
+#define MAGAS_INTERPOLATEDNUCURVE_H
 
 #include <vector>
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
 
-#include "BHCurve.h"
+#include "NuCurve.h"
 
-class InterpolatedBHCurve : public BHCurve {
+class InterpolatedNuCurve : public NuCurve {
 
 public:
-    InterpolatedBHCurve(std::vector<double>, std::vector<double>);
-    ~InterpolatedBHCurve();
+    InterpolatedNuCurve(std::vector<double>, std::vector<double>);
+    ~InterpolatedNuCurve();
     double get_nu(double) override;
     double get_nu_prime(double) override;
 
@@ -29,4 +29,4 @@ private:
 };
 
 
-#endif //MAGAS_INTERPOLATEDBHCURVE_H
+#endif //MAGAS_INTERPOLATEDNUCURVE_H

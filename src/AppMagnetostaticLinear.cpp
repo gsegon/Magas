@@ -16,8 +16,8 @@
 #include "misc.h"
 #include "exprtk.hpp"
 #include "ConfigParser.h"
-#include "BHCurveFactory.h"
-#include "BHCurve.h"
+#include "NuCurveFactory.h"
+#include "NuCurve.h"
 
 
 using json = nlohmann::json;
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]){
     }
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
-    std::unordered_map<int, BHCurve*> nu_map;
+    std::unordered_map<int, NuCurve*> nu_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
 
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
-    BHCurveFactory bhcf;
+    NuCurveFactory bhcf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){

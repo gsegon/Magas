@@ -2,7 +2,7 @@
 // Created by gordan on 7/5/23.
 //
 
-#include "../include/InterpolatedBHCurve.h"
+#include "../include/InterpolatedNuCurve.h"
 #include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@
 #include <iostream>
 #include <cassert>
 
-InterpolatedBHCurve::InterpolatedBHCurve(std::vector<double> b, std::vector<double> h) {
+InterpolatedNuCurve::InterpolatedNuCurve(std::vector<double> b, std::vector<double> h) {
    this->b = b;
    this->h = h;
 
@@ -26,29 +26,29 @@ InterpolatedBHCurve::InterpolatedBHCurve(std::vector<double> b, std::vector<doub
    gsl_spline_init(spline, &b[0], &h[0], b.size());
 }
 
-InterpolatedBHCurve::~InterpolatedBHCurve() {
+InterpolatedNuCurve::~InterpolatedNuCurve() {
     gsl_spline_free(spline);
     gsl_interp_accel_free(acc);
 }
 
-double InterpolatedBHCurve::get_nu(double b) {
+double InterpolatedNuCurve::get_nu(double b) {
     if (b!=0){
         double h = gsl_spline_eval(spline, b, acc);
         return h/b;
     }
     else{
-        return InterpolatedBHCurve::get_nu(1e-3);
+        return InterpolatedNuCurve::get_nu(1e-3);
     }
 
 }
 
-double InterpolatedBHCurve::get_nu_prime(double b) {
+double InterpolatedNuCurve::get_nu_prime(double b) {
     if (b!=0){
         double h = gsl_spline_eval(spline, b, acc);
         double h_prime = gsl_spline_eval_deriv(spline, b, acc);
         return h_prime/b - h/(b*b);
     }
     else{
-        return InterpolatedBHCurve::get_nu_prime(1e-3);
+        return InterpolatedNuCurve::get_nu_prime(1e-3);
     }
 }

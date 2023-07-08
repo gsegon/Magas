@@ -10,8 +10,8 @@
 #include <filesystem>
 
 #include "LinearSolver.h"
-#include "BHCurve.h"
-#include "LinearBHCurve.h"
+#include "NuCurve.h"
+#include "LinearNuCurve.h"
 
 
 using namespace dealii;
@@ -50,7 +50,7 @@ TEST(LinearSolver, assemble_system){
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -69,7 +69,7 @@ TEST(LinearSolver, solve_system){
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -86,7 +86,7 @@ TEST(LinearSolver, solve_system){
 
 TEST(LinearSolver, set_nu_map){
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -96,7 +96,7 @@ TEST(LinearSolver, set_nu_map){
 
 TEST(LinearSolver, set_f_map){
 
-    std::unordered_map<int, BHCurve*> nu_map{{6, new LinearBHCurve{1}}};
+    std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
@@ -127,9 +127,9 @@ TEST(LinearSolver, 2_conductors){
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/2_conductors/2_conductors_x.msh";
 
-    std::unordered_map<int, BHCurve*> nu_map{{1, new LinearBHCurve{nu_0}},       // Conductor 1
-                                           {2, new LinearBHCurve{nu_0}},       // Conductor 2
-                                           {3, new LinearBHCurve{nu_0}}};      // Air
+    std::unordered_map<int, NuCurve*> nu_map{{1, new LinearNuCurve{nu_0}},       // Conductor 1
+                                           {  2, new LinearNuCurve{nu_0}},       // Conductor 2
+                                           {  3, new LinearNuCurve{nu_0}}};      // Air
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, Jdensity},   // Conductor 1
                                            {2, -Jdensity},  // Conductor 2
@@ -160,12 +160,12 @@ TEST(LinearSolver, EI_core){
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/EI_core/EI_core.msh";
 
-    std::unordered_map<int, BHCurve*> nu_map{{200, new LinearBHCurve{nu_core}},       // Core1
-                                             {201, new LinearBHCurve{nu_core}},       // Core2
-                                             {202, new LinearBHCurve{nu_0}},       // Copper
-                                             {203, new LinearBHCurve{nu_0}},       // Copper
-                                             {204, new LinearBHCurve{nu_0}},       // Air
-                                             {205, new LinearBHCurve{nu_0}},       // Air
+    std::unordered_map<int, NuCurve*> nu_map{{200, new LinearNuCurve{nu_core}},       // Core1
+                                             {201, new LinearNuCurve{nu_core}},       // Core2
+                                             {202, new LinearNuCurve{nu_0}},       // Copper
+                                             {203, new LinearNuCurve{nu_0}},       // Copper
+                                             {204, new LinearNuCurve{nu_0}},       // Air
+                                             {205, new LinearNuCurve{nu_0}},       // Air
     };
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, 0},        // Core1
@@ -202,23 +202,23 @@ TEST(LinearSolver, motoric_section){
     std::filesystem::path test_mesh = "../../../examples/motoric_section/motoric_section.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{1, new LinearBHCurve{nu_core}},            // Core rotor
-                                           {2, new LinearBHCurve{nu_core}},            // Core stator
+    std::unordered_map<int, NuCurve*> nu_map{{1,   new LinearNuCurve{nu_core}},            // Core rotor
+                                           {  2,   new LinearNuCurve{nu_core}},            // Core stator
 
-                                           {506, new LinearBHCurve{nu_0}},             // copper
-                                           {507, new LinearBHCurve{nu_0}},
-                                           {508, new LinearBHCurve{nu_0}},
-                                           {509, new LinearBHCurve{nu_0}},
-                                           {510, new LinearBHCurve{nu_0}},
-                                           {511, new LinearBHCurve{nu_0}},
+                                           {  506, new LinearNuCurve{nu_0}},             // copper
+                                           {  507, new LinearNuCurve{nu_0}},
+                                             {508, new LinearNuCurve{nu_0}},
+                                             {509, new LinearNuCurve{nu_0}},
+                                             {510, new LinearNuCurve{nu_0}},
+                                             {511, new LinearNuCurve{nu_0}},
 
-                                           {512, new LinearBHCurve{nu_0}},         // magnets
-                                           {513, new LinearBHCurve{nu_0}},
-                                           {514, new LinearBHCurve{nu_0}},
-                                           {515, new LinearBHCurve{nu_0}},
+                                             {512, new LinearNuCurve{nu_0}},         // magnets
+                                           {513, new LinearNuCurve{nu_0}},
+                                             {514, new LinearNuCurve{nu_0}},
+                                             {515, new LinearNuCurve{nu_0}},
 
-                                           {516, new LinearBHCurve{nu_0}},          // Air
-                                           {517, new LinearBHCurve{nu_0}},
+                                             {516, new LinearNuCurve{nu_0}},          // Air
+                                           {517, new LinearNuCurve{nu_0}},
     };
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},       // Core rotor
@@ -267,8 +267,8 @@ TEST(LinearSolver, Magnet){
     std::filesystem::path test_mesh = "../../../examples/magnet/BlockMagnet.msh";
 
 
-    std::unordered_map<int, BHCurve*> nu_map{{1, new LinearBHCurve{nu_0}},       // Air
-                                           {2, new LinearBHCurve{nu_0}},       // Magnet
+    std::unordered_map<int, NuCurve*> nu_map{{1, new LinearNuCurve{nu_0}},       // Air
+                                           {  2, new LinearNuCurve{nu_0}},       // Magnet
 
     };
 

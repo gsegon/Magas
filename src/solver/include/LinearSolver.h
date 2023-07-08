@@ -27,7 +27,7 @@
 
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
-#include "BHCurve.h"
+#include "NuCurve.h"
 
 using namespace dealii;
 
@@ -40,7 +40,7 @@ public:
     void setup_system();
     void assemble_system();
     void solve();
-    void set_nu_map(std::unordered_map<int, BHCurve*>);
+    void set_nu_map(std::unordered_map<int, NuCurve*>);
     void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
     void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
@@ -83,7 +83,7 @@ private:
 
     Vector<double> solution;
     Vector<double> system_rhs;
-    std::unordered_map<int, BHCurve*> nu_map;
+    std::unordered_map<int, NuCurve*> nu_map;
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;

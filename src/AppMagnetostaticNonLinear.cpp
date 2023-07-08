@@ -16,8 +16,8 @@
 #include "misc.h"
 #include "exprtk.hpp"
 #include "ConfigParser.h"
-#include "BHCurveFactory.h"
-#include "BHCurve.h"
+#include "NuCurveFactory.h"
+#include "NuCurve.h"
 
 
 using json = nlohmann::json;
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]){
     }
 
     std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
-    std::unordered_map<int, BHCurve*> nu_map;
+    std::unordered_map<int, NuCurve*> nu_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]){
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     static const double pi = 3.141592653589793238462643383279502;
 
-    BHCurveFactory bhcf;
+    NuCurveFactory bhcf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
@@ -220,13 +220,13 @@ int main(int argc, char* argv[]){
         std::cout << "Setting up system..." << std::endl;
         solver.setup_system(true);
 
-        int i = 0;
         double alpha=0.1;
         double res;
         double res_trial;
-        std::vector<double> steps{1, 1/2.0, 1/4.0, 1/8.0, 1/16.0};
-        while(i++ < 100){
+        std::vector<double> steps{1, 1/2.0, 1/4.0, 1/8.0, 1/16.0, 1/32.0};
 
+        int i = 0;
+        while(i++ < 100){
             if (i > 1){
                 for (double alpha_trial : steps){
                     res_trial = solver.compute_residual(alpha_trial);
@@ -241,13 +241,13 @@ int main(int argc, char* argv[]){
             std::cout << "alpha = " << alpha << std::endl;
             solver.solve(alpha);
             res = solver.compute_residual(alpha);
-            std::cout << "\tResidual(" << i<< "): " << res << std::endl;
+            std::cout << "\tResidual(" << i << "): " << res << std::endl;
+
             if (res < 1e-6){
                 std::cout << "Converged!";
                 break;
             }
         }
-
 
         // Create vector postprocessors
         std::map<std::string, ExpressionCellPostprocessor<2>*> user_expr_postprocessors;
@@ -260,11 +260,6 @@ int main(int argc, char* argv[]){
         for (auto& user_post_sum_data : postprocess_sum_data.items())
             user_expr_sum_postprocessors[user_post_sum_data.key()] = scalar_postprocessor_factory.create(user_post_sum_data.value());
 
-        // Attach vector postprocessors to Exporters
-        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-        for (auto [key, val] : user_expr_postprocessors)
-            export_vtu.attach_postprocessor(val, key);
-
         // Perform postprocessing of scalar postprocessors
         std::unordered_map<std::string, double> results_map;
         double result_sum = 0;
@@ -273,6 +268,11 @@ int main(int argc, char* argv[]){
             results_map[key] = result_sum;
             delete val;
         }
+
+        // Attach vector postprocessors to Exporters
+        ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
+        for (auto [key, val] : user_expr_postprocessors)
+            export_vtu.attach_postprocessor(val, key);
 
         // Perform vector postprocessing and export to vtu.
         // TODO: separate pefrom and write.
