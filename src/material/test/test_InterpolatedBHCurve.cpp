@@ -78,14 +78,21 @@ TEST(InterpolatedBHCurve, from_csv) {
 
     auto fbh = fopen("bh.dat", "w");
     auto fnu = fopen("nu.dat", "w");
-    for (double bi=b[0]; bi < 1.5*b[b.size()-1]; bi += (1.5*b[b.size()-1]-b[0])/500){
+    auto fbce = fopen("bce.dat", "w");
+    auto fbe = fopen("be.dat", "w");
+    for (double bi=b[0]; bi < 1.5*b[b.size()-1]; bi += (1.5*b[b.size()-1]-b[0])/500.0){
         double nui = ibh.get_nu(bi);
         double hi = nui*bi;
+        double ce = ibh.get_coenergy(bi);
+        double e = ibh.get_energy(bi);
         fprintf(fbh, "%g %g\n", hi, bi);
         fprintf(fnu, "%g %g\n", bi, nui);
+        fprintf(fbce, "%g %g\n", bi, ce);
+        fprintf(fbe, "%g %g\n", bi, e);
     }
     fclose(fbh);
     fclose(fnu);
-
+    fclose(fbce);
+    fclose(fbe);
 
 }

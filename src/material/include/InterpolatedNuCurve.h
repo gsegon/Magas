@@ -18,6 +18,8 @@ public:
     ~InterpolatedNuCurve();
     double get_nu(double) override;
     double get_nu_prime(double) override;
+    double get_coenergy(double);
+    double get_energy(double);
 
 private:
     std::vector<double> b;
