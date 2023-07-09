@@ -60,7 +60,6 @@ void NeighborPostprocessor<dim>::process(const Triangulation<dim>&  triangulatio
                 }
             }
         }
-//        mask->push_back(different);
     }
 
     for (auto vertex_index: mask_vertex_indices) {
