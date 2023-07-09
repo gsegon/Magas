@@ -12,7 +12,6 @@ DEAL_II_SETUP_TARGET(solver)
 target_compile_options(solver PRIVATE -Wall -Wextra)
 target_include_directories(solver PUBLIC include)
 target_link_libraries(solver
-        optimized
         preprocessing
         material
         tbb)
