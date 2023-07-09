@@ -11,13 +11,13 @@
 
 #include "LinearSolver.h"
 #include "NewtonSolver.h"
-#include "processors/EggShellPostprocessor.h"
+#include "processors/TorqueEggShellPostprocessor.h"
 #include "processors/MatIDPostprocessor.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
 #include "export/ExportVtu.h"
 
-TEST(TestNeighborPostprocessor, torque_benchmark_kelvin_1){
+TEST(TestTorqueEggShellPostprocessor, torque_benchmark_kelvin_1){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
@@ -50,13 +50,13 @@ TEST(TestNeighborPostprocessor, torque_benchmark_kelvin_1){
     solver.solve();
 
     MatIDPostprocessor<2> mat_id_postp{};
-    EggShellPostprocessor<2> neighbor_postp{3, 4};
+    TorqueEggShellPostprocessor<2> torque_eggshell_postp{3, 4};
 
     ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu.attach_postprocessor(&neighbor_postp, "Eggshell");
+    export_vtu.attach_postprocessor(&torque_eggshell_postp, "Eggshell");
     export_vtu.attach_postprocessor(&mat_id_postp, "mat_id");
 
-    export_vtu.write("neighbors_torque_benchmark_kelvin_1");
+    export_vtu.write("torque_eggshell_torque_benchmark_kelvin_1");
 
 }
 

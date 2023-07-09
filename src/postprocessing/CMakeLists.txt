@@ -7,7 +7,7 @@ add_library(postprocessor OBJECT
         src/processors/PointBabsScalarPostprocessor.cpp
         src/processors/ScalarPostprocessorFactory.cpp
         src/processors/FluxLinkageScalarPostprocessor.cpp
-        src/processors/EggShellPostprocessor.cpp)
+        src/processors/EggShellPostprocessor.cpp src/processors/TorqueEggShellPostprocessor.cpp)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
@@ -31,7 +31,7 @@ add_executable(test_postprocessor
         test/test_processors/test_ArkkioScalarPostprocessor.cpp
         test/test_processors/test_PointBabsScalarPostprocessor.cpp
         test/test_processors/test_ScalarPostprocessorFactory.cpp
-        test/test_processors/test_FluxLinkageScalarPostprocessor.cpp test/test_processors/test_NeighborPostprocessor.cpp)
+        test/test_processors/test_FluxLinkageScalarPostprocessor.cpp test/test_processors/test_EggShellPostprocessor.cpp test/test_processors/test_TorqueEggShellPostprocessor.cpp)
 target_link_libraries(test_postprocessor ${GTEST_LIBRARIES} gtest_main pthread solver postprocessor material preprocessing)
 DEAL_II_SETUP_TARGET(test_postprocessor)
 
