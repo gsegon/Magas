@@ -210,9 +210,9 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
         JxW_q4 = fe_values.JxW(3);
 
         u_q1 = solution_at_cell[0];
-        u_q2 = solution_at_cell[0];
-        u_q3 = solution_at_cell[0];
-        u_q4 = solution_at_cell[0];
+        u_q2 = solution_at_cell[1];
+        u_q3 = solution_at_cell[2];
+        u_q4 = solution_at_cell[3];
 
         if (nu_map_ptr){
             NuCurve* bh = ((*nu_map_ptr).at(cell->material_id()));
@@ -226,9 +226,6 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
             e_q3 = bh->get_energy(solution_gradients[2].norm());
             e_q4 = bh->get_energy(solution_gradients[3].norm());
         }
-
-
-
 
         result.push_back(expression.value());
 
