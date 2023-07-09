@@ -1,6 +1,7 @@
 //
 // Created by gordan on 5/16/23.
 //
+#include <cmath>
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/grid/tria.h>
@@ -9,24 +10,25 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/base/quadrature_lib.h>
 
-#include "processors/TorqueEggShellPostprocessor.h"
+#include "processors/ForceEggShellScalarPostprocessor.h"
 
 using namespace dealii;
 
-template class TorqueEggShellPostprocessor<2>;
+template class ForceEggShellScalarPostprocessor<2>;
 
 
 template <int dim>
-TorqueEggShellPostprocessor<dim>::TorqueEggShellPostprocessor(unsigned int egg_id, unsigned int shell_id) {
+ForceEggShellScalarPostprocessor<dim>::ForceEggShellScalarPostprocessor(unsigned int egg_id, unsigned int shell_id, const std::string& component) {
     this->egg_id = egg_id;
     this->shell_id = shell_id;
+    this->component = component;
 }
 
 template<int dim>
-void TorqueEggShellPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
-                                         const Vector<double>&      solution,
-                                         const FE_Q<dim>&           fe,
-                                         std::vector<double>& result) {
+void ForceEggShellScalarPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
+                                                   const Vector<double>&      solution,
+                                                   const FE_Q<dim>&           fe,
+                                                   double& result) {
 
     triangulation_ptr = &triangulation;
     solution_ptr = &solution;
@@ -34,14 +36,11 @@ void TorqueEggShellPostprocessor<dim>::process(const Triangulation<dim>&  triang
 
     DoFHandler<dim> dof_handler(*triangulation_ptr);
     dof_handler.distribute_dofs(*fe_ptr);
-
-    std::vector<double> *mask = &result;
-
     QGauss<dim> quadrature_formula(fe_ptr->degree + 1);
-
     FEValues<dim> fe_values(*fe_ptr, quadrature_formula, update_values | update_gradients | update_quadrature_points |
                                                          update_JxW_values);
     std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
+
     std::set<int> mask_vertex_indices;
     std::set<int> mask_cell_indices;
     for (auto cell: dof_handler.active_cell_iterators()) {
@@ -53,7 +52,6 @@ void TorqueEggShellPostprocessor<dim>::process(const Triangulation<dim>&  triang
                         mask_cell_indices.insert(neighbor_cell->index());
                         auto face = cell->face(i);
                         for (unsigned int j = 0; j < face->n_vertices(); j++) {
-                            auto vertex = face->vertex(j);
                             mask_vertex_indices.insert(face->vertex_index(j));
                         }
                     }
@@ -64,7 +62,7 @@ void TorqueEggShellPostprocessor<dim>::process(const Triangulation<dim>&  triang
 
     for (auto cell: dof_handler.active_cell_iterators()) {
         if (cell->material_id() == shell_id){
-            for (int j=0; j<cell->n_vertices(); j++){
+            for (unsigned int j=0; j<cell->n_vertices(); j++){
                 if (std::count(mask_vertex_indices.begin(), mask_vertex_indices.end(), cell->vertex_index(j))){
                     mask_cell_indices.insert(cell->index());
                 }
@@ -72,45 +70,40 @@ void TorqueEggShellPostprocessor<dim>::process(const Triangulation<dim>&  triang
         }
     }
 
-
+    double force_x = 0;
+    double force_y = 0;
     double nu_0 = 795774.715025;
     for (auto cell: dof_handler.active_cell_iterators()) {
-        double cell_torque = 0;
         if(std::count(mask_cell_indices.begin(), mask_cell_indices.end(), cell->index())){
-            std::cout << "cell index: " << cell->index() << "\t\t";
             fe_values.reinit(cell);
             fe_values.get_function_gradients(solution, solution_gradients);
             auto q_points = fe_values.get_quadrature_points();
-            for (int j=0; j<cell->n_vertices(); j++){
+            for (unsigned int j=0; j<cell->n_vertices(); j++){
                 if (std::count(mask_vertex_indices.begin(), mask_vertex_indices.end(), cell->vertex_index(j))){
-                    std::cout << "local vertex index: " << j << " global vertex index: " << cell->vertex_index(j) << "|\t";
                     for (auto q : fe_values.quadrature_point_indices()){
-                        auto x = q_points[q][0];
-                        auto y = q_points[q][1];
+//                        auto x = q_points[q][0];
+//                        auto y = q_points[q][1];
                         auto Bx = solution_gradients[q][1];
                         auto By = -solution_gradients[q][0];
                         auto JxW = fe_values.JxW(q);
 
-                        Tensor<1, dim> r({x, y});
                         auto gamma = fe_values.shape_grad(j, q);
-                        auto cross_1 = r[0]*gamma[1] -r[1]*gamma[0];
-                        auto cross_2 = r[0]*By -r[1]*Bx;
 
-                        double term1 = nu_0*0.5*solution_gradients[q].norm_square()*cross_1;
-                        double term2 = -nu_0*(Bx*gamma[0] + By*gamma[1])*cross_2;
-                        cell_torque += (term1 + term2)*JxW;
+                        double term1_x = nu_0*0.5*solution_gradients[q].norm_square()*gamma[0];
+                        double term1_y = nu_0*0.5*solution_gradients[q].norm_square()*gamma[1];
+
+                        double term2_x = -nu_0*(Bx*gamma[0] + By*gamma[1])*Bx;
+                        double term2_y = -nu_0*(Bx*gamma[0] + By*gamma[1])*By;
+                        force_x += (term1_x + term2_x)*JxW;
+                        force_y += (term1_y + term2_y)*JxW;
                     }
-
                 }
             }
-            std::cout << std::endl;
         }
-        result.push_back(cell_torque);
     }
 
-    double results_sum =0;
-    for (double cell_contrib : result)
-        results_sum += cell_contrib;
-    std::cout << "results_sum: " << results_sum << std::endl;
+    if (component == "x") result = force_x;
+    else if (component == "y") result = force_y;
+    else result = std::numeric_limits<double>::quiet_NaN();
 }
 

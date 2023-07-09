@@ -2,8 +2,8 @@
 // Created by gordan on 5/16/23.
 //
 
-#ifndef SOLVER_TORQUEEGGSHELLPOSTPROCESSOR_H
-#define SOLVER_TORQUEEGGSHELLPOSTPROCESSOR_H
+#ifndef SOLVER_FORCEEGGSHELLSCALARPOSTPROCESSOR_H
+#define SOLVER_FORCEEGGSHELLSCALARPOSTPROCESSOR_H
 
 #include <variant>
 #include <deal.II/lac/vector.h>
@@ -11,20 +11,20 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/grid/grid_in.h>
-#include "CellPostprocessor.h"
+#include "ScalarPostprocessor.h"
 #include "NuCurve.h"
 
 using namespace dealii;
 
 template <int dim>
-class TorqueEggShellPostprocessor : public CellPostprocessor<dim> {
+class ForceEggShellScalarPostprocessor : public ScalarPostprocessor<dim> {
 
 public:
-    TorqueEggShellPostprocessor(unsigned int, unsigned int);
+    ForceEggShellScalarPostprocessor(unsigned int, unsigned int, const std::string&);
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
                  const FE_Q<dim>&           fe,
-                 std::vector<double>& result);
+                 double& result);
 
 private:
     const Triangulation<dim> *triangulation_ptr = nullptr;
@@ -33,7 +33,8 @@ private:
 
     unsigned int egg_id;
     unsigned int shell_id;
+    std::string component;
 
 };
 
-#endif //SOLVER_TORQUEEGGSHELLPOSTPROCESSOR_H
+#endif //SOLVER_FORCEEGGSHELLSCALARPOSTPROCESSOR_H

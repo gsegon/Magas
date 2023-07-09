@@ -9,24 +9,24 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/base/quadrature_lib.h>
 
-#include "processors/EggShellPostprocessor.h"
+#include "processors/EggShellCellPostprocessor.h"
 
 using namespace dealii;
 
-template class EggShellPostprocessor<2>;
+template class EggShellCellPostprocessor<2>;
 
 
 template <int dim>
-EggShellPostprocessor<dim>::EggShellPostprocessor(unsigned int egg_id, unsigned int shell_id) {
+EggShellCellPostprocessor<dim>::EggShellCellPostprocessor(unsigned int egg_id, unsigned int shell_id) {
     this->egg_id = egg_id;
     this->shell_id = shell_id;
 }
 
 template<int dim>
-void EggShellPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
-                                         const Vector<double>&      solution,
-                                         const FE_Q<dim>&           fe,
-                                         std::vector<double>& result) {
+void EggShellCellPostprocessor<dim>::process(const Triangulation<dim>&  triangulation,
+                                             const Vector<double>&      solution,
+                                             const FE_Q<dim>&           fe,
+                                             std::vector<double>& result) {
 
     triangulation_ptr = &triangulation;
     solution_ptr = &solution;

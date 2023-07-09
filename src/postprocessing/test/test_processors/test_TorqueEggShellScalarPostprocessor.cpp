@@ -11,13 +11,11 @@
 
 #include "LinearSolver.h"
 #include "NewtonSolver.h"
-#include "processors/TorqueEggShellCellPostprocessor.h"
-#include "processors/MatIDPostprocessor.h"
+#include "processors/TorqueEggShellScalarPostprocessor.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
-#include "export/ExportVtu.h"
 
-TEST(TestTorqueEggShellPostprocessor, torque_benchmark_kelvin_1){
+TEST(TestTorqueEggShellScalarPostprocessor, torque_benchmark_kelvin_1){
 
     std::filesystem::path home = std::getenv("HOME");
     std::filesystem::path test_mesh = "../../../examples/torque_benchmark_kelvin_1/torque_benchmark_kelvin_1.msh";
@@ -49,14 +47,15 @@ TEST(TestTorqueEggShellPostprocessor, torque_benchmark_kelvin_1){
     solver.assemble_system();
     solver.solve();
 
-    MatIDPostprocessor<2> mat_id_postp{};
-    TorqueEggShellCellPostprocessor<2> torque_eggshell_postp{3, 4};
+    TorqueEggShellScalarPostprocessor<2> torque_eggshell_postp{3, 4};
 
-    ExportVtu<2> export_vtu(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
-    export_vtu.attach_postprocessor(&torque_eggshell_postp, "Eggshell");
-    export_vtu.attach_postprocessor(&mat_id_postp, "mat_id");
+    double result;
+    torque_eggshell_postp.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result);
 
-    export_vtu.write("torque_eggshell_torque_benchmark_kelvin_1");
+    std::cout << "result: " << result << std::endl;
+    std::cout << "result*2e-2: " << result*2e-2 << std::endl;
+
+    ASSERT_NEAR(result*2e-2, 1.0, 1e-3);
 
 }
 

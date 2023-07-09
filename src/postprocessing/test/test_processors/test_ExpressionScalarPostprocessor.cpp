@@ -35,15 +35,15 @@ TEST(ExpressionScalarPostprocessor, unit_square){
     solver.solve();
 
     ExpressionScalarPostprocessor<2> expression_postp_count_elem{"1", nu_map};
-    ExpressionScalarPostprocessor<2> expression_postp_energy{"(Bx_q1^2+By_q1^2)/2.0 * nu * JxW_q1 + "
-                                                             "(Bx_q2^2+By_q2^2)/2.0 * nu * JxW_q2 + "
-                                                             "(Bx_q3^2+By_q3^2)/2.0 * nu * JxW_q3 + "
-                                                             "(Bx_q4^2+By_q4^2)/2.0 * nu * JxW_q4", nu_map};
+    ExpressionScalarPostprocessor<2> expression_postp_energy{"(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + "
+                                                             "(Bx_q2^2+By_q2^2)/2.0 * nu_q2 * JxW_q2 + "
+                                                             "(Bx_q3^2+By_q3^2)/2.0 * nu_q3 * JxW_q3 + "
+                                                             "(Bx_q4^2+By_q4^2)/2.0 * nu_q4 * JxW_q4", nu_map};
 
     double result_count_elem;
     expression_postp_count_elem.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_count_elem);
 
-    double result_energy;
+    double result_energy =0;
     expression_postp_energy.process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_energy);
 
     std::cout << "result_count_elem: " << result_count_elem << std::endl;
