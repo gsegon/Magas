@@ -7,7 +7,7 @@ add_library(postprocessor OBJECT
         src/processors/PointBabsScalarPostprocessor.cpp
         src/processors/ScalarPostprocessorFactory.cpp
         src/processors/FluxLinkageScalarPostprocessor.cpp
-        src/processors/NeighborPostprocessor.cpp)
+        src/processors/EggShellPostprocessor.cpp)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})

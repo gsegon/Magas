@@ -17,10 +17,10 @@
 using namespace dealii;
 
 template <int dim>
-class NeighborPostprocessor : public CellPostprocessor<dim> {
+class EggShellPostprocessor : public CellPostprocessor<dim> {
 
 public:
-    NeighborPostprocessor();
+    EggShellPostprocessor(unsigned int, unsigned int);
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
                  const FE_Q<dim>&           fe,
@@ -30,6 +30,9 @@ private:
     const Triangulation<dim> *triangulation_ptr = nullptr;
     const Vector<double> *solution_ptr = nullptr;
     const FE_Q<dim> *fe_ptr = nullptr;
+
+    unsigned int egg_id;
+    unsigned int shell_id;
 
 };
 
