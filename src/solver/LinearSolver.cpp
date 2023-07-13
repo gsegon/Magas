@@ -105,8 +105,11 @@ void LinearSolver<dim>::setup_system() {
             auto first = matched_pair.first;
             auto second = matched_pair.second;
 
-            constraints.add_line(first);
-            constraints.add_entry(first, second, pm->get_weigth());
+            if (first != second){
+                constraints.add_line(first);
+                constraints.add_entry(first, second, pm->get_weigth());
+            }
+
         }
     }
 
