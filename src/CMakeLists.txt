@@ -6,7 +6,8 @@ target_link_libraries(magas optimized
         postprocessor
         preprocessing
         material
-        sources)
+        sources
+        input)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
@@ -18,7 +19,6 @@ target_include_directories(magas PUBLIC ~/Programs/cxxopts/include)
 target_include_directories(magas PUBLIC ~/Programs/exprtk)
 target_include_directories(magas PUBLIC ~/Programs/json/include)
 
-
 # amnl
 add_executable(amnl AppMagnetostaticNonLinear.cpp)
 target_link_libraries(amnl optimized
@@ -27,7 +27,8 @@ target_link_libraries(amnl optimized
         postprocessor
         preprocessing
         material
-        sources)
+        sources
+        input)
 
 set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
 find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})

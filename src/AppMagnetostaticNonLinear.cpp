@@ -15,7 +15,7 @@
 #include "processors/ScalarPostprocessorFactory.h"
 #include "misc.h"
 #include "exprtk.hpp"
-#include "ConfigParser.h"
+#include "input/include/ConfigParser.h"
 #include "NuCurveFactory.h"
 #include "NuCurve.h"
 #include "FSourceFactory.h"

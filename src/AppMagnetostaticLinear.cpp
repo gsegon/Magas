@@ -136,7 +136,6 @@ int main(int argc, char* argv[]){
     }
 
     // Add material coefficients to 'nu_map' and sources to 'f_map'
-    static const double pi = 3.141592653589793238462643383279502;
     NuCurveFactory bhcf;
     FSourceFactory fsf;
     for (auto& mesh_el_data : mesh_id_data.items()){
@@ -152,14 +151,15 @@ int main(int argc, char* argv[]){
             auto source_d = source_data.at(mesh_el_data.value().at("source"));
             double source_val = 0;
             if (!mesh_el_data.value().contains("angle")){
-                if (source_d.is_number()){
-                    source_val = source_d;
-                    f_map.insert({mat_id, fsf.create(source_val)});
-                }
-                else if (source_d.is_string()){
-                    std::string user_expr_string = source_d;
-                    f_map.insert({mat_id, fsf.create(user_expr_string)});
-                }
+
+                    if (source_d.is_number()){
+                        source_val = source_d;
+                        f_map.insert({mat_id, fsf.create(source_val)});
+                    }
+                    else if (source_d.is_string()){
+                        std::string user_expr_string = source_d;
+                        f_map.insert({mat_id, fsf.create(user_expr_string)});
+                    }
             }
 
             // If mesh data contains angle, the source is vector Hc. Magnitude in Material data and direction from mesh data.

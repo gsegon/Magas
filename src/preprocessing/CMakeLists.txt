@@ -18,7 +18,6 @@ include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(test_preprocessing
         test/test_LinePeriodicityMapper.cpp
         test/test_CirclePeriodicityMapper.cpp
-        test/test_ConfigParser.cpp
         test/test_PeriodicityMapperFactory.cpp
         )
 target_include_directories(test_preprocessing PUBLIC include)
