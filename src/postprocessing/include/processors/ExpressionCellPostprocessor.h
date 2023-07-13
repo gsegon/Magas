@@ -16,14 +16,20 @@
 
 using namespace dealii;
 
+typedef std::unordered_map<int, NuCurve*> t_nu_map;
+typedef std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> t_f_map;
+typedef std::unordered_map<int, double> t_dc_map;
+typedef std::unordered_map<std::string, std::vector<unsigned int>> t_per_map;
+typedef std::unordered_map<std::string, double> t_cli_source_map;
+
 template <int dim>
 class ExpressionCellPostprocessor : public CellPostprocessor<dim> {
 
 public:
     ExpressionCellPostprocessor(const std::string&);
-    ExpressionCellPostprocessor(const std::string&, const std::unordered_map<int, NuCurve*>&);
-    ExpressionCellPostprocessor(const std::string&, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>&);
-    ExpressionCellPostprocessor(const std::string&, const std::unordered_map<int, NuCurve*>&, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>&);
+    ExpressionCellPostprocessor(const std::string&, t_nu_map&);
+    ExpressionCellPostprocessor(const std::string&, t_f_map&);
+    ExpressionCellPostprocessor(const std::string&, t_nu_map&, t_f_map&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -34,8 +40,8 @@ private:
     const Triangulation<dim> *triangulation_ptr = nullptr;
     const Vector<double> *solution_ptr = nullptr;
     const FE_Q<dim> *fe_ptr = nullptr;
-    const std::unordered_map<int, NuCurve*>* nu_map_ptr = nullptr;
-    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>* f_map_ptr = nullptr;
+    const t_nu_map* nu_map_ptr = nullptr;
+    t_f_map* f_map_ptr = nullptr;
 
     std::string user_expression;
 
