@@ -35,6 +35,7 @@
 
 #include "PeriodicityMapperFactory.h"
 #include "LinearSolver.h"
+#include "ConstFSource.h"
 
 
 using namespace dealii;
@@ -161,7 +162,8 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
                                               LinearSolver::AssemblyCopyData &copy_data) {
 
     double nu = 0;
-    double f = 0;
+    FSource* f;
+    ConstFSource f_zero{0};
     Tensor<1, dim> Hc({0, 0});
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
@@ -176,13 +178,13 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     NuCurve* bh = nu_map.at(cell->material_id());
     nu = bh->get_nu(0);
     auto f_variant = f_map.at(cell->material_id());
-    if(std::holds_alternative<double>(f_variant)){
-        f = std::get<double>(f_variant);
+    if(std::holds_alternative<FSource*>(f_variant)){
+        f = std::get<FSource*>(f_variant);
         Hc[0] = 0;
         Hc[1] = 0;
     }
     else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
-        f = 0;
+        f = &f_zero;
         Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
         Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
     }
@@ -200,9 +202,11 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
                             sd.fe_values.JxW(q);               // dx
             }
             // Current contribution
-                copy_data.cell_rhs(i) += f*                         // f at cell
-                        sd.fe_values.shape_value(i, q)*            // phi_i(x_q)
-                        sd.fe_values.JxW(q);                        // dx
+            auto vertex = cell->vertex(i);
+            double f_val = f->get_value(vertex[0], vertex[1]);   // TODO: for all FSources fval += ...
+            copy_data.cell_rhs(i) += f_val*                     // f at cell
+                    sd.fe_values.shape_value(i, q)*             // phi_i(x_q)
+                    sd.fe_values.JxW(q);                        // dx
 
             // Magnet contribution
                 copy_data.cell_rhs(i) += Hc*sd.fe_values.shape_grad(i, q)*sd.fe_values.JxW(q);
@@ -249,7 +253,7 @@ void LinearSolver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
 }
 
 template<int dim>
-void LinearSolver<dim>::set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>> map) {
+void LinearSolver<dim>::set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> map) {
     this->f_map = map;
 }
 

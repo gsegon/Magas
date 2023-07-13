@@ -15,6 +15,7 @@
 #include "processors/MatIDPostprocessor.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
+#include "ConstFSource.h"
 
 TEST(ExportVtu, initialize_unit){
 
@@ -23,7 +24,7 @@ TEST(ExportVtu, initialize_unit){
 
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -63,12 +64,12 @@ TEST(ExportVtu, initialize_EI_core){
                                              {205, new LinearNuCurve{nu_0}},       // Air
     };
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, (double) 0},        // Core1
-                                           {201, 0},        // Core2
-                                           {202, J1},       // Copper
-                                           {203, J2},       // Copper
-                                           {204, 0},        // Air
-                                           {205, 0},        // Air
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{ {200, new ConstFSource{0}},        // Core1
+                                           {201, new ConstFSource{0}},        // Core2
+                                           {202, new ConstFSource{J1}},       // Copper
+                                           {203, new ConstFSource{J2}},       // Copper
+                                           {204, new ConstFSource{0}},        // Air
+                                           {205, new ConstFSource{0}},        // Air
     };
 
     std::unordered_map<int, double> dc_map{{44, 0}} ;      // Air

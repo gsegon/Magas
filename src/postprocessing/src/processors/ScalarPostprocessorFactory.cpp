@@ -17,7 +17,7 @@
 template class ScalarPostprocessorFactory<2>;
 
 template<int dim>
-ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map){
+ScalarPostprocessorFactory<dim>::ScalarPostprocessorFactory(const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map){
     this->nu_map_ptr = &nu_map;
     this->f_map_ptr = &f_map;
 }
