@@ -14,6 +14,7 @@ target_include_directories(solver PUBLIC include)
 target_link_libraries(solver
         preprocessing
         material
+        sources
         tbb)
 
 # test solver
@@ -27,7 +28,7 @@ add_executable(test_solver
         test/test_NewtonSolver.cpp)
 
 #TODO: Remove dependency to test_solver -> preprocessing OR split tests into unit tests and integration tests
-target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver preprocessing material)
+target_link_libraries(test_solver ${GTEST_LIBRARIES} gtest_main pthread solver preprocessing material sources)
 DEAL_II_SETUP_TARGET(test_solver)
 
 add_test(test_solver_gtest test_solver)

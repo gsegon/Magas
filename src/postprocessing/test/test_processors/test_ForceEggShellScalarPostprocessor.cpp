@@ -15,6 +15,7 @@
 #include "processors/ExpressionScalarPostprocessor.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
+#include "ConstFSource.h"
 
 TEST(TestForceEggShellScalarPostprocessor, force_benchmark_kelvin_1){
 
@@ -27,10 +28,10 @@ TEST(TestForceEggShellScalarPostprocessor, force_benchmark_kelvin_1){
                                              {6, new LinearNuCurve{795774.715025}},
                                              {8, new LinearNuCurve{795774.715025}}};
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, 25/(std::pow(0.25e-2, 2)*M_PI)},
-                                                                                   {4, 0},
-                                                                                   {5, 0},
-                                                                                   {6, 0},
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{3, new ConstFSource{25/(std::pow(0.25e-2, 2)*M_PI)}},
+                                                                                   {4, new ConstFSource{0}},
+                                                                                   {5, new ConstFSource{0}},
+                                                                                   {6, new ConstFSource{0}},
                                                                                    {8, std::pair<double, double>{-1591549.43091895, 0.0}}
     };
     std::unordered_map<int, double> dc_map{{7, 0}};
@@ -48,10 +49,10 @@ TEST(TestForceEggShellScalarPostprocessor, force_benchmark_kelvin_1){
 
     ForceEggShellScalarPostprocessor<2> force_x_eggshell_postp{3, 4, "x"};
     ForceEggShellScalarPostprocessor<2> force_y_eggshell_postp{3, 4, "y"};
-    ExpressionScalarPostprocessor<2> force_x_lorentz_postp{"if((mat_id == 3), -4e-2*(By_q1*J*JxW_q1+By_q2*J*JxW_q2+By_q3*J*JxW_q3+By_q4*J*JxW_q4), 0)",
+    ExpressionScalarPostprocessor<2> force_x_lorentz_postp{"if((mat_id == 3), -4e-2*(By_q1*J_q1*JxW_q1+By_q2*J_q2*JxW_q2+By_q3*J_q3*JxW_q3+By_q4*J_q4*JxW_q4), 0)",
                                                            nu_map,
                                                            f_map};
-    ExpressionScalarPostprocessor<2> force_y_lorentz_postp{"if((mat_id == 3), 4e-2*(Bx_q1*J*JxW_q1+Bx_q2*J*JxW_q2+Bx_q3*J*JxW_q3+Bx_q4*J*JxW_q4), 0)",
+    ExpressionScalarPostprocessor<2> force_y_lorentz_postp{"if((mat_id == 3), 4e-2*(Bx_q1*J_q1*JxW_q1+Bx_q2*J_q2*JxW_q2+Bx_q3*J_q3*JxW_q3+Bx_q4*J_q4*JxW_q4), 0)",
                                                            nu_map,
                                                            f_map};
 
@@ -91,10 +92,10 @@ TEST(TestForceEggShellScalarPostprocessor, force_benchmark_kelvin_2){
                                              {6, new LinearNuCurve{795774.715025}},
                                              {8, new LinearNuCurve{795774.715025}}};
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, 25/(std::pow(0.25e-2, 2)*M_PI)},
-                                                                                   {4, 0},
-                                                                                   {5, 0},
-                                                                                   {6, 0},
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{3, new ConstFSource{25/(std::pow(0.25e-2, 2)*M_PI)}},
+                                                                                   {4, new ConstFSource{0}},
+                                                                                   {5, new ConstFSource{0}},
+                                                                                   {6, new ConstFSource{0}},
                                                                                    {8, std::pair<double, double>{0.0, -1591549.43091895}}
     };
     std::unordered_map<int, double> dc_map{{7, 0}};
@@ -112,10 +113,10 @@ TEST(TestForceEggShellScalarPostprocessor, force_benchmark_kelvin_2){
 
     ForceEggShellScalarPostprocessor<2> force_x_eggshell_postp{3, 4, "x"};
     ForceEggShellScalarPostprocessor<2> force_y_eggshell_postp{3, 4, "y"};
-    ExpressionScalarPostprocessor<2> force_x_lorentz_postp{"if((mat_id == 3), -4e-2*(By_q1*J*JxW_q1+By_q2*J*JxW_q2+By_q3*J*JxW_q3+By_q4*J*JxW_q4), 0)",
+    ExpressionScalarPostprocessor<2> force_x_lorentz_postp{"if((mat_id == 3), -4e-2*(By_q1*J_q1*JxW_q1+By_q2*J_q2*JxW_q2+By_q3*J_q3*JxW_q3+By_q4*J_q4*JxW_q4), 0)",
                                                            nu_map,
                                                            f_map};
-    ExpressionScalarPostprocessor<2> force_y_lorentz_postp{"if((mat_id == 3), 4e-2*(Bx_q1*J*JxW_q1+Bx_q2*J*JxW_q2+Bx_q3*J*JxW_q3+Bx_q4*J*JxW_q4), 0)",
+    ExpressionScalarPostprocessor<2> force_y_lorentz_postp{"if((mat_id == 3), 4e-2*(Bx_q1*J_q1*JxW_q1+Bx_q2*J_q2*JxW_q2+Bx_q3*J_q3*JxW_q3+Bx_q4*J_q4*JxW_q4), 0)",
                                                            nu_map,
                                                            f_map};
 

@@ -12,6 +12,7 @@
 #include "LinearSolver.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
+#include "ConstFSource.h"
 
 
 using namespace dealii;
@@ -51,7 +52,7 @@ TEST(LinearSolver, assemble_system){
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -70,7 +71,7 @@ TEST(LinearSolver, solve_system){
     std::filesystem::path test_mesh = "../../../examples/unit_square/unit_square.msh";
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -87,7 +88,7 @@ TEST(LinearSolver, solve_system){
 TEST(LinearSolver, set_nu_map){
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -97,7 +98,7 @@ TEST(LinearSolver, set_nu_map){
 TEST(LinearSolver, set_f_map){
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -131,9 +132,9 @@ TEST(LinearSolver, 2_conductors){
                                            {  2, new LinearNuCurve{nu_0}},       // Conductor 2
                                            {  3, new LinearNuCurve{nu_0}}};      // Air
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, Jdensity},   // Conductor 1
-                                           {2, -Jdensity},  // Conductor 2
-                                           {3, 0},          // Air
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{ {1, new ConstFSource{Jdensity}},   // Conductor 1
+                                           {2,  new ConstFSource{-Jdensity}},  // Conductor 2
+                                           {3,  new ConstFSource{0}},          // Air
                                         };
 
     std::unordered_map<int, double> dc_map{{100, 0}};       // Outerbounds
@@ -168,12 +169,12 @@ TEST(LinearSolver, EI_core){
                                              {205, new LinearNuCurve{nu_0}},       // Air
     };
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {200, 0},        // Core1
-                                           {201, 0},        // Core2
-                                           {202, J1},       // Copper
-                                           {203, J2},       // Copper
-                                           {204, 0},        // Air
-                                           {205, 0},        // Air
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{ {200,  new ConstFSource{0}},        // Core1
+                                           {201,  new ConstFSource{0}},        // Core2
+                                           {202,  new ConstFSource{J1}},       // Copper
+                                           {203, new ConstFSource{J2}},       // Copper
+                                           {204, new ConstFSource{0}},        // Air
+                                           {205, new ConstFSource{0}},        // Air
     };
 
     std::unordered_map<int, double> dc_map{{44, 0}} ;      // Air
@@ -221,22 +222,22 @@ TEST(LinearSolver, motoric_section){
                                            {517, new LinearNuCurve{nu_0}},
     };
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},       // Core rotor
-                                                                                    {2, 0},       // Core stator
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{ {1, new ConstFSource{0}},       // Core rotor
+                                                                                    {2, new ConstFSource{0}},       // Core stator
 
-                                                                                    {506, 0},         // Coils
-                                                                                    {507, 0},
-                                                                                    {508, J1},
-                                                                                    {509, J1},
-                                                                                    {510, 0},
-                                                                                    {511, 0},
+                                                                                    {506, new ConstFSource{0}},         // Coils
+                                                                                    {507, new ConstFSource{0}},
+                                                                                    {508, new ConstFSource{J1}},
+                                                                                    {509, new ConstFSource{J2}},
+                                                                                    {510, new ConstFSource{0}},
+                                                                                    {511, new ConstFSource{0}},
 
-                                                                                    {512, 0},         // magnets
-                                                                                    {513, 0},
-                                                                                    {514, 0},
-                                                                                    {515, 0},
-                                                                                    {516, 0},
-                                                                                    {517, 0},
+                                                                                    {512, new ConstFSource{0}},         // magnets
+                                                                                    {513, new ConstFSource{0}},
+                                                                                    {514, new ConstFSource{0}},
+                                                                                    {515, new ConstFSource{0}},
+                                                                                    {516, new ConstFSource{0}},
+                                                                                    {517, new ConstFSource{0}},
     };
 
     std::unordered_map<int, double> dc_map{{505, 0.0},
@@ -273,7 +274,7 @@ TEST(LinearSolver, Magnet){
     };
 
     std::pair<double, double> Hc{0, 10e3};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{ {1, 0},
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{ {1, new ConstFSource{0}},
                                            {2, Hc},        // Magnet
                                            };
 

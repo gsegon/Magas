@@ -14,6 +14,8 @@
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
 #include "processors/ExpressionScalarPostprocessor.h"
+#include "ConstFSource.h"
+#include "FSource.h"
 
 TEST(ExpressionScalarPostprocessor, unit_square){
 
@@ -22,7 +24,7 @@ TEST(ExpressionScalarPostprocessor, unit_square){
 
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;
@@ -58,7 +60,7 @@ TEST(ExpressionScalarPostprocessorNonlinear, unit_square){
 
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     NewtonSolver<2> solver;

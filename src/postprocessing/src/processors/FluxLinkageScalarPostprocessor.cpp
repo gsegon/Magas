@@ -11,13 +11,14 @@
 #include <deal.II/base/quadrature_lib.h>
 
 #include "processors/FluxLinkageScalarPostprocessor.h"
+#include "ConstFSource.h"
 
 using namespace dealii;
 
 template class FluxLinkageScalarPostprocessor<2>;
 
 template <int dim>
-FluxLinkageScalarPostprocessor<dim>::FluxLinkageScalarPostprocessor(const unsigned int mat_id, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+FluxLinkageScalarPostprocessor<dim>::FluxLinkageScalarPostprocessor(const unsigned int mat_id, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map) {
     this->f_map_ptr = &f_map;
     this->mat_id = mat_id;
 }
@@ -42,15 +43,17 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
     std::vector<double> solution_at_cell(quadrature_formula.size());
 
     result = 0;
-    double J;
+    FSource* f_source;
+    ConstFSource f_zero{0};
     double i_current = 0;
     for (auto& cell : dof_handler.active_cell_iterators()){
         if (cell->material_id() == mat_id){
-            J = 0;
             if (f_map_ptr){
                 auto f_variant = (*f_map_ptr).at(cell->material_id());
-                if(std::holds_alternative<double>(f_variant))
-                    J = std::get<double>(f_variant);
+                if(std::holds_alternative<FSource*>(f_variant))
+                    f_source = std::get<FSource*>(f_variant);
+            }else{
+                f_source = &f_zero;
             }
 
             fe_values.reinit(cell);
@@ -59,6 +62,10 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
             q_points = fe_values.get_quadrature_points();
 
             for (auto q: fe_values.quadrature_point_indices()){
+
+                auto x = q_points[q][0];
+                auto y = q_points[q][1];
+                auto J = f_source->get_value(x, y);
                 auto u = solution_at_cell[q];
                 auto JxW = fe_values.JxW(q);
                 result += u*J*JxW;

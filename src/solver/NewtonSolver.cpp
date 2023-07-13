@@ -29,6 +29,7 @@
 
 #include "NewtonSolver.h"
 #include "PeriodicityMapperFactory.h"
+#include "ConstFSource.h"
 
 using namespace dealii;
 
@@ -146,7 +147,8 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
                                               NewtonSolver::AssemblyCopyData &copy_data) {
 
     double no = 0;
-    double f = 0;
+    FSource* f;
+    ConstFSource f_zero{0};
     Tensor<1, dim> Hc({0, 0});
 
     const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
@@ -162,13 +164,13 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     scratch_data.fe_values.get_function_gradients(current_solution, old_solution_gradients);
 
     auto f_variant = f_map.at(cell->material_id());
-    if(std::holds_alternative<double>(f_variant)){
-        f = std::get<double>(f_variant);
+    if(std::holds_alternative<FSource*>(f_variant)){
+        f = std::get<FSource*>(f_variant);
         Hc[0] = 0;
         Hc[1] = 0;
     }
     else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
-        f = 0;
+        f = &f_zero;
         Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
         Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
     }
@@ -192,7 +194,10 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
                                                sd.fe_values.JxW(q);                 // dx
             }
             // Current + Magnet contribution - (...)
-            copy_data.cell_rhs(i) += ((f*sd.fe_values.shape_value(i, q)+Hc*sd.fe_values.shape_grad(i, q))                               // (f
+            // Current contribution
+            auto vertex = cell->vertex(i);
+            double f_val = f->get_value(vertex[0], vertex[1]);   // TODO: for all FSources fval += ...
+            copy_data.cell_rhs(i) += ((f_val*sd.fe_values.shape_value(i, q)+Hc*sd.fe_values.shape_grad(i, q))                               // (f
                                       -                                   // -
                                       no*                                 // nu at cell*
                                       sd.fe_values.shape_grad(i, q)*       // phi_i(x_q)*
@@ -262,7 +267,8 @@ double NewtonSolver<dim>::compute_residual(double alpha) const
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
     double no = 0;
-    double f = 0;
+    FSource* f;
+    ConstFSource f_zero{0};
     Tensor<1, dim> Hc({0, 0});
 
     for (const auto &cell : dof_handler.active_cell_iterators()){
@@ -271,13 +277,13 @@ double NewtonSolver<dim>::compute_residual(double alpha) const
         fe_values.get_function_gradients(evaluation_point, gradients);
 
         auto f_variant = f_map.at(cell->material_id());
-        if(std::holds_alternative<double>(f_variant)){
-            f = std::get<double>(f_variant);
+        if(std::holds_alternative<FSource*>(f_variant)){
+            f = std::get<FSource*>(f_variant);
             Hc[0] = 0;
             Hc[1] = 0;
         }
         else if (std::holds_alternative<std::pair<double, double>>(f_variant)){
-            f = 0;
+            f = &f_zero;
             Hc[0] = -std::get<std::pair<double, double>>(f_variant).second;
             Hc[1] = std::get<std::pair<double, double>>(f_variant).first;
         }
@@ -290,12 +296,18 @@ double NewtonSolver<dim>::compute_residual(double alpha) const
             double b_abs = std::sqrt(std::pow(gradients[q][0],2) + std::pow(gradients[q][1],2));
             no = bh->get_nu(b_abs) + bh->get_nu_prime(b_abs)*b_abs; // Newton::nu_fun(b_abs) + Newton::nu_fun_prime(b_abs)*b_abs;
 
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                cell_residual(i) += ((f*fe_values.shape_value(i, q)+Hc*fe_values.shape_grad(i, q))
+
+            for (unsigned int i = 0; i < dofs_per_cell; ++i){
+                // Current contribution
+                auto vertex = cell->vertex(i);
+                double f_val = f->get_value(vertex[0], vertex[1]);   // TODO: for all FSources fval += ...
+
+                cell_residual(i) += ((f_val*fe_values.shape_value(i, q)+Hc*fe_values.shape_grad(i, q))
                                      - fe_values.shape_grad(i, q)         // \nabla \phi_i
                                        * no                               // * a_n
-                                       * gradients[q])                        // * \nabla u_n
-                                    * fe_values.JxW(q);                // * dx
+                                       * gradients[q])                    // * \nabla u_n
+                                    * fe_values.JxW(q);                  // * dx
+            }
         }
 
         cell->get_dof_indices(local_dof_indices);
@@ -317,7 +329,7 @@ void NewtonSolver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
 }
 
 template<int dim>
-void NewtonSolver<dim>::set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>> map) {
+void NewtonSolver<dim>::set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> map) {
     this->f_map = map;
 }
 

@@ -16,6 +16,7 @@
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
 #include "export/ExportVtu.h"
+#include "ConstFSource.h"
 
 TEST(TestTorqueEggShellPostprocessor, torque_benchmark_kelvin_1){
 
@@ -29,10 +30,10 @@ TEST(TestTorqueEggShellPostprocessor, torque_benchmark_kelvin_1){
                                              {6, new LinearNuCurve{795774.715025}},
                                              {8, new LinearNuCurve{795774.715025}}};
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{3, std::pair<double, double>{0.0, 1000000.0}},
-                                                                                   {4, 0},
-                                                                                   {5, 0},
-                                                                                   {6, 0},
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{3, std::pair<double, double>{0.0, 1000000.0}},
+                                                                                   {4, new ConstFSource{0}},
+                                                                                   {5, new ConstFSource{0}},
+                                                                                   {6, new ConstFSource{0}},
                                                                                    {8, std::pair<double, double>{-1591549.43091895, 0.0}}
     };
     std::unordered_map<int, double> dc_map{{7, 0}};

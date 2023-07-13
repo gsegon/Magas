@@ -29,6 +29,7 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
 #include "NuCurve.h"
+#include "FSource.h"
 
 
 using namespace dealii;
@@ -50,7 +51,7 @@ public:
     void assemble_system();
     void solve(const double alpha);
     void set_nu_map(std::unordered_map<int, NuCurve*>);
-    void set_f_map(std::unordered_map<int, std::variant<double, std::pair<double, double>>>);
+    void set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
     void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
     double compute_residual(double) const;
@@ -99,7 +100,7 @@ private:
     Vector<double> newton_update;
 
     std::unordered_map<int, NuCurve*> nu_map;
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
 

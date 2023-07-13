@@ -13,6 +13,8 @@
 
 #include "processors/ExpressionScalarPostprocessor.h"
 #include "NuCurve.h"
+#include "FSource.h"
+#include "ConstFSource.h"
 
 typedef exprtk::symbol_table<double> symbol_table_t;
 typedef exprtk::expression<double>   expression_t;
@@ -35,13 +37,13 @@ ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::str
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     f_map_ptr = &f_map;
 }
 
 template <int dim>
-ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<double, std::pair<double, double>>>& f_map) {
+ExpressionScalarPostprocessor<dim>::ExpressionScalarPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -95,7 +97,11 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     double u_q3 = 0;
     double u_q4 = 0;
 
-    double J = 0;
+    double J_q1 = 0;
+    double J_q2 = 0;
+    double J_q3 = 0;
+    double J_q4 = 0;
+
     double nu_q1 = 0;
     double nu_q2 = 0;
     double nu_q3 = 0;
@@ -137,8 +143,12 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     symbol_table.add_variable("u_q3", u_q3);
     symbol_table.add_variable("u_q4", u_q4);
 
-    if (f_map_ptr)
-        symbol_table.add_variable("J", J);
+    if (f_map_ptr){
+        symbol_table.add_variable("J_q1", J_q1);
+        symbol_table.add_variable("J_q2", J_q2);
+        symbol_table.add_variable("J_q3", J_q3);
+        symbol_table.add_variable("J_q4", J_q4);
+    }
 
     if (nu_map_ptr){
         symbol_table.add_variable("nu_q1", nu_q1);
@@ -166,13 +176,9 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
     std::vector<double> solution_at_cell(quadrature_formula.size());
 
     result = 0;
+    FSource* f_source;
+    ConstFSource f_zero{0};
     for (auto& cell : dof_handler.active_cell_iterators()){
-        J = 0;
-        if (f_map_ptr){
-            auto f_variant = (*f_map_ptr).at(cell->material_id());
-            if(std::holds_alternative<double>(f_variant))
-                J = std::get<double>(f_variant);
-        }
 
         fe_values.reinit(cell);
         fe_values.get_function_gradients(*this->solution_ptr, solution_gradients);
@@ -210,6 +216,20 @@ void ExpressionScalarPostprocessor<dim>::process(const Triangulation<dim>&  tria
         u_q2 = solution_at_cell[1];
         u_q3 = solution_at_cell[2];
         u_q4 = solution_at_cell[3];
+
+        if (f_map_ptr){
+            auto f_variant = (*f_map_ptr).at(cell->material_id());
+            if(std::holds_alternative<FSource*>(f_variant)){
+                f_source = std::get<FSource*>(f_variant);
+            }
+            else
+                f_source = &f_zero;
+
+            J_q1 = f_source->get_value(x_q1, y_q1);
+            J_q2 = f_source->get_value(x_q2, y_q2);
+            J_q3 = f_source->get_value(x_q3, y_q3);
+            J_q4 = f_source->get_value(x_q4, y_q4);
+        }
 
         if (nu_map_ptr){
             NuCurve* bh = ((*nu_map_ptr).at(cell->material_id()));

@@ -18,6 +18,7 @@
 #include "ConfigParser.h"
 #include "NuCurveFactory.h"
 #include "NuCurve.h"
+#include "FSourceFactory.h"
 
 
 using json = nlohmann::json;
@@ -128,7 +129,7 @@ int main(int argc, char* argv[]){
         std::cout << key << ": " << val << std::endl;
     }
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map;
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map;
     std::unordered_map<int, NuCurve*> nu_map;
     std::unordered_map<int, double> dc_map;
     std::unordered_map<std::string, std::vector<unsigned int>> per_map;
@@ -151,6 +152,7 @@ int main(int argc, char* argv[]){
     static const double pi = 3.141592653589793238462643383279502;
 
     NuCurveFactory bh_factory;
+    FSourceFactory fsf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
@@ -176,22 +178,15 @@ int main(int argc, char* argv[]){
             // if number take number; if string evaluate expression
             auto source_d = source_data.at(mesh_el_data.value().at("source"));
             double source_val = 0;
-            if (source_d.is_number()){
-                source_val = source_d;
-            }
-            else if (source_d.is_string()){
-                std::string user_expr_string = source_d;
-                std::cout << "user_expr_string: " << user_expr_string << std::endl;
-                symbol_table_t symbol_table;
-                expression_t expression;
-                parser_t parser;
-
-                symbol_table.add_constant("pi", pi);
-                expression.register_symbol_table(symbol_table);
-                parser.compile(user_expr_string, expression);
-                source_val = expression.value();
-                std::cout << std::setprecision(12);
-                std::cout << "Evaluated " << mesh_el_data.value().at("source") << ": " << source_val << std::endl;
+            if (!mesh_el_data.value().contains("angle")){
+                if (source_d.is_number()){
+                    source_val = source_d;
+                    f_map.insert({mat_id, fsf.create(source_val)});
+                }
+                else if (source_d.is_string()){
+                    std::string user_expr_string = source_d;
+                    f_map.insert({mat_id, fsf.create(user_expr_string)});
+                }
             }
 
             // If mesh data contains angle, the source is vector Hc. Magnitude in Material data and direction from mesh data.
@@ -204,17 +199,10 @@ int main(int argc, char* argv[]){
                 std::pair<double, double> Hc_vec{Hc_x, Hc_y};
                 f_map.insert({mat_id, Hc_vec});
             }
-
-            // Otherwise, the source is J (current density)
-            else {
-                double J = source_val;
-                f_map.insert({mat_id, J});
-            }
         }
-
         // If there is no source, set f to 0.
         else{
-            f_map.insert({mat_id, 0.0});
+            f_map.insert({mat_id, fsf.create(0)});
         }
     }
 

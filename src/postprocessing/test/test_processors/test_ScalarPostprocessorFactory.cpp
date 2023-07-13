@@ -13,6 +13,7 @@
 #include "processors/ScalarPostprocessorFactory.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
+#include "ConstFSource.h"
 
 TEST(ScalarPostprocessorFactory, unit_square){
 
@@ -21,7 +22,7 @@ TEST(ScalarPostprocessorFactory, unit_square){
 
 
     std::unordered_map<int, NuCurve*> nu_map{{6, new LinearNuCurve{1}}};
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{6, 1}};
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{6, new ConstFSource{1}}};
     std::unordered_map<int, double> dc_map{{5, 0}};
 
     LinearSolver<2> solver;

@@ -13,6 +13,7 @@
 #include "ScalarPostprocessor.h"
 
 #include "NuCurve.h"
+#include "FSource.h"
 
 using namespace dealii;
 
@@ -22,8 +23,8 @@ class ExpressionScalarPostprocessor : public ScalarPostprocessor<dim> {
 public:
     explicit ExpressionScalarPostprocessor(const std::string&);
     ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, NuCurve*>&);
-    ExpressionScalarPostprocessor(const std::string&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
-    ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, NuCurve*>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ExpressionScalarPostprocessor(const std::string&, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>&);
+    ExpressionScalarPostprocessor(const std::string&, const std::unordered_map<int, NuCurve*>&, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>&);
 
     void process(const Triangulation<dim>&  triangulation,
                  const Vector<double>&      solution,
@@ -34,7 +35,7 @@ private:
 
     std::string user_expression;
     const std::unordered_map<int, NuCurve*>* nu_map_ptr = nullptr;
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>>* f_map_ptr = nullptr;
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>* f_map_ptr = nullptr;
 
 };
 

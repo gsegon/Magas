@@ -12,6 +12,7 @@
 #include "processors/FluxLinkageScalarPostprocessor.h"
 #include "NuCurve.h"
 #include "LinearNuCurve.h"
+#include "ConstFSource.h"
 
 TEST(FluxLinkageScalarPostprocessor, 6_conductors_3_circuits){
 
@@ -24,13 +25,13 @@ TEST(FluxLinkageScalarPostprocessor, 6_conductors_3_circuits){
                                              {7, new LinearNuCurve{795774.715025}},
                                              {8, new LinearNuCurve{795774.715025}}};
 
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>> f_map{{2, 0},
-                                                                                   {3, 31.8309886184},
-                                                                                   {4, -31.8309886184},
-                                                                                   {5, -31.8309886184},
-                                                                                   {6, 31.8309886184},
-                                                                                   {7, -31.8309886184},
-                                                                                   {8, 31.8309886184},
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map{{2, new ConstFSource{0}},
+                                                                                   {3, new ConstFSource{31.8309886184}},
+                                                                                   {4, new ConstFSource{-31.8309886184}},
+                                                                                   {5, new ConstFSource{-31.8309886184}},
+                                                                                   {6, new ConstFSource{31.8309886184}},
+                                                                                   {7, new ConstFSource{-31.8309886184}},
+                                                                                   {8, new ConstFSource{31.8309886184}},
                                                                                    };
     std::unordered_map<int, double> dc_map{{1, 0}};
 

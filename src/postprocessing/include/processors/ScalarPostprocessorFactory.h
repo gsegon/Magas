@@ -10,17 +10,18 @@
 
 #include "ScalarPostprocessor.h"
 #include "NuCurve.h"
+#include "FSource.h"
 
 template<int dim>
 class ScalarPostprocessorFactory {
 
 public:
-    ScalarPostprocessorFactory(const std::unordered_map<int, NuCurve*>&, std::unordered_map<int, std::variant<double, std::pair<double, double>>>&);
+    ScalarPostprocessorFactory(const std::unordered_map<int, NuCurve*>&, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>&);
     ScalarPostprocessor<dim>* create(std::string input_string);
 
 protected:
     const std::unordered_map<int, NuCurve*>* nu_map_ptr = nullptr;
-    std::unordered_map<int, std::variant<double, std::pair<double, double>>>* f_map_ptr = nullptr;
+    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>* f_map_ptr = nullptr;
 
 };
 
