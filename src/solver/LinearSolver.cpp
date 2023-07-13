@@ -109,7 +109,6 @@ void LinearSolver<dim>::setup_system() {
                 constraints.add_line(first);
                 constraints.add_entry(first, second, pm->get_weigth());
             }
-
         }
     }
 
