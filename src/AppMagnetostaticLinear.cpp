@@ -11,18 +11,14 @@
 #include <cxxopts.hpp>
 #include "exprtk.hpp"
 
+#include "JsonInputTranslator.h"
 #include "LinearSolver.h"
 #include "export/ExportVtu.h"
 #include "processors/ExpressionCellPostprocessor.h"
 #include "processors/ScalarPostprocessorFactory.h"
-#include "misc.h"
-#include "ConfigParser.h"
-#include "NuCurveFactory.h"
-#include "FSourceFactory.h"
-#include "JsonInputTranslator.h"
+
 
 using json = nlohmann::json;
-
 
 int main(int argc, char* argv[]){
 
@@ -55,31 +51,16 @@ int main(int argc, char* argv[]){
 
     std::filesystem::path input = result["input"].as<std::string>();
     std::filesystem::path output = input.filename().replace_extension();
+
     if (result.count("output")){
         output = result["output"].as<std::string>();
         output.replace_extension();
     }
 
-    typedef exprtk::symbol_table<double> symbol_table_t;
-    typedef exprtk::expression<double>   expression_t;
-    typedef exprtk::parser<double>       parser_t;
-
-    std::unordered_map<std::string, double> cli_source_map;
-    if (result.count("sources")){
-        for (const auto& src_param_str : result["sources"].as<std::vector<std::string>>()){
-            std::vector<std::string> v = split(src_param_str, "=");
-            std::string user_expr_string = v[1];
-            symbol_table_t symbol_table;
-            expression_t expression;
-            parser_t parser;
-            parser.compile(user_expr_string, expression);
-            cli_source_map[v[0]] = expression.value();
-        }
-    }
-
     // Translate JSON
-    JsonInputTranslator itrans{input, cli_source_map};
+    JsonInputTranslator itrans{input};
 
+    // setup maps
     auto nu_map = itrans.get_nu_map();
     auto f_map = itrans.get_f_map();
     auto dc_map = itrans.get_dc_map();
@@ -87,6 +68,7 @@ int main(int argc, char* argv[]){
     auto postprocessors_cell = itrans.get_pp_cell();
     auto postprocessors_scalar = itrans.get_pp_scalar();
     auto mesh_path = itrans.get_mesh_filepath();
+
     // Initialize Solver and solver
     try{
         LinearSolver<2> solver;
@@ -126,7 +108,6 @@ int main(int argc, char* argv[]){
         for (auto [key, val] : user_expr_sum_postprocessors){
             val->process(solver.get_triangulation(), solver.get_solution(), solver.get_fe(), result_sum);
             results_map[key] = result_sum;
-            delete val;
         }
 
         // Perform vector postprocessing and export to vtu.

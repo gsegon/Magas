@@ -34,7 +34,7 @@ std::filesystem::path JsonInputTranslator::get_mesh_filepath() {
     return mesh_filepath;
 }
 
-JsonInputTranslator::JsonInputTranslator(std::filesystem::path input, t_cli_source_map cli_source_map) {
+JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
 
     ConfigParser cp{input};
     json input_data = cp.get_top_data();
@@ -60,13 +60,6 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input, t_cli_sour
     for (auto [key, val] : postprocess_sum_data.items())
         postprocessor_strings_scalar[key] = val;
 
-    // modify source data if needed:
-    // TODO: Rewrite possibly
-    for (auto& [key, val] : source_data.items()){
-        if (cli_source_map.count(key))
-            val = cli_source_map[key];
-    }
-
     // Add boundary values to dc_map
     for (auto& boundary_el_data : boundary_id_data.items()) {
         int boundary_id{std::stoi(boundary_el_data.key())};
@@ -78,14 +71,25 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input, t_cli_sour
     }
 
     // Add material coefficients to 'nu_map' and sources to 'f_map'
-    NuCurveFactory bhcf;
+    NuCurveFactory bh_factory;
     FSourceFactory fsf;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
             auto value1 = material_data.at(mesh_el_data.value().at("material")).at("nu");
-            if (value1.is_number()) nu_map.insert({mat_id, bhcf.create((double)value1)});
-            if (value1.is_string()) nu_map.insert({mat_id, bhcf.create((string)value1)});
+            if (value1.is_number()) nu_map.insert({mat_id, bh_factory.create((double)value1)});
+            if (value1.is_string()){
+                if (((std::string)value1).find(".csv") != std::string::npos){
+                    filesystem::path bhpath{value1};
+                    if (bhpath.is_relative()){
+                        bhpath = json_dir / bhpath;
+                    }
+                    nu_map.insert({mat_id, bh_factory.create(bhpath)});
+                }
+                else{
+                    nu_map.insert({mat_id, bh_factory.create((string)value1)});
+                }
+            }
         }
         if (mesh_el_data.value().contains("source")){
 
