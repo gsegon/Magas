@@ -27,6 +27,7 @@ public:
     t_postprocessor_strings get_pp_cell();
     t_postprocessor_strings get_pp_scalar();
     std::filesystem::path get_mesh_filepath();
+    bool is_nonlinear();
 
 private:
     json input_data;
@@ -37,6 +38,7 @@ private:
     t_postprocessor_strings postprocessor_strings_cell;
     t_postprocessor_strings postprocessor_strings_scalar;
     std::filesystem::path mesh_filepath;
+    bool nonlinear=false;
 
 };
 

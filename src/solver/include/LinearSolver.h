@@ -29,15 +29,16 @@
 #include <deal.II/grid/manifold_lib.h>
 #include "NuCurve.h"
 #include "FSource.h"
+#include "Solver.h"
 
 using namespace dealii;
 
 template <int dim>
-class LinearSolver{
+class LinearSolver: public Solver<dim>{
 
 public:
     LinearSolver();
-    void read_mesh(std::string);
+    void read_mesh(const std::string&);
     void setup_system();
     void assemble_system();
     void solve();
@@ -45,6 +46,7 @@ public:
     void set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>);
     void set_dc_map(std::unordered_map<int, double>);
     void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
+    void run();
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();

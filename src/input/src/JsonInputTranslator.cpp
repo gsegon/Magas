@@ -4,6 +4,7 @@
 
 #include "JsonInputTranslator.h"
 #include "ConfigParser.h"
+#include "InterpolatedNuCurve.h"
 
 
 t_dc_map JsonInputTranslator::get_dc_map() {
@@ -127,4 +128,13 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
             f_map.insert({mat_id, fsf.create(0)});
         }
     }
+}
+
+bool JsonInputTranslator::is_nonlinear() {
+    for (auto [key, val] : nu_map){
+        if (typeid(*val) == typeid(InterpolatedNuCurve)){
+            nonlinear = true;
+        }
+    }
+    return nonlinear;
 }

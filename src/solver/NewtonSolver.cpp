@@ -363,3 +363,42 @@ FE_Q<dim>& NewtonSolver<dim>::get_fe(){
     return this->fe;
 }
 
+template<int dim>
+void NewtonSolver<dim>::run(){
+
+    std::cout << "::Running solver::" << std::endl;
+    std::cout << "\tSetting up system...";
+    setup_system(true);
+    std::cout << "Done!" << std::endl;
+
+    std::cout << "\tRunning Newton iteration...";
+    double alpha=0.1;
+    double res;
+    double res_trial;
+    std::vector<double> steps{1, 1/2.0, 1/4.0, 1/8.0, 1/16.0, 1/32.0};
+
+    int i = 0;
+    while(i++ < 100) {
+        if (i > 1) {
+            for (double alpha_trial: steps) {
+                res_trial = compute_residual(alpha_trial);
+                if (res_trial < res) {
+                    alpha = alpha_trial;
+                    break;
+                }
+            }
+        }
+
+        assemble_system();
+        std::cout << "alpha = " << alpha << std::endl;
+        solve(alpha);
+        res = compute_residual(alpha);
+        std::cout << "\tResidual(" << i << "): " << res << std::endl;
+
+        if (res < 1e-6) {
+            std::cout << "Converged!";
+            break;
+        }
+        std::cout << "\tSolving: Done!" << std::endl;
+    }
+}

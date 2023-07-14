@@ -30,6 +30,7 @@
 #include <deal.II/grid/manifold_lib.h>
 #include "NuCurve.h"
 #include "FSource.h"
+#include "Solver.h"
 
 
 using namespace dealii;
@@ -42,7 +43,7 @@ struct NuHistory
 };
 
 template <int dim>
-class NewtonSolver{
+class NewtonSolver : public Solver<dim>{
 
 public:
     NewtonSolver();
@@ -55,6 +56,7 @@ public:
     void set_dc_map(std::unordered_map<int, double>);
     void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
     double compute_residual(double) const;
+    void run();
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
