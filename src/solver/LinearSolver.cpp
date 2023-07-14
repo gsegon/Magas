@@ -47,7 +47,7 @@ LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature
 {}
 
 template<int dim>
-void LinearSolver<dim>::read_mesh(std::string mesh_filepath) {
+void LinearSolver<dim>::read_mesh(const std::string& mesh_filepath) {
     GridIn<dim> grid_in;
     grid_in.attach_triangulation(triangulation);
     std::ifstream input_file(mesh_filepath);
@@ -67,7 +67,6 @@ void LinearSolver<dim>::setup_system() {
 
     // Apply 0 DC boundary conditions
     for (auto& [mat_id, value] : dc_map){
-        std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
         VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
     }
 
@@ -281,5 +280,19 @@ Vector<double>& LinearSolver<dim>::get_rhs(){
 template<int dim>
 FE_Q<dim>& LinearSolver<dim>::get_fe(){
     return this->fe;
+}
+
+template<int dim>
+void LinearSolver<dim>::run(){
+    std::cout << "::Running solver::" << std::endl;
+    std::cout << "\tSetting up system...";
+    setup_system();
+    std::cout << "Done!" << std::endl;
+    std::cout << "\tAssembling system...";
+    assemble_system();
+    std::cout << "Done!" << std::endl;
+    std::cout << "\tSolving system...";
+    solve();
+    std::cout << "\tSolving: Done!" << std::endl;
 }
 

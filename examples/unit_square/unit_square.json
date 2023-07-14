@@ -12,10 +12,11 @@
   },
 
   "source": {
-    "one": 1.0
+    "one": "if((x^2+y^2)> 0.2^2 and (x^2+y^2)< 0.5^2, sin(atan2(x, y)+pi/2), 0)"
   },
 
   "postprocess" : {
+    "J_avg" : "avg(J_q1, J_q2, J_q3, J_q4)"
   },
 
   "postprocess_sum": {

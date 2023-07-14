@@ -32,19 +32,19 @@ ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string&
 }
 
 template <int dim>
-ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, t_nu_map& nu_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
 }
 
 template <int dim>
-ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, t_f_map& f_map) {
     user_expression = user_expr;
     f_map_ptr = &f_map;
 }
 
 template <int dim>
-ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, const std::unordered_map<int, NuCurve*>& nu_map, std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>& f_map) {
+ExpressionCellPostprocessor<dim>::ExpressionCellPostprocessor(const std::string& user_expr, t_nu_map& nu_map, t_f_map& f_map) {
     user_expression = user_expr;
     nu_map_ptr = &nu_map;
     f_map_ptr = &f_map;
@@ -245,12 +245,8 @@ void ExpressionCellPostprocessor<dim>::process(const Triangulation<dim>&  triang
             e_q3 = bh->get_energy(solution_gradients[2].norm());
             e_q4 = bh->get_energy(solution_gradients[3].norm());
         }
-
         result.push_back(expression.value());
-
     }
-
-
 }
 
 

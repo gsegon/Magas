@@ -74,9 +74,7 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
         }
     }
 
-    std::cout << "i_current: " << i_current << std::endl;
     result = result/i_current;
-
 }
 
 

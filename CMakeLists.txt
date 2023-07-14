@@ -7,6 +7,7 @@ enable_testing()
 # Modules
 add_subdirectory(src/material)
 add_subdirectory(src/sources)
+add_subdirectory(src/input)
 add_subdirectory(src/preprocessing)
 add_subdirectory(src/postprocessing)
 add_subdirectory(src/solver)
