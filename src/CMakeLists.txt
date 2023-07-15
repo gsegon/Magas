@@ -9,12 +9,9 @@ target_link_libraries(magas optimized
         sources
         input)
 
-set(DEAL_II_DIR ~/Programs/dealii/dealii/build)
-find_package(deal.II 9.4.0 REQUIRED HINTS ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR})
-DEAL_II_INITIALIZE_CACHED_VARIABLES()
 DEAL_II_SETUP_TARGET(magas)
 
-target_compile_options(magas PRIVATE -Wall -Wextra)
+target_compile_options(magas PUBLIC -Wall -Wextra)
 target_include_directories(magas PUBLIC ~/Programs/cxxopts/include)
 target_include_directories(magas PUBLIC ~/Programs/exprtk)
 target_include_directories(magas PUBLIC ~/Programs/json/include)

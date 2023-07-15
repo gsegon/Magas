@@ -10,7 +10,8 @@ target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
 target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
 target_link_libraries(preprocessing optimized
         tbb
-        gsl)
+        )
+target_link_libraries(preprocessing gsl)
 
 # test preprocessing
 find_package(GTest REQUIRED)
