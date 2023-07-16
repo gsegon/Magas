@@ -19,10 +19,10 @@ DEAL_II_SETUP_TARGET(postprocessor)
 
 target_include_directories(postprocessor PUBLIC include)
 target_compile_options(postprocessor PRIVATE -Wall -Wextra)
-target_include_directories(postprocessor PUBLIC ~/Programs/vtu11)
-target_include_directories(postprocessor PUBLIC ~/Programs/exprtk)
-target_link_libraries(postprocessor PUBLIC material)
-target_link_libraries(postprocessor PUBLIC sources)
+target_include_directories(postprocessor PRIVATE ../../external/vtu11)
+target_include_directories(postprocessor PRIVATE ../../external/exprtk)
+target_link_libraries(postprocessor PRIVATE material)
+target_link_libraries(postprocessor PRIVATE sources)
 
 # test export
 find_package(GTest REQUIRED)

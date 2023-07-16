@@ -4,3 +4,12 @@
 [submodule "external/json"]
 	path = external/json
 	url = https://github.com/nlohmann/json.git
+[submodule "external/exprtk"]
+	path = external/exprtk
+	url = https://github.com/ArashPartow/exprtk.git
+[submodule "external/strtk"]
+	path = external/strtk
+	url = https://github.com/ArashPartow/strtk.git
+[submodule "external/vtu11"]
+	path = external/vtu11
+	url = https://github.com/phmkopp/vtu11.git

@@ -15,9 +15,11 @@ DEAL_II_INITIALIZE_CACHED_VARIABLES()
 DEAL_II_SETUP_TARGET(magas)
 
 target_compile_options(magas PRIVATE -Wall -Wextra)
-target_include_directories(magas PUBLIC ~/Programs/cxxopts/include)
-target_include_directories(magas PUBLIC ~/Programs/exprtk)
-target_include_directories(magas PUBLIC ~/Programs/json/include)
+target_include_directories(magas PRIVATE ../external/cxxopts/include)
+target_include_directories(magas PRIVATE ../external/exprtk)
+
+find_package(nlohmann_json 3.2.0 REQUIRED)
+target_include_directories(magas PRIVATE nlohmann_json::nlohmann_json)
 
 add_custom_command(
         TARGET magas POST_BUILD
