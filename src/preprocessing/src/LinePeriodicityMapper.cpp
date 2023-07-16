@@ -6,6 +6,7 @@
 #include <variant>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 #include "LinePeriodicityMapper.h"
 
@@ -46,7 +47,7 @@ LinePeriodicityMapper::LinePeriodicityMapper(   vector<unsigned int> a_dofs,
         auto r2 = sqrt(pow(dof_to_nodes[pair.second][0], 2) + pow(dof_to_nodes[pair.second][1], 2));
         auto e_distance = abs(r1-r2);
         if (e_distance > 1e-8){
-            throw runtime_error("Radius of matched points too big.");
+            throw std::runtime_error("Radius of matched points too big.");
         }
     }
 
