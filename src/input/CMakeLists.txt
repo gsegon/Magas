@@ -3,7 +3,7 @@ add_library(input OBJECT
         src/JsonInputTranslator.cpp)
 
 target_include_directories(input PUBLIC include)
-target_include_directories(input PRIVATE ../../external/json/include)
+target_include_directories(input PUBLIC ../../external/json/include)
 target_link_libraries(input PUBLIC material sources)
 
 # test material
