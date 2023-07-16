@@ -18,3 +18,9 @@ target_compile_options(magas PRIVATE -Wall -Wextra)
 target_include_directories(magas PUBLIC ~/Programs/cxxopts/include)
 target_include_directories(magas PUBLIC ~/Programs/exprtk)
 target_include_directories(magas PUBLIC ~/Programs/json/include)
+
+add_custom_command(
+        TARGET magas POST_BUILD
+        DEPENDS magas
+        COMMAND $<$<CONFIG:release>:${CMAKE_STRIP}>
+        ARGS magas)
