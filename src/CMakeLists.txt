@@ -17,9 +17,7 @@ DEAL_II_SETUP_TARGET(magas)
 target_compile_options(magas PRIVATE -Wall -Wextra)
 target_include_directories(magas PRIVATE ../external/cxxopts/include)
 target_include_directories(magas PRIVATE ../external/exprtk)
-
-find_package(nlohmann_json 3.2.0 REQUIRED)
-target_include_directories(magas PRIVATE nlohmann_json::nlohmann_json)
+target_include_directories(magas PRIVATE ../external/json/include)
 
 add_custom_command(
         TARGET magas POST_BUILD
