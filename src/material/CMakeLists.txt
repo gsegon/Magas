@@ -5,8 +5,8 @@ add_library(material OBJECT
         src/BHCurveFactory.cpp)
 
 target_include_directories(material PUBLIC include)
-target_include_directories(material PUBLIC ~/Programs/strtk)
-target_link_libraries(material PUBLIC gsl)
+target_include_directories(material PRIVATE ../../external/strtk)
+target_link_libraries(material PRIVATE gsl)
 
 # test material
 find_package(GTest REQUIRED)
@@ -18,6 +18,8 @@ add_executable(test_material
         test/test_LinearBHCurve.cpp
         test/test_BHCurveFactory.cpp)
 target_link_libraries(test_material ${GTEST_LIBRARIES} gtest_main pthread material)
+target_include_directories(test_material PRIVATE include)
+target_include_directories(test_material PRIVATE ../../external/strtk)
 
 # CMake test
 add_test(test_material_gtest test_material)

@@ -6,8 +6,8 @@ add_library(preprocessing OBJECT
         )
 
 target_include_directories(preprocessing PUBLIC include)
-target_include_directories(preprocessing PUBLIC ~/Programs/vtu11)
-target_include_directories(preprocessing PUBLIC ~/Programs/json/include)
+target_include_directories(preprocessing PRIVATE ../external/vtu11)
+target_include_directories(preprocessing PRIVATE ../external/json/include)
 target_link_libraries(preprocessing optimized
         tbb
         gsl)
