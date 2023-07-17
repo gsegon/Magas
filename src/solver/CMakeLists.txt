@@ -5,7 +5,7 @@ add_library(solver OBJECT
         NewtonSolver.cpp
         SolverFactory.cpp)
 
-find_package(deal.II 9.4.0 REQUIRED)
+find_package(deal.II 9.4 REQUIRED)
 
 DEAL_II_INITIALIZE_CACHED_VARIABLES()
 DEAL_II_SETUP_TARGET(solver)
