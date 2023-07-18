@@ -30,6 +30,7 @@
 #include "NuCurve.h"
 #include "FSource.h"
 #include "Solver.h"
+#include "SlidingRotation.h"
 
 using namespace dealii;
 
@@ -39,7 +40,11 @@ class LinearSolver: public Solver<dim>{
 public:
     LinearSolver();
     void read_mesh(const std::string&);
+//    void read_mesh(std::string);
+    void setup_system(int offset);
     void setup_system();
+    void setup_1(int);
+    void extend_dsp(DynamicSparsityPattern& dsp);
     void assemble_system();
     void solve();
     void set_nu_map(std::unordered_map<int, NuCurve*>);
@@ -54,6 +59,10 @@ public:
     FE_Q<dim>& get_fe();
 
 private:
+
+    std::vector<unsigned int> rot_cell_indices;
+    std::vector<unsigned int> rot_dofs;
+    SlidingRotation* sr;
 
     Triangulation<dim> triangulation;
     FE_Q<dim> fe;

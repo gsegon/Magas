@@ -36,15 +36,124 @@
 #include "PeriodicityMapperFactory.h"
 #include "LinearSolver.h"
 #include "ConstFSource.h"
+#include "SlidingRotation.h"
+
 
 
 using namespace dealii;
 
 template class LinearSolver<2>;
 
+
+template<int dim>
+void set_rotating_bound_data(unsigned int domain1,
+                             unsigned int domain2,
+                             const Triangulation<dim>&  triangulation,
+                             const Vector<double>&      solution,
+                             const FE_Q<dim>&           fe,
+                             std::vector<unsigned int>& cell_indices,
+                             std::vector<unsigned int>& dofs
+){
+
+
+    DoFHandler<dim> dof_handler(triangulation);
+    dof_handler.distribute_dofs(fe);
+
+    QGauss<dim> quadrature_formula(fe.degree + 1);
+    FEValues<dim> fe_values(fe, quadrature_formula, update_values | update_gradients | update_quadrature_points |
+                                                    update_JxW_values);
+    std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
+
+    // Stator
+    std::set<int> mask_stator_vertex_indices;
+    std::set<int> mask_stator_cell_indices;
+    std::set<std::pair<unsigned int, int>> stator_dof_to_vertex_index;
+    std::set<unsigned int> dofs1;
+
+    for (auto cell: dof_handler.active_cell_iterators()) {
+        if (cell->material_id() == domain1){
+            for (unsigned int i = 0; i < (cell->n_faces()); i++) {
+                if (cell->neighbor_index(i) != -1) {
+                    auto neighbor_cell = cell->neighbor(i);
+                    if (neighbor_cell->material_id() == domain2) {
+                        mask_stator_cell_indices.insert(neighbor_cell->index());
+                        auto face = cell->face(i);
+                        std::vector< types::global_dof_index > global_dof_indices(2);
+                        face->get_dof_indices(global_dof_indices);
+                        for (unsigned int j = 0; j < face->n_vertices(); j++) {
+                            auto vertex = face->vertex(j);
+                            mask_stator_vertex_indices.insert(face->vertex_index(j));
+                            stator_dof_to_vertex_index.insert({global_dof_indices[j], face->vertex_index(j)});
+                            dofs1.insert(global_dof_indices[j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto cell: dof_handler.active_cell_iterators())
+        if (cell->material_id() == domain2)
+            for (unsigned int j=0; j<cell->n_vertices(); j++)
+                if (std::count(mask_stator_vertex_indices.begin(), mask_stator_vertex_indices.end(), cell->vertex_index(j)))
+                    mask_stator_cell_indices.insert(cell->index());
+
+    for (auto index: mask_stator_cell_indices)
+        cell_indices.push_back(index);
+
+    for (auto dof: dofs1)
+        dofs.push_back(dof);
+
+}
+
 template<int dim>
 LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
 {}
+
+
+
+
+template<int dim>
+void LinearSolver<dim>::setup_1(int offset) {
+
+//    dof_handler.distribute_dofs(fe);
+    set_rotating_bound_data(4, 5, triangulation, solution, fe, rot_cell_indices, rot_dofs);
+
+    std::vector<Point<dim>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
+    std::map<unsigned int, std::vector<double>> dof_to_node;
+    for (auto dof : rot_dofs){
+        dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
+    }
+
+    sr = new SlidingRotation{rot_dofs, dof_to_node, offset};
+    std::cout << "Setup_1() done." << std::endl;
+
+    for (auto dof : rot_dofs){
+        std::cout << "dof: " << dof << "to: " << sr->get_mapped(dof) << std::endl;
+    }
+}
+
+template<int dim>
+void LinearSolver<dim>::extend_dsp(DynamicSparsityPattern& dsp){
+    std::vector<types::global_dof_index> local_dof_indices(4);
+    for (auto cell: dof_handler.active_cell_iterators()){
+        cell->get_dof_indices(local_dof_indices);
+
+        if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
+            std::cout << "Should modify dofs mapping of this one! \t";
+            for (auto& local_dof_index : local_dof_indices){
+                std::cout << local_dof_index << "->" << sr->get_mapped(local_dof_index) << ", ";
+                local_dof_index = sr->get_mapped(local_dof_index);
+            }
+            std::cout << std::endl;
+            for (auto i : local_dof_indices)
+                for (auto j : local_dof_indices)
+                    dsp.add(i, j);
+            std::cout << std::endl;
+        }
+    }
+}
 
 template<int dim>
 void LinearSolver<dim>::read_mesh(const std::string& mesh_filepath) {
@@ -61,12 +170,19 @@ Triangulation<dim>& LinearSolver<dim>::get_triangulation(){
 
 template<int dim>
 void LinearSolver<dim>::setup_system() {
+    LinearSolver<dim>::setup_system(10);
+}
+
+
+template<int dim>
+void LinearSolver<dim>::setup_system(int offset) {
     dof_handler.distribute_dofs(fe);
 
     constraints.clear();
 
     // Apply 0 DC boundary conditions
     for (auto& [mat_id, value] : dc_map){
+        std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
         VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
     }
 
@@ -122,6 +238,8 @@ void LinearSolver<dim>::setup_system() {
     // TODO: Investigate condensing DynamicSparsityPattern
 //    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+    setup_1(offset);
+    extend_dsp(dsp);
 
     sparsity_pattern.copy_from(dsp);
 
@@ -145,14 +263,14 @@ void LinearSolver<dim>::assemble_system() {
 
 template<int dim>
 LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const FiniteElement<dim> &fe):
-    fe_values(fe, QGauss<dim>(fe.degree + 1), update_values | update_gradients | update_quadrature_points | update_JxW_values),
-    rhs_values(fe_values.get_quadrature().size())
-    {}
+        fe_values(fe, QGauss<dim>(fe.degree + 1), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+        rhs_values(fe_values.get_quadrature().size())
+{}
 
 template<int dim>
 LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const AssemblyScratchData& scratch_data):
-    fe_values(scratch_data.fe_values.get_fe(), scratch_data.fe_values.get_quadrature(), update_values | update_gradients | update_quadrature_points | update_JxW_values),
-    rhs_values(scratch_data.rhs_values.size())
+        fe_values(scratch_data.fe_values.get_fe(), scratch_data.fe_values.get_quadrature(), update_values | update_gradients | update_quadrature_points | update_JxW_values),
+        rhs_values(scratch_data.rhs_values.size())
 {}
 
 template<int dim>
@@ -196,22 +314,32 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
             const auto &sd = scratch_data;
             for (unsigned int j = 0; j < dofs_per_cell; j++){
                 copy_data.cell_matrix(i, j) += nu*              // nu at cell
-                            sd.fe_values.shape_grad(i, q)*      // grad phi_i(x_q)
-                            sd.fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
-                            sd.fe_values.JxW(q);               // dx
+                                               sd.fe_values.shape_grad(i, q)*      // grad phi_i(x_q)
+                                               sd.fe_values.shape_grad(j, q)*     // grad phi_j(x_q)
+                                               sd.fe_values.JxW(q);               // dx
             }
             // Current contribution
             auto vertex = cell->vertex(i);
             double f_val = f->get_value(vertex[0], vertex[1]);   // TODO: for all FSources fval += ...
             copy_data.cell_rhs(i) += f_val*                     // f at cell
-                    sd.fe_values.shape_value(i, q)*             // phi_i(x_q)
-                    sd.fe_values.JxW(q);                        // dx
+                                     sd.fe_values.shape_value(i, q)*             // phi_i(x_q)
+                                     sd.fe_values.JxW(q);                        // dx
 
             // Magnet contribution
-                copy_data.cell_rhs(i) += Hc*sd.fe_values.shape_grad(i, q)*sd.fe_values.JxW(q);
+            copy_data.cell_rhs(i) += Hc*sd.fe_values.shape_grad(i, q)*sd.fe_values.JxW(q);
         }
 
     cell->get_dof_indices(copy_data.local_dof_indices);
+
+    if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
+        std::cout << "Should modify dofs mapping of this one! \t";
+        for (auto& local_dof_index : copy_data.local_dof_indices){
+            std::cout << local_dof_index << "->" << sr->get_mapped(local_dof_index) << ", ";
+            local_dof_index = sr->get_mapped(local_dof_index);
+        }
+        std::cout << std::endl;
+    }
+
 }
 
 template<int dim>
