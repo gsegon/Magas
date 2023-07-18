@@ -20,7 +20,7 @@ add_subdirectory(src)
 #add_subdirectory(examples)
 
 # install
-SET(CMAKE_INSTALL_PREFIX install)
+#SET(CMAKE_INSTALL_PREFIX install)
 install(TARGETS magas)
 
 # package
