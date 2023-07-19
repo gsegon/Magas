@@ -13,6 +13,7 @@
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
+#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/numerics/vector_tools.h>
@@ -38,7 +39,8 @@
 #include "ConstFSource.h"
 #include "SlidingRotation.h"
 
-
+#include <deal.II/dofs/dof_tools.h>
+#include <deal.II/fe/mapping_q1.h>
 
 using namespace dealii;
 
@@ -125,7 +127,6 @@ void LinearSolver<dim>::setup_rotation(unsigned int a, unsigned int b, int offse
     for (auto dof : rot_dofs){
         dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
     }
-
     sr = new SlidingRotation{rot_dofs, dof_to_node, offset};
 
 }
@@ -161,11 +162,30 @@ Triangulation<dim>& LinearSolver<dim>::get_triangulation(){
 }
 
 
+void write_dof_locations(const DoFHandler<2> &dof_handler,
+                         const std::string &  filename)
+{
+    std::map<types::global_dof_index, Point<2>> dof_location_map;
+    DoFTools::map_dofs_to_support_points(MappingQ1<2>(), dof_handler, dof_location_map);
+
+    std::ofstream dof_location_file(filename);
+    DoFTools::write_gnuplot_dof_support_point_info(dof_location_file,
+                                                   dof_location_map);
+}
+
+
 template<int dim>
 void LinearSolver<dim>::setup_system() {
     dof_handler.distribute_dofs(fe);
 
+//    write_dof_locations(dof_handler, "dof-locations-1.gnuplot");
+//    DoFRenumbering::Cuthill_McKee(dof_handler);
     constraints.clear();
+
+    // setup_rotation
+    for (auto [key, value] : rot_map){
+        setup_rotation(key.first, key.second, value);
+    }
 
     // Apply 0 DC boundary conditions
     for (auto& [mat_id, value] : dc_map){
@@ -177,7 +197,6 @@ void LinearSolver<dim>::setup_system() {
     for (auto [per_type, boundary_ids] : per_map){
         const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
         const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
-
 
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
@@ -225,18 +244,18 @@ void LinearSolver<dim>::setup_system() {
     // TODO: Investigate condensing DynamicSparsityPattern
 //    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
-    //setup rotation:
-    for (auto [key, value] : rot_map){
-        setup_rotation(key.first, key.second, value);
-        extend_dsp(dsp);
-    }
+
+    //Extend dsp due to rotation mappings:
+    extend_dsp(dsp);
 
     sparsity_pattern.copy_from(dsp);
+
+    std::ofstream out("sparsity-pattern-2.svg");
+    sparsity_pattern.print_svg(out);
 
     system_matrix.reinit(sparsity_pattern);
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
-    Point<dim> a{0, 0};
 }
 
 template<int dim>
@@ -325,7 +344,6 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
             local_dof_index = sr->get_mapped(local_dof_index);
         }
     }
-
 }
 
 template<int dim>
