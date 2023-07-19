@@ -50,7 +50,12 @@ Periodic Line {246} = {244};
 Periodic Line {241} = {242};
 Periodic Line {369} = {367};
 
+Transfinite Curve {368} = 60 Using Progression 1;
+
 Mesh 2;
+RecombineMesh;
+Mesh.SubdivisionAlgorithm = 1;
+RefineMesh;
 
 //
 
@@ -102,3 +107,5 @@ Physical Surface("Airgap") = {27};
 //+
 Physical Curve("bc_periodic_a") = {369, 241, 246};
 Physical Curve("bc_periodic_b") = {367, 242, 244};
+//+
+

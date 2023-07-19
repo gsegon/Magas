@@ -32,7 +32,7 @@
 
   "postprocess": {
     "|Bavg [T]|": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
-    "J": "J"
+    "mat_id": "mat_id"
   },
 
   "postprocess_sum": {
@@ -40,6 +40,10 @@
   },
 
   "mesh_path": "motoric_section.msh",
+
+  "rotation": {
+    "rot1": 0
+  },
 
   "boundary_id": {
     "505": {
@@ -53,7 +57,8 @@
   "mesh_id": {
 
     "1": {
-      "material": "core"},
+      "material": "core",
+      "rotation": "rot1"},
     "2": {
       "material": "core"},
     "506": {
@@ -101,7 +106,8 @@
       "material": "air"},
     "517": {
       "name": "Airgap",
-      "material": "air"}
+      "material": "air",
+      "rotation": "rot1"}
   }
 
 

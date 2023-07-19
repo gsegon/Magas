@@ -18,6 +18,8 @@ public:
     SlidingRotation(vector<dof> dofs, map<dof, vector<double>> dof_to_node, int offset);
     dof get_mapped(dof);
     vector<dof> get_dofs();
+    bool is_full_circle();
+    void print_map();
 
 private:
     void sort();
@@ -25,6 +27,7 @@ private:
     map<dof, vector<double>> dof_to_node;
     vector<dof> dofs;
     int offset;
+    bool full_circle;
 
 };
 

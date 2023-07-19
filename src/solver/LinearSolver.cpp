@@ -127,11 +127,7 @@ void LinearSolver<dim>::setup_rotation(unsigned int a, unsigned int b, int offse
     }
 
     sr = new SlidingRotation{rot_dofs, dof_to_node, offset};
-    std::cout << "Setup_1() done." << std::endl;
 
-    for (auto dof : rot_dofs){
-        std::cout << "dof: " << dof << "to: " << sr->get_mapped(dof) << std::endl;
-    }
 }
 
 template<int dim>
@@ -141,16 +137,12 @@ void LinearSolver<dim>::extend_dsp(DynamicSparsityPattern& dsp){
         cell->get_dof_indices(local_dof_indices);
 
         if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
-            std::cout << "Should modify dofs mapping of this one! \t";
             for (auto& local_dof_index : local_dof_indices){
-                std::cout << local_dof_index << "->" << sr->get_mapped(local_dof_index) << ", ";
                 local_dof_index = sr->get_mapped(local_dof_index);
             }
-            std::cout << std::endl;
             for (auto i : local_dof_indices)
                 for (auto j : local_dof_indices)
                     dsp.add(i, j);
-            std::cout << std::endl;
         }
     }
 }
@@ -329,12 +321,9 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     cell->get_dof_indices(copy_data.local_dof_indices);
 
     if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
-        std::cout << "Should modify dofs mapping of this one! \t";
         for (auto& local_dof_index : copy_data.local_dof_indices){
-            std::cout << local_dof_index << "->" << sr->get_mapped(local_dof_index) << ", ";
             local_dof_index = sr->get_mapped(local_dof_index);
         }
-        std::cout << std::endl;
     }
 
 }

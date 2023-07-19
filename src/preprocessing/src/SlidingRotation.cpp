@@ -2,6 +2,7 @@
 // Created by gordan on 7/11/23.
 //
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 
@@ -13,6 +14,23 @@ SlidingRotation::SlidingRotation(vector<dof> dofs, map<dof, vector<double>> dof_
     this->offset = offset;
 
     this->sort();
+}
+
+bool SlidingRotation::is_full_circle(){
+    double x=0;
+    double y=0;
+    for (auto [dof, node] : dof_to_node){
+        x += node[0];
+        y += node[1];
+    }
+    x /= dofs.size();
+    y /= dofs.size();
+
+    if (std::sqrt(std::pow(x,2) + std::pow(y, 2)) < 1e-6)
+        return true;
+    else
+        return false;
+
 }
 
 void SlidingRotation::sort() {
@@ -34,7 +52,14 @@ void SlidingRotation::sort() {
         new_dofs.push_back(dof);
     }
     dofs = new_dofs;
+    print_map();
+}
 
+void SlidingRotation::print_map() {
+    std::cout << "Printout of Sliding rotation map: "<< std::endl;
+    for (auto dof : dofs){
+        std::cout << "Dof " << dof << "->" << get_mapped(dof) << std::endl;
+    }
 }
 
 vector<dof> SlidingRotation::get_dofs() {
@@ -45,7 +70,12 @@ dof SlidingRotation::get_mapped(dof given) {
     auto pos_given = std::find(dofs.begin(), dofs.end(), given) - dofs.begin();
 
     auto pos_mapped = pos_given + offset;
-    pos_mapped = pos_mapped % dofs.size();
+
+    if (!is_full_circle()){
+        pos_mapped = pos_mapped % (dofs.size()-1);
+    }else{
+        pos_mapped = pos_mapped % (dofs.size());
+    }
 
     if (pos_given >= dofs.size())
         return given;
