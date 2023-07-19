@@ -114,10 +114,10 @@ LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature
 
 
 template<int dim>
-void LinearSolver<dim>::setup_1(int offset) {
+void LinearSolver<dim>::setup_rotation(unsigned int a, unsigned int b, int offset) {
 
 //    dof_handler.distribute_dofs(fe);
-    set_rotating_bound_data(4, 5, triangulation, solution, fe, rot_cell_indices, rot_dofs);
+    set_rotating_bound_data(a, b, triangulation, solution, fe, rot_cell_indices, rot_dofs);
 
     std::vector<Point<dim>> nodes(dof_handler.n_dofs());
     DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
@@ -168,14 +168,9 @@ Triangulation<dim>& LinearSolver<dim>::get_triangulation(){
     return this->triangulation;
 }
 
+
 template<int dim>
 void LinearSolver<dim>::setup_system() {
-    LinearSolver<dim>::setup_system(10);
-}
-
-
-template<int dim>
-void LinearSolver<dim>::setup_system(int offset) {
     dof_handler.distribute_dofs(fe);
 
     constraints.clear();
@@ -238,8 +233,11 @@ void LinearSolver<dim>::setup_system(int offset) {
     // TODO: Investigate condensing DynamicSparsityPattern
 //    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
-    setup_1(offset);
-    extend_dsp(dsp);
+    //setup rotation:
+    for (auto [key, value] : rot_map){
+        setup_rotation(key.first, key.second, value);
+        extend_dsp(dsp);
+    }
 
     sparsity_pattern.copy_from(dsp);
 
@@ -289,7 +287,6 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     copy_data.cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
     copy_data.cell_rhs.reinit(dofs_per_cell);
     copy_data.local_dof_indices.resize(dofs_per_cell);
-
     scratch_data.fe_values.reinit(cell);
 
     NuCurve* bh = nu_map.at(cell->material_id());
@@ -394,6 +391,10 @@ void LinearSolver<dim>::set_per_map(std::unordered_map<std::string, std::vector<
     this->per_map = map;
 }
 
+template<int dim>
+void LinearSolver<dim>::set_rot_map(std::map<std::pair<unsigned int, unsigned int>, int> map) {
+    this->rot_map = map;
+}
 
 template<int dim>
 Vector<double>& LinearSolver<dim>::get_solution(){

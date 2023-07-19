@@ -51,10 +51,11 @@ public:
     void setup_system(const bool initial_step);
     void assemble_system();
     void solve(const double alpha);
-    void set_nu_map(std::unordered_map<int, NuCurve*>);
-    void set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>);
-    void set_dc_map(std::unordered_map<int, double>);
-    void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
+    void set_nu_map(t_nu_map);
+    void set_f_map(t_f_map);
+    void set_dc_map(t_dc_map);
+    void set_per_map(t_per_map);
+    void set_rot_map(t_rot_map);
     double compute_residual(double) const;
     void run();
 
@@ -101,10 +102,11 @@ private:
     Vector<double> current_solution;
     Vector<double> newton_update;
 
-    std::unordered_map<int, NuCurve*> nu_map;
-    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map;
-    std::unordered_map<int, double> dc_map;
-    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
+    t_nu_map nu_map;
+    t_f_map f_map;
+    t_dc_map dc_map;
+    t_per_map per_map;
+    t_rot_map rot_map;
 
     bool is_initial = true;
 

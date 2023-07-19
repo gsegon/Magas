@@ -13,6 +13,10 @@
     "per1": "periodic-circle"
   },
 
+  "rotation": {
+    "rot1" : 0
+  },
+
   "source": {
     "MagHC": 1000000,
     "MagAir": 1591549.43091895
@@ -46,11 +50,13 @@
     },
     "4": {
       "name": "Air 1",
-      "material": "air"
+      "material": "air",
+      "rotation": "rot1"
     },
     "5": {
       "name": "Air 2",
-      "material": "air"
+      "material": "air",
+      "rotation": "rot1"
     },
     "6": {
       "name": "Air 4",

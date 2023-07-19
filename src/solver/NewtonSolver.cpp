@@ -344,6 +344,11 @@ void NewtonSolver<dim>::set_per_map(std::unordered_map<std::string, std::vector<
 }
 
 template<int dim>
+void NewtonSolver<dim>::set_rot_map(std::map<std::pair<unsigned int, unsigned int>, int> map) {
+    this->rot_map = map;
+}
+
+template<int dim>
 Vector<double>& NewtonSolver<dim>::get_solution(){
     return this->current_solution;
 }

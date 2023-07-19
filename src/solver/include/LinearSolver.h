@@ -40,17 +40,16 @@ class LinearSolver: public Solver<dim>{
 public:
     LinearSolver();
     void read_mesh(const std::string&);
-//    void read_mesh(std::string);
-    void setup_system(int offset);
     void setup_system();
-    void setup_1(int);
+    void setup_rotation(unsigned int, unsigned int, int);
     void extend_dsp(DynamicSparsityPattern& dsp);
     void assemble_system();
     void solve();
-    void set_nu_map(std::unordered_map<int, NuCurve*>);
-    void set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>);
-    void set_dc_map(std::unordered_map<int, double>);
-    void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
+    void set_nu_map(t_nu_map);
+    void set_f_map(t_f_map);
+    void set_dc_map(t_dc_map);
+    void set_per_map(t_per_map);
+    void set_rot_map(t_rot_map);
     void run();
 
     Triangulation<dim>& get_triangulation();
@@ -95,10 +94,12 @@ private:
 
     Vector<double> solution;
     Vector<double> system_rhs;
-    std::unordered_map<int, NuCurve*> nu_map;
-    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map;
-    std::unordered_map<int, double> dc_map;
-    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
+    t_nu_map nu_map;
+    t_f_map f_map;
+    t_dc_map dc_map;
+    t_per_map per_map;
+    t_rot_map rot_map;
+
 };
 
 #endif //SOLVER_LINEARSOLVER_H

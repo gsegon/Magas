@@ -5,8 +5,6 @@
 #ifndef MAGAS_SOLVER_H
 #define MAGAS_SOLVER_H
 
-
-
 #include <string>
 #include <unordered_map>
 
@@ -38,6 +36,7 @@ typedef std::unordered_map<int, std::variant<FSource*, std::pair<double, double>
 typedef std::unordered_map<int, double> t_dc_map;
 typedef std::unordered_map<std::string, std::vector<unsigned int>> t_per_map;
 typedef std::map<std::string, std::string> t_postprocessor_strings;
+typedef std::map<std::pair<unsigned int, unsigned int>, int> t_rot_map;
 
 template<int dim>
 class Solver{
@@ -47,6 +46,7 @@ public:
     virtual void set_f_map(t_f_map) = 0;
     virtual void set_dc_map(t_dc_map) = 0;
     virtual void set_per_map(t_per_map) = 0;
+    virtual void set_rot_map(t_rot_map) = 0;
     virtual void run() = 0;
 
     virtual Triangulation<dim>& get_triangulation() = 0;

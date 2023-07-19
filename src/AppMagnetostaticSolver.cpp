@@ -66,6 +66,7 @@ int main(int argc, char* argv[]){
     auto f_map = itrans.get_f_map();
     auto dc_map = itrans.get_dc_map();
     auto per_map = itrans.get_per_map();
+    auto rot_map = itrans.get_rot_map();
     auto postprocessors_cell = itrans.get_pp_cell();
     auto postprocessors_scalar = itrans.get_pp_scalar();
     auto mesh_path = itrans.get_mesh_filepath();
@@ -83,6 +84,7 @@ int main(int argc, char* argv[]){
         solver->set_f_map(f_map);
         solver->set_dc_map(dc_map);
         solver->set_per_map(per_map);
+        solver->set_rot_map(rot_map);
         std::cout << "Done!" << std::endl;
         solver->run();
 
