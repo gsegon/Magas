@@ -142,8 +142,9 @@ void LinearSolver<dim>::extend_dsp(DynamicSparsityPattern& dsp){
                 local_dof_index = sr->get_mapped(local_dof_index);
             }
             for (auto i : local_dof_indices)
-                for (auto j : local_dof_indices)
+                for (auto j : local_dof_indices){
                     dsp.add(i, j);
+                }
         }
     }
 }
@@ -339,11 +340,43 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     cell->get_dof_indices(copy_data.local_dof_indices);
 
+    int min = std::numeric_limits<int>::max();
+    int max = std::numeric_limits<int>::min();
+    auto dofs = sr->get_dofs();
     if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
         for (auto& local_dof_index : copy_data.local_dof_indices){
             local_dof_index = sr->get_mapped(local_dof_index);
+//            auto pos_given = std::find(dofs.begin(), dofs.end(), local_dof_index) - dofs.begin();
+//            if (pos_given < dofs.size()){
+//                if (pos_given > max) max = pos_given;
+//                if (pos_given < min) min = pos_given;
+//            }
         }
     }
+//
+//    if (std::abs(max-min)>1){
+////        std::cout << "Element dof distances (max-min): " << max-min << std::endl;
+//        for (auto& dof: copy_data.local_dof_indices){
+//            std::cout << dof << "(";
+//            std::cout << sr->get_other(dof) << ") ";
+//            dof = sr->get_other(dof);
+//        }
+//        std::cout << std::endl;
+//    }
+//
+//    min = std::numeric_limits<int>::max();
+//    max = std::numeric_limits<int>::min();
+//    if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
+//        for (auto& local_dof_index : copy_data.local_dof_indices){
+//            auto pos_given = std::find(dofs.begin(), dofs.end(), local_dof_index) - dofs.begin();
+//            if (pos_given < dofs.size()){
+//                if (pos_given > max) max = pos_given;
+//                if (pos_given < min) min = pos_given;
+//            }
+//        }
+//    }
+//    AssertThrow (std::abs(max-min) == 1, ExcInternalError());
+
 }
 
 template<int dim>

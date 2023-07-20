@@ -20,6 +20,8 @@ public:
     vector<dof> get_dofs();
     bool is_full_circle();
     void print_map();
+    dof get_other(dof);
+    bool is_in(dof);
 
 private:
     void sort();

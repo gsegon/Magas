@@ -33,6 +33,10 @@ bool SlidingRotation::is_full_circle(){
 
 }
 
+bool SlidingRotation::is_in(dof given) {
+    return std::find(dofs.begin(), dofs.end(), given) - dofs.begin() < dofs.size();
+}
+
 void SlidingRotation::sort() {
 
     std::map<unsigned int, std::vector<double>> circle_points;
@@ -52,7 +56,6 @@ void SlidingRotation::sort() {
         new_dofs.push_back(dof);
     }
     dofs = new_dofs;
-    print_map();
 }
 
 void SlidingRotation::print_map() {
@@ -66,20 +69,30 @@ vector<dof> SlidingRotation::get_dofs() {
     return dofs;
 }
 
+dof SlidingRotation::get_other(dof given){
+    if (std::find(dofs.begin(), dofs.end(), given) - dofs.begin() == 0)
+        return dofs[dofs.size()-1];
+    if (std::find(dofs.begin(), dofs.end(), given) - dofs.begin() == dofs.size()-1)
+        return dofs[0];
+
+    return given;
+}
+
 dof SlidingRotation::get_mapped(dof given) {
     auto pos_given = std::find(dofs.begin(), dofs.end(), given) - dofs.begin();
+    if (pos_given >= dofs.size())
+        return given;
 
     auto pos_mapped = pos_given + offset;
 
-    if (!is_full_circle()){
+    if (!is_full_circle()) {
         pos_mapped = pos_mapped % (dofs.size()-1);
-    }else{
-        pos_mapped = pos_mapped % (dofs.size());
-    }
+//        pos_mapped = pos_mapped % (dofs.size());
 
-    if (pos_given >= dofs.size())
-        return given;
+    }
     else
-        return dofs[pos_mapped];
+        pos_mapped = pos_mapped % (dofs.size());
+
+    return dofs[pos_mapped];
 
 }

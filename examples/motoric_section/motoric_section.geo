@@ -55,7 +55,7 @@ Transfinite Curve {368} = 60 Using Progression 1;
 Mesh 2;
 RecombineMesh;
 Mesh.SubdivisionAlgorithm = 1;
-RefineMesh;
+//RefineMesh;
 
 //
 
