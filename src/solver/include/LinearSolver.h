@@ -61,7 +61,7 @@ private:
 
     std::vector<unsigned int> rot_cell_indices;
     std::vector<unsigned int> rot_dofs;
-    SlidingRotation* sr;
+    SlidingRotation* sr = nullptr;
 
     Triangulation<dim> triangulation;
     FE_Q<dim> fe;
@@ -98,7 +98,7 @@ private:
     t_f_map f_map;
     t_dc_map dc_map;
     t_per_map per_map;
-    t_rot_map rot_map;
+    t_rot_map rot_map = {};
 
 };
 

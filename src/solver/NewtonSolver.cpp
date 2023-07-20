@@ -209,6 +209,7 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     }
 
     cell->get_dof_indices(copy_data.local_dof_indices);
+
 }
 
 template<int dim>

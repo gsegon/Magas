@@ -337,12 +337,11 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     cell->get_dof_indices(copy_data.local_dof_indices);
 
-    int min = std::numeric_limits<int>::max();
-    int max = std::numeric_limits<int>::min();
-    auto dofs = sr->get_dofs();
-    if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
-        for (auto& local_dof_index : copy_data.local_dof_indices){
-            local_dof_index = sr->get_mapped(local_dof_index);
+    if (sr){
+        if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
+            for (auto& local_dof_index : copy_data.local_dof_indices){
+                local_dof_index = sr->get_mapped(local_dof_index);
+            }
         }
     }
 }
