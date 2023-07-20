@@ -42,7 +42,7 @@
   "mesh_path": "motoric_section.msh",
 
   "rotation": {
-    "rot1": 10
+    "rot1": 100
   },
 
   "boundary_id": {

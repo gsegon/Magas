@@ -69,14 +69,6 @@ vector<dof> SlidingRotation::get_dofs() {
     return dofs;
 }
 
-dof SlidingRotation::get_other(dof given){
-    if (std::find(dofs.begin(), dofs.end(), given) - dofs.begin() == 0)
-        return dofs[dofs.size()-1];
-    if (std::find(dofs.begin(), dofs.end(), given) - dofs.begin() == dofs.size()-1)
-        return dofs[0];
-
-    return given;
-}
 
 dof SlidingRotation::get_mapped(dof given) {
     auto pos_given = std::find(dofs.begin(), dofs.end(), given) - dofs.begin();
@@ -87,8 +79,6 @@ dof SlidingRotation::get_mapped(dof given) {
 
     if (!is_full_circle()) {
         pos_mapped = pos_mapped % (dofs.size()-1);
-//        pos_mapped = pos_mapped % (dofs.size());
-
     }
     else
         pos_mapped = pos_mapped % (dofs.size());

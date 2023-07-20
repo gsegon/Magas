@@ -113,8 +113,6 @@ LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature
 {}
 
 
-
-
 template<int dim>
 void LinearSolver<dim>::setup_rotation(unsigned int a, unsigned int b, int offset) {
 
@@ -177,10 +175,12 @@ void write_dof_locations(const DoFHandler<2> &dof_handler,
 
 template<int dim>
 void LinearSolver<dim>::setup_system() {
+
     dof_handler.distribute_dofs(fe);
+//    DoFRenumbering::Cuthill_McKee(dof_handler);
 
 //    write_dof_locations(dof_handler, "dof-locations-1.gnuplot");
-//    DoFRenumbering::Cuthill_McKee(dof_handler);
+
     constraints.clear();
 
     // setup_rotation
@@ -241,9 +241,6 @@ void LinearSolver<dim>::setup_system() {
     constraints.close();
 
     DynamicSparsityPattern dsp(dof_handler.n_dofs());
-
-    // TODO: Investigate condensing DynamicSparsityPattern
-//    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
 
     //Extend dsp due to rotation mappings:
@@ -346,37 +343,8 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
     if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
         for (auto& local_dof_index : copy_data.local_dof_indices){
             local_dof_index = sr->get_mapped(local_dof_index);
-//            auto pos_given = std::find(dofs.begin(), dofs.end(), local_dof_index) - dofs.begin();
-//            if (pos_given < dofs.size()){
-//                if (pos_given > max) max = pos_given;
-//                if (pos_given < min) min = pos_given;
-//            }
         }
     }
-//
-//    if (std::abs(max-min)>1){
-////        std::cout << "Element dof distances (max-min): " << max-min << std::endl;
-//        for (auto& dof: copy_data.local_dof_indices){
-//            std::cout << dof << "(";
-//            std::cout << sr->get_other(dof) << ") ";
-//            dof = sr->get_other(dof);
-//        }
-//        std::cout << std::endl;
-//    }
-//
-//    min = std::numeric_limits<int>::max();
-//    max = std::numeric_limits<int>::min();
-//    if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
-//        for (auto& local_dof_index : copy_data.local_dof_indices){
-//            auto pos_given = std::find(dofs.begin(), dofs.end(), local_dof_index) - dofs.begin();
-//            if (pos_given < dofs.size()){
-//                if (pos_given > max) max = pos_given;
-//                if (pos_given < min) min = pos_given;
-//            }
-//        }
-//    }
-//    AssertThrow (std::abs(max-min) == 1, ExcInternalError());
-
 }
 
 template<int dim>
@@ -392,11 +360,6 @@ void LinearSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) 
 
 template<int dim>
 void LinearSolver<dim>::solve(){
-
-    // TODO: Investigate what happens here with constraints condense system_matrix and system_rhs.
-    //  Whatever it is, it breaks periodicity
-//    constraints.condense(system_matrix);
-//    constraints.condense(system_rhs);
 
     SolverControl solver_control(10000, 1e-12);
     SolverCG<Vector<double>> solver(solver_control);
