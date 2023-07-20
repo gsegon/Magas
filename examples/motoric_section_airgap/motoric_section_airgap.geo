@@ -103,3 +103,5 @@ Physical Surface("AirGap", 517) = {20};//+
 Physical Surface("RotorCore", 601) = {14};
 //+
 Physical Surface("StatorCore", 602) = {1};
+//+
+Transfinite Curve {420} = 90 Using Progression 1;

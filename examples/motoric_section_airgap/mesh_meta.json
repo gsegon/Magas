@@ -64,10 +64,12 @@
       "material": "air"},
     "517": {
       "name": "Airgap",
-      "material": "air"},
+      "material": "air",
+      "rotation": "rot1"},
     "518": {
       "name": "Air",
-      "material": "air"}
+      "material": "air",
+      "rotation": "rot1"}
   }
 
 
