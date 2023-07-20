@@ -9,6 +9,7 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -41,6 +42,7 @@
 
 #include <deal.II/dofs/dof_tools.h>
 #include <deal.II/fe/mapping_q1.h>
+#include <deal.II/lac/sparse_direct.h>
 
 using namespace dealii;
 
@@ -360,15 +362,38 @@ void LinearSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) 
 template<int dim>
 void LinearSolver<dim>::solve(){
 
-    SolverControl solver_control(10000, 1e-12);
-    SolverCG<Vector<double>> solver(solver_control);
+    SparseDirectUMFPACK A_direct;
+    solution = system_rhs;
+    A_direct.solve(system_matrix, solution);
 
-    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.6);
+//    SolverControl               solver_control(std::max<std::size_t>(10000,
+//                                                                     system_rhs.size() / 10),
+//                                               1e-13 * system_rhs.l2_norm());
+//    SolverGMRES<Vector<double>> solver(solver_control);
+//    PreconditionJacobi<SparseMatrix<double>> preconditioner;
+//    preconditioner.initialize(system_matrix, 1.0);
+//    solver.solve(system_matrix, solution, system_rhs, preconditioner);
+//
+//    Vector<double> residual(dof_handler.n_dofs());
+//
+//    system_matrix.vmult(residual, solution);
+//    residual -= system_rhs;
+//    std::cout << "   Iterations required for convergence: "
+//              << solver_control.last_step() << '\n'
+//              << "   Max norm of residual:                "
+//              << residual.linfty_norm() << '\n';
 
-    solver.solve(system_matrix, solution, system_rhs, preconditioner);
 
-    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
+//    std::cout << "system_rhs.l2_norm(): " << system_rhs.l2_norm() << std::endl;
+//    SolverControl solver_control(10000, 1e-13 * system_rhs.l2_norm());
+//    SolverCG<Vector<double>> solver(solver_control);
+//
+//    PreconditionSSOR<SparseMatrix<double>> preconditioner;
+//    preconditioner.initialize(system_matrix, 1.6);
+//
+//    solver.solve(system_matrix, solution, system_rhs, preconditioner);
+//
+//    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
     constraints.distribute(solution);
 
 }

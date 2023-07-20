@@ -26,6 +26,7 @@
 #include <deal.II/base/function_cspline.h>
 #include <variant>
 #include <deal.II/base/work_stream.h>
+#include <deal.II/lac/sparse_direct.h>
 
 #include "NewtonSolver.h"
 #include "PeriodicityMapperFactory.h"
@@ -226,15 +227,19 @@ void NewtonSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) 
 template<int dim>
 void NewtonSolver<dim>::solve(const double alpha){
 
-    SolverControl solver_control(10000, 1e-12);
-    SolverCG<Vector<double>> solver(solver_control);
+    SparseDirectUMFPACK A_direct;
+    newton_update = system_rhs;
+    A_direct.solve(system_matrix, newton_update);
 
-    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.2);
-
-    newton_update.reinit(dof_handler.n_dofs());
-    solver.solve(system_matrix, newton_update, system_rhs, preconditioner);
-    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
+//    SolverControl solver_control(10000, 1e-12);
+//    SolverCG<Vector<double>> solver(solver_control);
+//
+//    PreconditionSSOR<SparseMatrix<double>> preconditioner;
+//    preconditioner.initialize(system_matrix, 1.2);
+//
+//    newton_update.reinit(dof_handler.n_dofs());
+//    solver.solve(system_matrix, newton_update, system_rhs, preconditioner);
+//    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
 
     // Distribute constraints (periodic).
     constraints.distribute(newton_update);
