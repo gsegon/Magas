@@ -37,8 +37,6 @@
 #include "Solver.h"
 #include "ConstFSource.h"
 
-//template class Solver<2>;
-
 using namespace dealii;
 
 template class Solver<2>;
