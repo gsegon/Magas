@@ -68,9 +68,9 @@ TEST(ExpressionScalarPostprocessorNonlinear, unit_square){
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
-    solver.setup_system(true);
-    solver.assemble_system();
-    solver.solve(0.5);
+//    solver.setup_system(true);
+//    solver.assemble_system();
+    solver.run();
 
     ExpressionScalarPostprocessor<2> expression_postp_count_elem{"1", nu_map};
     ExpressionScalarPostprocessor<2> expression_postp_energy{"(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + "

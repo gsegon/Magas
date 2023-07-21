@@ -94,28 +94,7 @@ TEST(ArkkioScalarPostprocessor, torque_benchmark_kelvin_1_nonlinear){
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
     solver.set_per_map(per_map);
-    solver.setup_system(true);
-
-    int i = 0;
-    double alpha = 0.0;
-    while(i++ < 50){
-        if (i < 10)
-            alpha = 0.1;
-        else if (i < 15)
-            alpha = 0.3;
-        else
-            alpha = 0.5;
-
-        solver.assemble_system();
-
-        solver.solve(alpha);
-        double res = solver.compute_residual(alpha);
-        std::cout << "\tResidual(" << i<< "): " << res << std::endl;
-        if (res < 1e-6){
-            std::cout << "Converged!";
-            break;
-        }
-    }
+    solver.run();
 
     ExportVtu<2> export_vtu3(solver.get_triangulation(), solver.get_rhs(), solver.get_solution(), solver.get_fe());
     export_vtu3.write("vtu_export_torque_benchmark_kelvin_1_nonlinear");

@@ -3,7 +3,7 @@ add_library(solver OBJECT
         LinearSolver.cpp
         PicardSolver.cpp
         NewtonSolver.cpp
-        SolverFactory.cpp)
+        SolverFactory.cpp Solver.cpp)
 
 find_package(deal.II 9.4 REQUIRED)
 
