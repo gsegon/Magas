@@ -1,12 +1,1 @@
-{
-
-  "boundaries": "boundaries.json",
-  "materials": "material_data.json",
-  "sources": "sources.json",
-  "post": "post.json",
-  "mesh_meta": "mesh_meta.json",
-
-  "rotation": {
-    "rot1": 15
-  }
-}
+{"boundaries": "boundaries.json", "materials": "material_data.json", "sources": "sources.json", "post": "post.json", "mesh_meta": "mesh_meta.json", "rotation": {"rot1": 179}}

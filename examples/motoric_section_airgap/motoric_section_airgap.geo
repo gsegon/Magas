@@ -94,14 +94,18 @@ Physical Surface("Coil_C+", 509) = {3, 9};
 Physical Surface("Coil_B+", 510) = {8, 10};
 Physical Surface("Coil_C-", 511) = {6, 4};
 
-
 Physical Surface("AirPockets", 516) = {22, 23, 24, 25, 26, 27, 28, 29};
-Physical Surface("Air", 518) = {19, 21};
+Physical Surface("Air", 2000) = {19};
+Physical Surface("Air2", 2001) = {21};
 Physical Surface("AirGap", 517) = {20};//+
-
 //+
 Physical Surface("RotorCore", 601) = {14};
 //+
 Physical Surface("StatorCore", 602) = {1};
 //+
 Transfinite Curve {420} = 90 Using Progression 1;
+//+
+Transfinite Curve {186} = 90 Using Progression 1;
+//+
+Transfinite Curve {419} = 90 Using Progression 1;
+//+

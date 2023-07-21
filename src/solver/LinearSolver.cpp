@@ -128,6 +128,7 @@ void LinearSolver<dim>::setup_rotation(unsigned int a, unsigned int b, int offse
         dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
     }
     sr = new SlidingRotation{rot_dofs, dof_to_node, offset};
+    std::cout << "Sliding boundary has " << sr->get_dofs().size() << " dofs." << std::endl;
 
 }
 
@@ -192,7 +193,6 @@ void LinearSolver<dim>::setup_system() {
 
     // Apply 0 DC boundary conditions
     for (auto& [mat_id, value] : dc_map){
-        std::cout << "mat_id: " << mat_id << ": " << value << std::endl;
         VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
     }
 
@@ -366,34 +366,6 @@ void LinearSolver<dim>::solve(){
     solution = system_rhs;
     A_direct.solve(system_matrix, solution);
 
-//    SolverControl               solver_control(std::max<std::size_t>(10000,
-//                                                                     system_rhs.size() / 10),
-//                                               1e-13 * system_rhs.l2_norm());
-//    SolverGMRES<Vector<double>> solver(solver_control);
-//    PreconditionJacobi<SparseMatrix<double>> preconditioner;
-//    preconditioner.initialize(system_matrix, 1.0);
-//    solver.solve(system_matrix, solution, system_rhs, preconditioner);
-//
-//    Vector<double> residual(dof_handler.n_dofs());
-//
-//    system_matrix.vmult(residual, solution);
-//    residual -= system_rhs;
-//    std::cout << "   Iterations required for convergence: "
-//              << solver_control.last_step() << '\n'
-//              << "   Max norm of residual:                "
-//              << residual.linfty_norm() << '\n';
-
-
-//    std::cout << "system_rhs.l2_norm(): " << system_rhs.l2_norm() << std::endl;
-//    SolverControl solver_control(10000, 1e-13 * system_rhs.l2_norm());
-//    SolverCG<Vector<double>> solver(solver_control);
-//
-//    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-//    preconditioner.initialize(system_matrix, 1.6);
-//
-//    solver.solve(system_matrix, solution, system_rhs, preconditioner);
-//
-//    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
     constraints.distribute(solution);
 
 }

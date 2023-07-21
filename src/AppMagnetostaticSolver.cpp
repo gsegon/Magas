@@ -112,10 +112,15 @@ int main(int argc, char* argv[]){
             results_map[key] = result_sum;
         }
 
+        json results;
         std::cout << "::Postprocessing results::" << std::endl;
         for (auto [key, val] : results_map){
             std::cout << "\t" << key << " = " << val << std::endl;
+            results[key] = val;
         }
+
+        std::ofstream o("results- " + (std::string)output + ".json");
+        o << std::setw(4) << results << std::endl;
 
         // Perform vector postprocessing and export to vtu.
         // TODO: separate perform and write.
