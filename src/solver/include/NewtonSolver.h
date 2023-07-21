@@ -46,7 +46,7 @@ template <int dim>
 class NewtonSolver : public Solver<dim>{
 
 public:
-//    NewtonSolver();
+
     void setup_system(const bool initial_step);
     void solve(const double alpha);
     double compute_residual(double) const;

@@ -37,14 +37,9 @@
 #include "LinearSolver.h"
 #include "ConstFSource.h"
 
-
 using namespace dealii;
 
 template class LinearSolver<2>;
-
-//template<int dim>
-//LinearSolver<dim>::LinearSolver(): Solver<dim>::Solver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
-//{}
 
 template<int dim>
 void LinearSolver<dim>::setup_system() {

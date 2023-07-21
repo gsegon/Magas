@@ -60,9 +60,9 @@ TEST(TestExpressionCellPostprocessorNonlinear, unit_square){
     solver.set_nu_map(nu_map);
     solver.set_f_map(f_map);
     solver.set_dc_map(dc_map);
-    solver.setup_system(true);
-    solver.assemble_system();
-    solver.solve(0.5);
+//    solver.setup_system(true);
+//    solver.assemble_system();
+    solver.run();
 
     ExpressionCellPostprocessor<2> expression_postp{"if(Bx_q1 >0.0, 1, 0)"};
 

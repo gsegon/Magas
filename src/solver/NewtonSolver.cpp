@@ -36,10 +36,6 @@ using namespace dealii;
 
 template class NewtonSolver<2>;
 
-//template<int dim>
-//NewtonSolver<dim>::NewtonSolver(): Solver<dim>::fe(1), Solver<dim>::dof_handler(Solver<dim>::triangulation), Solver<dim>::quadrature_formula(Solver<dim>::fe.degree + 1)
-//{}
-
 template<int dim>
 void NewtonSolver<dim>::setup_system(const bool initial_step) {
 

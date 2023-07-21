@@ -37,7 +37,6 @@ template <int dim>
 class LinearSolver: public Solver<dim>{
 
 public:
-//    LinearSolver();
     void setup_system();
     void solve();
     void run();
