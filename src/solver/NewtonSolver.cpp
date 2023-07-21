@@ -1,36 +1,24 @@
 #include <iostream>
-#include <deal.II/grid/tria.h>
+#include <variant>
+#include <fstream>
 
-#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
-#include <deal.II/base/logstream.h>
 #include <deal.II/lac/vector.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/precondition.h>
-#include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
-#include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <deal.II/grid/tria_accessor.h>
-#include <fstream>
 #include <deal.II/base/exceptions.h>
-#include <deal.II/base/function_cspline.h>
-#include <variant>
-#include <deal.II/base/work_stream.h>
+#include <deal.II/lac/sparse_direct.h>
 
+#include "Solver.h"
 #include "NewtonSolver.h"
 #include "PeriodicityMapperFactory.h"
 #include "ConstFSource.h"
-#include "Solver.h"
+
 
 using namespace dealii;
 
@@ -170,15 +158,9 @@ void NewtonSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 template<int dim>
 void NewtonSolver<dim>::solve(const double alpha){
 
-    SolverControl solver_control(10000, 1e-12);
-    SolverCG<Vector<double>> solver(solver_control);
-
-    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(Solver<dim>::system_matrix, 1.2);
-
-    newton_update.reinit(Solver<dim>::dof_handler.n_dofs());
-    solver.solve(Solver<dim>::system_matrix, newton_update, Solver<dim>::system_rhs, preconditioner);
-    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
+    SparseDirectUMFPACK A_direct;
+    newton_update = this->system_rhs;
+    A_direct.solve(this->system_matrix, newton_update);
 
     // Distribute constraints (periodic).
     Solver<dim>::constraints.distribute(newton_update);
