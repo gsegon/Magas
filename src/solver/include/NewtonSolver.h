@@ -46,68 +46,22 @@ template <int dim>
 class NewtonSolver : public Solver<dim>{
 
 public:
-    NewtonSolver();
-    void read_mesh(const std::string&);
+//    NewtonSolver();
     void setup_system(const bool initial_step);
-    void assemble_system();
     void solve(const double alpha);
-    void set_nu_map(std::unordered_map<int, NuCurve*>);
-    void set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>>);
-    void set_dc_map(std::unordered_map<int, double>);
-    void set_per_map(std::unordered_map<std::string, std::vector<unsigned int>>);
     double compute_residual(double) const;
     void run();
-
-    Triangulation<dim>& get_triangulation();
-    Vector<double>& get_solution();
-    Vector<double>& get_current_solution();
-    Vector<double>& get_rhs();
-    FE_Q<dim>& get_fe();
+    void local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator& cell,
+                               typename Solver<dim>::AssemblyScratchData& scratch,
+                               typename Solver<dim>::AssemblyCopyData& copy_data);
 
 private:
 
-    Triangulation<dim> triangulation;
-    FE_Q<dim> fe;
-    DoFHandler<dim> dof_handler;
-    QGauss<dim> quadrature_formula;
-
-    AffineConstraints<double> constraints;
-
-    struct AssemblyScratchData{
-        AssemblyScratchData(const FiniteElement<dim> &fe);
-        AssemblyScratchData(const AssemblyScratchData &scratch_data);
-
-        FEValues<dim> fe_values;
-        std::vector<double> rhs_values;
-    };
-
-    struct AssemblyCopyData{
-        FullMatrix<double> cell_matrix;
-        Vector<double> cell_rhs;
-        std::vector<types::global_dof_index> local_dof_indices;
-    };
-
-    void local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator& cell,
-                               AssemblyScratchData& scratch,
-                               AssemblyCopyData& copy_data);
-    void copy_local_to_global(const AssemblyCopyData &copy_data);
-
-    SparsityPattern sparsity_pattern;
-    SparseMatrix<double> system_matrix;
-
-//    Vector<double> solution;
-    Vector<double> system_rhs;
 
     Vector<double> current_solution;
     Vector<double> newton_update;
 
-    std::unordered_map<int, NuCurve*> nu_map;
-    std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> f_map;
-    std::unordered_map<int, double> dc_map;
-    std::unordered_map<std::string, std::vector<unsigned int>> per_map;
-
     bool is_initial = true;
-
 
 };
 

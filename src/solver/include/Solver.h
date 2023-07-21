@@ -42,17 +42,58 @@ typedef std::map<std::string, std::string> t_postprocessor_strings;
 template<int dim>
 class Solver{
 public:
-    virtual void read_mesh(const std::string&) = 0;
-    virtual void set_nu_map(t_nu_map) = 0;
-    virtual void set_f_map(t_f_map) = 0;
-    virtual void set_dc_map(t_dc_map) = 0;
-    virtual void set_per_map(t_per_map) = 0;
-    virtual void run() = 0;
 
-    virtual Triangulation<dim>& get_triangulation() = 0;
-    virtual Vector<double>& get_solution() = 0;
-    virtual Vector<double>& get_rhs() = 0;
-    virtual FE_Q<dim>& get_fe() = 0;
+    Solver();
+    void read_mesh(const std::string&);
+    void set_nu_map(t_nu_map);
+    void set_f_map(t_f_map);
+    void set_dc_map(t_dc_map);
+    void set_per_map(t_per_map);
+//    virtual void setup_system() = 0;
+    void assemble_system();
+    virtual void run() = 0;
+//    virtual void solve() = 0;
+
+    Triangulation<dim>& get_triangulation();
+    Vector<double>& get_solution();
+    Vector<double>& get_rhs();
+    FE_Q<dim>& get_fe();
+
+    Triangulation<dim> triangulation;
+    FE_Q<dim> fe;
+    DoFHandler<dim> dof_handler;
+    QGauss<dim> quadrature_formula;
+
+    AffineConstraints<double> constraints;
+
+    struct AssemblyScratchData{
+        AssemblyScratchData(const FiniteElement<dim> &fe);
+        AssemblyScratchData(const AssemblyScratchData &scratch_data);
+
+        FEValues<dim> fe_values;
+        std::vector<double> rhs_values;
+    };
+
+    struct AssemblyCopyData{
+        FullMatrix<double> cell_matrix;
+        Vector<double> cell_rhs;
+        std::vector<types::global_dof_index> local_dof_indices;
+    };
+
+    virtual void local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator& cell,
+                               AssemblyScratchData& scratch,
+                               AssemblyCopyData& copy_data) = 0;
+    void copy_local_to_global(const AssemblyCopyData &copy_data);
+
+    SparsityPattern sparsity_pattern;
+    SparseMatrix<double> system_matrix;
+
+    Vector<double> solution;
+    Vector<double> system_rhs;
+    t_nu_map nu_map;
+    t_f_map f_map;
+    t_dc_map dc_map;
+    t_per_map per_map;
 };
 
 #endif //MAGAS_SOLVER_H

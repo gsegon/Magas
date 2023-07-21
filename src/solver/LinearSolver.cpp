@@ -42,44 +42,31 @@ using namespace dealii;
 
 template class LinearSolver<2>;
 
-template<int dim>
-LinearSolver<dim>::LinearSolver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
-{}
-
-template<int dim>
-void LinearSolver<dim>::read_mesh(const std::string& mesh_filepath) {
-    GridIn<dim> grid_in;
-    grid_in.attach_triangulation(triangulation);
-    std::ifstream input_file(mesh_filepath);
-    grid_in.read_msh(input_file);
-}
-
-template<int dim>
-Triangulation<dim>& LinearSolver<dim>::get_triangulation(){
-    return this->triangulation;
-}
+//template<int dim>
+//LinearSolver<dim>::LinearSolver(): Solver<dim>::Solver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)
+//{}
 
 template<int dim>
 void LinearSolver<dim>::setup_system() {
-    dof_handler.distribute_dofs(fe);
+    this->dof_handler.distribute_dofs(this->fe);
 
-    constraints.clear();
+    this->constraints.clear();
 
     // Apply 0 DC boundary conditions
-    for (auto& [mat_id, value] : dc_map){
-        VectorTools::interpolate_boundary_values(dof_handler, mat_id, Functions::ConstantFunction<2>(value), constraints);
+    for (auto& [mat_id, value] : this->dc_map){
+        VectorTools::interpolate_boundary_values(this->dof_handler, mat_id, Functions::ConstantFunction<2>(value), this->constraints);
     }
 
     // Apply periodic or anti-periodic boundary conditions
-    for (auto [per_type, boundary_ids] : per_map){
-        const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[0]});
-        const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(dof_handler, ComponentMask(), {boundary_ids[1]});
+    for (auto [per_type, boundary_ids] : Solver<dim>::per_map){
+        const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(Solver<dim>::dof_handler, ComponentMask(), {boundary_ids[0]});
+        const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(Solver<dim>::dof_handler, ComponentMask(), {boundary_ids[1]});
 
 
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
-        std::vector<Point<dim>> nodes(dof_handler.n_dofs());
-        DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
+        std::vector<Point<dim>> nodes(Solver<dim>::dof_handler.n_dofs());
+        DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), Solver<dim>::dof_handler, nodes);
 
         std::map<unsigned int, std::vector<double>> dof_to_node;
         std::vector<unsigned int> dofs_1;
@@ -106,8 +93,8 @@ void LinearSolver<dim>::setup_system() {
             auto second = matched_pair.second;
 
             if (first != second){
-                constraints.add_line(first);
-                constraints.add_entry(first, second, pm->get_weigth());
+                Solver<dim>::constraints.add_line(first);
+                Solver<dim>::constraints.add_entry(first, second, pm->get_weigth());
             }
         }
     }
@@ -115,57 +102,32 @@ void LinearSolver<dim>::setup_system() {
 //    constraints.print(std::cout);
 //    std::ofstream dot_out("at_print.dot");
 //    constraints.write_dot(dot_out);
-    constraints.close();
+    Solver<dim>::constraints.close();
 
-    DynamicSparsityPattern dsp(dof_handler.n_dofs());
+    DynamicSparsityPattern dsp(Solver<dim>::dof_handler.n_dofs());
 
     // TODO: Investigate condensing DynamicSparsityPattern
 //    constraints.condense(dsp);
-    DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+    DoFTools::make_sparsity_pattern(Solver<dim>::dof_handler, dsp, Solver<dim>::constraints);
 
-    sparsity_pattern.copy_from(dsp);
+    Solver<dim>::sparsity_pattern.copy_from(dsp);
 
-    system_matrix.reinit(sparsity_pattern);
-    solution.reinit(dof_handler.n_dofs());
-    system_rhs.reinit(dof_handler.n_dofs());
-    Point<dim> a{0, 0};
+    Solver<dim>::system_matrix.reinit(Solver<dim>::sparsity_pattern);
+    Solver<dim>::solution.reinit(Solver<dim>::dof_handler.n_dofs());
+    Solver<dim>::system_rhs.reinit(Solver<dim>::dof_handler.n_dofs());
 }
-
-template<int dim>
-void LinearSolver<dim>::assemble_system() {
-
-    WorkStream::run(dof_handler.begin_active(),
-                    dof_handler.end(),
-                    *this,
-                    &LinearSolver::local_assemble_system,
-                    &LinearSolver::copy_local_to_global,
-                    AssemblyScratchData(fe),
-                    AssemblyCopyData());
-}
-
-template<int dim>
-LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const FiniteElement<dim> &fe):
-    fe_values(fe, QGauss<dim>(fe.degree + 1), update_values | update_gradients | update_quadrature_points | update_JxW_values),
-    rhs_values(fe_values.get_quadrature().size())
-    {}
-
-template<int dim>
-LinearSolver<dim>::AssemblyScratchData::AssemblyScratchData(const AssemblyScratchData& scratch_data):
-    fe_values(scratch_data.fe_values.get_fe(), scratch_data.fe_values.get_quadrature(), update_values | update_gradients | update_quadrature_points | update_JxW_values),
-    rhs_values(scratch_data.rhs_values.size())
-{}
 
 template<int dim>
 void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                              LinearSolver::AssemblyScratchData &scratch_data,
-                                              LinearSolver::AssemblyCopyData &copy_data) {
+                                              typename Solver<dim>::AssemblyScratchData &scratch_data,
+                                              typename Solver<dim>::AssemblyCopyData &copy_data) {
 
     double nu = 0;
     FSource* f;
     ConstFSource f_zero{0};
     Tensor<1, dim> Hc({0, 0});
 
-    const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
+    const unsigned int dofs_per_cell = this->fe.n_dofs_per_cell();
     const unsigned int n_q_points = scratch_data.fe_values.get_quadrature().size();
 
     copy_data.cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
@@ -174,9 +136,9 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 
     scratch_data.fe_values.reinit(cell);
 
-    NuCurve* bh = nu_map.at(cell->material_id());
+    NuCurve* bh = this->nu_map.at(cell->material_id());
     nu = bh->get_nu(0);
-    auto f_variant = f_map.at(cell->material_id());
+    auto f_variant = this->f_map.at(cell->material_id());
     if(std::holds_alternative<FSource*>(f_variant)){
         f = std::get<FSource*>(f_variant);
         Hc[0] = 0;
@@ -215,17 +177,6 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 }
 
 template<int dim>
-void LinearSolver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) {
-    constraints.distribute_local_to_global(
-            copy_data.cell_matrix,
-            copy_data.cell_rhs,
-            copy_data.local_dof_indices,
-            system_matrix,
-            system_rhs);
-}
-
-
-template<int dim>
 void LinearSolver<dim>::solve(){
 
     // TODO: Investigate what happens here with constraints condense system_matrix and system_rhs.
@@ -237,49 +188,13 @@ void LinearSolver<dim>::solve(){
     SolverCG<Vector<double>> solver(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.6);
+    preconditioner.initialize(this->system_matrix, 1.6);
 
-    solver.solve(system_matrix, solution, system_rhs, preconditioner);
+    solver.solve(this->system_matrix, this->solution, this->system_rhs, preconditioner);
 
     std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
-    constraints.distribute(solution);
+    this->constraints.distribute(this->solution);
 
-}
-
-template<int dim>
-void LinearSolver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
-    this->nu_map = map;
-}
-
-template<int dim>
-void LinearSolver<dim>::set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> map) {
-    this->f_map = map;
-}
-
-template<int dim>
-void LinearSolver<dim>::set_dc_map(std::unordered_map<int, double> map) {
-    this->dc_map = map;
-}
-
-template<int dim>
-void LinearSolver<dim>::set_per_map(std::unordered_map<std::string, std::vector<unsigned int>> map) {
-    this->per_map = map;
-}
-
-
-template<int dim>
-Vector<double>& LinearSolver<dim>::get_solution(){
-    return this->solution;
-}
-
-template<int dim>
-Vector<double>& LinearSolver<dim>::get_rhs(){
-    return this->system_rhs;
-}
-
-template<int dim>
-FE_Q<dim>& LinearSolver<dim>::get_fe(){
-    return this->fe;
 }
 
 template<int dim>
@@ -289,7 +204,7 @@ void LinearSolver<dim>::run(){
     setup_system();
     std::cout << "Done!" << std::endl;
     std::cout << "\tAssembling system...";
-    assemble_system();
+    this->assemble_system();
     std::cout << "Done!" << std::endl;
     std::cout << "\tSolving system...";
     solve();
