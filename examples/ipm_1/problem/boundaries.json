@@ -2,9 +2,5 @@
   "boundary": {
     "A=0": 0.0,
     "per1": "anti-periodic-line"
-  },
-
-  "rotation": {
-    "rot1": 0
   }
 }
