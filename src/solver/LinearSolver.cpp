@@ -156,6 +156,15 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
         }
 
     cell->get_dof_indices(copy_data.local_dof_indices);
+
+    if (this->sr){
+        if (std::count(this->rot_cell_indices.begin(), this->rot_cell_indices.end(), cell->index())){
+            for (auto& local_dof_index : copy_data.local_dof_indices){
+                local_dof_index = this->sr->get_mapped(local_dof_index);
+            }
+        }
+    }
+
 }
 
 template<int dim>
