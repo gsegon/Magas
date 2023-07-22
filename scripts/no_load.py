@@ -3,18 +3,21 @@ import json
 
 if __name__ == '__main__':
 
+    example = "motoric_section"
+    example_path = "../examples/{:}/{:}.json".format(example, example)
+
     os.system('pwd')
-    with open("../examples/motoric_section_airgap/motoric_section_airgap.json", "r") as jsonFile:
+    with open(example_path, "r") as jsonFile:
         data = json.load(jsonFile)
 
-    for rot_step in range(180):
+    for rot_step in range(0, 60):
 
         data["rotation"]["rot1"] = rot_step
 
-        with open("../examples/motoric_section_airgap/motoric_section_airgap.json", "w") as jsonFile:
+        with open(example_path, "w") as jsonFile:
             json.dump(data, jsonFile)
 
-        exc_string = '../cmake-build-release/src/magas ../examples/motoric_section_airgap/motoric_section_airgap.json -o out-{:d}.vtu'.format(rot_step)
+        exc_string = '../cmake-build-release/src/magas {:} -o out-{:d}.vtu'.format(example_path, rot_step)
         os.system(exc_string)
 
     # for index, (jd, jq) in enumerate(zip(jds, jqs)):
