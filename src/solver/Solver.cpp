@@ -115,7 +115,6 @@ void Solver<dim>::set_per_map(std::unordered_map<std::string, std::vector<unsign
     this->per_map = map;
 }
 
-
 template<int dim>
 Vector<double>& Solver<dim>::get_solution(){
     return this->solution;

@@ -1,37 +1,20 @@
 #include <iostream>
-#include <deal.II/grid/tria.h>
+#include <fstream>
 
-#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
-#include <deal.II/base/logstream.h>
 #include <deal.II/lac/vector.h>
-#include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/precondition.h>
-#include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
 #include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/numerics/data_out.h>
-#include <deal.II/grid/tria_accessor.h>
-
 #include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <fstream>
-#include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <fstream>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/fe/mapping_q1.h>
 #include <deal.II/grid/grid_tools.h>
-
-#include <deal.II/base/work_stream.h>
 #include <deal.II/base/multithread_info.h>
+#include <deal.II/lac/sparse_direct.h>
 
 #include "PeriodicityMapperFactory.h"
 #include "LinearSolver.h"
@@ -174,20 +157,10 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
 template<int dim>
 void LinearSolver<dim>::solve(){
 
-    // TODO: Investigate what happens here with constraints condense system_matrix and system_rhs.
-    //  Whatever it is, it breaks periodicity
-//    constraints.condense(system_matrix);
-//    constraints.condense(system_rhs);
+    SparseDirectUMFPACK A_direct;
+    this->solution = this->system_rhs;
+    A_direct.solve(this->system_matrix, this->solution);
 
-    SolverControl solver_control(10000, 1e-12);
-    SolverCG<Vector<double>> solver(solver_control);
-
-    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(this->system_matrix, 1.6);
-
-    solver.solve(this->system_matrix, this->solution, this->system_rhs, preconditioner);
-
-    std::cout << "\t" << solver_control.last_step() << " CG iterations needed to obtain convergence." << std::endl;
     this->constraints.distribute(this->solution);
 
 }
