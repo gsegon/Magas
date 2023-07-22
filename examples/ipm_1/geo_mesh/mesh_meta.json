@@ -14,7 +14,8 @@
   "mesh_id": {
     "3": {
       "name": "Rotor Core",
-      "material": "core"},
+      "material": "core",
+      "rotation": "rot1"},
     "4": {
       "name": "Stator core",
       "material": "core"},
@@ -44,7 +45,8 @@
       "angle":  1.15192},
     "506": {
       "name": "Airgap",
-      "material": "air"},
+      "material": "air",
+      "rotation": "rot1"},
     "201": {
       "name": "Air2",
       "material": "air"},

@@ -13,9 +13,6 @@
 
   "mesh_id": {
 
-    "601": {
-      "name": "Rotor Core",
-      "material": "core"},
     "602": {
       "name": "Stator core",
       "material": "core"},
@@ -64,11 +61,19 @@
       "material": "air"},
     "517": {
       "name": "Airgap",
+      "material": "air"
+    },
+    "2000": {
+      "name": "Air2",
+      "material": "air",
+      "rotation": "rot1"},
+    "2001": {
+      "name": "Air3",
       "material": "air"},
-    "518": {
-      "name": "Air",
-      "material": "air"}
+    "601": {
+      "name": "Rotor Core",
+      "material": "core",
+      "rotation": "rot1"
+    }
   }
-
-
 }
