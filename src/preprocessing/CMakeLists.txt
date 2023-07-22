@@ -3,6 +3,7 @@ add_library(preprocessing OBJECT
         src/PeriodicityMapperFactory.cpp
         src/LinePeriodicityMapper.cpp
         src/CirclePeriodicityMapper.cpp
+        src/SlidingRotation.cpp
         )
 
 target_include_directories(preprocessing PUBLIC include)
@@ -19,6 +20,7 @@ add_executable(test_preprocessing
         test/test_LinePeriodicityMapper.cpp
         test/test_CirclePeriodicityMapper.cpp
         test/test_PeriodicityMapperFactory.cpp
+        test/test_SlidingRotation.cpp
         )
 target_include_directories(test_preprocessing PUBLIC include)
 target_include_directories(test_preprocessing PUBLIC .)
