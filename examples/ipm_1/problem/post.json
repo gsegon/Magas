@@ -1,0 +1,14 @@
+{
+  "postprocess": {
+    "|Bavg [T]|": "avg(sqrt(Bx_q1^2 + By_q1^2), sqrt(Bx_q2^2 + By_q2^2), sqrt(Bx_q3^2 + By_q3^2), sqrt(Bx_q4^2 + By_q4^2))",
+    "J": "J",
+    "mat_id": "mat_id"
+  },
+
+  "postprocess_sum": {
+    "Check": "1",
+    "Torque_1/8 [Nmm]/m": "Torque(3, 506)"
+  }
+
+
+}

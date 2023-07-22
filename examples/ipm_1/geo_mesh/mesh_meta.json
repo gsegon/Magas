@@ -1,0 +1,57 @@
+{
+
+  "mesh_path": "geo_mesh/motoric_section_2.msh",
+
+  "boundary_id": {
+    "505": {
+      "boundary": "A=0"},
+    "507": {
+      "boundary": "per1"},
+    "508": {
+      "boundary": "per1"}
+  },
+
+  "mesh_id": {
+    "3": {
+      "name": "Rotor Core",
+      "material": "core"},
+    "4": {
+      "name": "Stator core",
+      "material": "core"},
+    "10": {
+      "Name": "Coil_A+",
+      "material": "copper",
+      "source": "Ja"},
+    "11": {
+      "Name": "Coil_B-",
+      "material": "copper",
+      "source": "-Jb"},
+    "12": {
+      "Name": "Coil_C+",
+      "material": "copper",
+      "source": "Jc"},
+    "13": {
+      "Name": "Coil_C-",
+      "material": "copper",
+      "source": "-Jc"},
+    "509": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle": -0.10472},
+    "510": {
+      "material": "Magnet_NdFe",
+      "source": "Magnet_NdFe",
+      "angle":  1.15192},
+    "506": {
+      "name": "Airgap",
+      "material": "air"},
+    "201": {
+      "name": "Air2",
+      "material": "air"},
+    "200": {
+      "name": "Air1",
+      "material": "air"}
+  }
+
+
+}
