@@ -43,33 +43,20 @@ void FluxLinkageScalarPostprocessor<dim>::process(const Triangulation<dim>&  tri
     std::vector<double> solution_at_cell(quadrature_formula.size());
 
     result = 0;
-    FSource* f_source;
-    ConstFSource f_zero{0};
     double i_current = 0;
     for (auto& cell : dof_handler.active_cell_iterators()){
         if (cell->material_id() == mat_id){
-            if (f_map_ptr){
-                auto f_variant = (*f_map_ptr).at(cell->material_id());
-                if(std::holds_alternative<FSource*>(f_variant))
-                    f_source = std::get<FSource*>(f_variant);
-            }else{
-                f_source = &f_zero;
-            }
 
             fe_values.reinit(cell);
-            fe_values.get_function_gradients(*this->solution_ptr, solution_gradients);
+//            fe_values.get_function_gradients(*this->solution_ptr, solution_gradients);
             fe_values.get_function_values(*this->solution_ptr, solution_at_cell);
-            q_points = fe_values.get_quadrature_points();
+//            q_points = fe_values.get_quadrature_points();
 
             for (auto q: fe_values.quadrature_point_indices()){
-
-                auto x = q_points[q][0];
-                auto y = q_points[q][1];
-                auto J = f_source->get_value(x, y);
                 auto u = solution_at_cell[q];
                 auto JxW = fe_values.JxW(q);
-                result += u*J*JxW;
-                i_current += J*JxW;
+                result += u*1*JxW;
+                i_current += 1*JxW;
             }
         }
     }
