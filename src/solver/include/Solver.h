@@ -51,6 +51,7 @@ public:
     void set_f_map(t_f_map);
     void set_dc_map(t_dc_map);
     void set_per_map(t_per_map);
+    void set_rot_map(t_rot_map);
 //    virtual void setup_system() = 0;
     void setup_rotation(unsigned int, unsigned int, int);
     void extend_dsp(DynamicSparsityPattern& dsp);

@@ -193,23 +193,28 @@ void Solver<dim>::copy_local_to_global(const AssemblyCopyData &copy_data) {
 }
 
 template<int dim>
-void Solver<dim>::set_nu_map(std::unordered_map<int, NuCurve*> map) {
+void Solver<dim>::set_nu_map(t_nu_map map) {
     this->nu_map = map;
 }
 
 template<int dim>
-void Solver<dim>::set_f_map(std::unordered_map<int, std::variant<FSource*, std::pair<double, double>>> map) {
+void Solver<dim>::set_f_map(t_f_map map) {
     this->f_map = map;
 }
 
 template<int dim>
-void Solver<dim>::set_dc_map(std::unordered_map<int, double> map) {
+void Solver<dim>::set_dc_map(t_dc_map map) {
     this->dc_map = map;
 }
 
 template<int dim>
-void Solver<dim>::set_per_map(std::unordered_map<std::string, std::vector<unsigned int>> map) {
+void Solver<dim>::set_per_map(t_per_map map) {
     this->per_map = map;
+}
+
+template<int dim>
+void Solver<dim>::set_rot_map(t_rot_map map) {
+    this->rot_map = map;
 }
 
 template<int dim>
@@ -226,5 +231,3 @@ template<int dim>
 FE_Q<dim>& Solver<dim>::get_fe(){
     return this->fe;
 }
-
-
