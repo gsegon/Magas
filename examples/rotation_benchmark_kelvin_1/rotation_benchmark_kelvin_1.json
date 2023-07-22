@@ -1,0 +1,68 @@
+{
+  "material": {
+    "air": {
+      "nu": 795774.715025
+    },
+    "magnet": {
+      "nu": 795774.715025
+    }
+  },
+
+  "boundary": {
+    "A=0": 0.0,
+    "per1": "periodic-circle"
+  },
+
+  "rotation": {
+    "rot1" : 0
+  },
+
+  "source": {
+    "MagHC": 1000000,
+    "MagAir": 1591549.43091895
+  },
+
+  "postprocess": {
+    "mat_id": "mat_id"
+  },
+
+  "postprocess_sum": {
+    "TorqueEgg": "Torque(3, 4)"
+  },
+
+  "mesh_path": "rotation_benchmark_kelvin_1.msh",
+
+  "boundary_id": {
+    "7": {
+      "boundary": "A=0"},
+    "1": {
+      "boundary": "per1"},
+    "2": {
+      "boundary": "per1"}
+  },
+
+  "mesh_id": {
+    "3": {
+      "name": "Magnet part",
+      "material": "magnet",
+      "source": "MagHC",
+      "angle":  -1.57079632679
+    },
+    "4": {
+      "name": "Air 1",
+      "material": "air",
+      "rotation": "rot1"
+    },
+    "5": {
+      "name": "Air 2",
+      "material": "air",
+      "rotation": "rot1"
+    },
+    "6": {
+      "name": "Air 4",
+      "material": "air",
+      "source": "MagAir",
+      "angle":  0
+    }
+  }
+}
