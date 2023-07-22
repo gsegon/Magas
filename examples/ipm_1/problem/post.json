@@ -7,7 +7,13 @@
 
   "postprocess_sum": {
     "Check": "1",
-    "Torque_1/8 [Nmm]/m": "Torque(3, 506)"
+    "Torque_1/8 [Nmm]/m": "Torque(3, 506)",
+    "Flux_a_+": "Psi(10)",
+    "Flux_a_-": "0",
+    "Flux_b_+": "0",
+    "Flux_b_-": "Psi(11)",
+    "Flux_c_+": "Psi(12)",
+    "Flux_c_-": "Psi(13)"
   }
 
 
