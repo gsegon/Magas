@@ -39,6 +39,7 @@ typedef std::unordered_map<int, std::variant<FSource*, std::pair<double, double>
 typedef std::unordered_map<int, double> t_dc_map;
 typedef std::unordered_map<std::string, std::vector<unsigned int>> t_per_map;
 typedef std::map<std::string, std::string> t_postprocessor_strings;
+typedef std::map<std::pair<unsigned int, unsigned int>, int> t_rot_map;
 
 template<int dim>
 class Solver{
@@ -50,10 +51,12 @@ public:
     void set_f_map(t_f_map);
     void set_dc_map(t_dc_map);
     void set_per_map(t_per_map);
-    virtual void setup_system() = 0;
+//    virtual void setup_system() = 0;
+    void setup_rotation(unsigned int, unsigned int, int);
+    void extend_dsp(DynamicSparsityPattern& dsp);
     void assemble_system();
     virtual void run() = 0;
-    virtual void solve() = 0;
+//    virtual void solve() = 0;
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
