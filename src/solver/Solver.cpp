@@ -39,10 +39,108 @@
 
 using namespace dealii;
 
+template<int dim>
+void set_rotating_bound_data(unsigned int domain1,
+                             unsigned int domain2,
+                             const Triangulation<dim>&  triangulation,
+                             const Vector<double>&      solution,
+                             const FE_Q<dim>&           fe,
+                             std::vector<unsigned int>& cell_indices,
+                             std::vector<unsigned int>& dofs
+){
+
+
+    DoFHandler<dim> dof_handler(triangulation);
+    dof_handler.distribute_dofs(fe);
+
+    QGauss<dim> quadrature_formula(fe.degree + 1);
+    FEValues<dim> fe_values(fe, quadrature_formula, update_values | update_gradients | update_quadrature_points |
+                                                    update_JxW_values);
+    std::vector<Tensor<1, dim>> solution_gradients(quadrature_formula.size());
+
+    // Stator
+    std::set<int> mask_stator_vertex_indices;
+    std::set<int> mask_stator_cell_indices;
+    std::set<std::pair<unsigned int, int>> stator_dof_to_vertex_index;
+    std::set<unsigned int> dofs1;
+
+    for (auto cell: dof_handler.active_cell_iterators()) {
+        if (cell->material_id() == domain1){
+            for (unsigned int i = 0; i < (cell->n_faces()); i++) {
+                if (cell->neighbor_index(i) != -1) {
+                    auto neighbor_cell = cell->neighbor(i);
+                    if (neighbor_cell->material_id() == domain2) {
+                        mask_stator_cell_indices.insert(neighbor_cell->index());
+                        auto face = cell->face(i);
+                        std::vector< types::global_dof_index > global_dof_indices(2);
+                        face->get_dof_indices(global_dof_indices);
+                        for (unsigned int j = 0; j < face->n_vertices(); j++) {
+                            auto vertex = face->vertex(j);
+                            mask_stator_vertex_indices.insert(face->vertex_index(j));
+                            stator_dof_to_vertex_index.insert({global_dof_indices[j], face->vertex_index(j)});
+                            dofs1.insert(global_dof_indices[j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (auto cell: dof_handler.active_cell_iterators())
+        if (cell->material_id() == domain2)
+            for (unsigned int j=0; j<cell->n_vertices(); j++)
+                if (std::count(mask_stator_vertex_indices.begin(), mask_stator_vertex_indices.end(), cell->vertex_index(j)))
+                    mask_stator_cell_indices.insert(cell->index());
+
+    for (auto index: mask_stator_cell_indices)
+        cell_indices.push_back(index);
+
+    for (auto dof: dofs1)
+        dofs.push_back(dof);
+
+}
+
+
 template class Solver<2>;
 
 template <int dim>
 Solver<dim>::Solver(): fe(1), dof_handler(triangulation), quadrature_formula(fe.degree+1)  {}
+
+
+template<int dim>
+void Solver<dim>::setup_rotation(unsigned int a, unsigned int b, int offset) {
+
+//    dof_handler.distribute_dofs(fe);
+    set_rotating_bound_data(a, b, triangulation, solution, fe, rot_cell_indices, rot_dofs);
+
+    std::vector<Point<dim>> nodes(dof_handler.n_dofs());
+    DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
+    std::map<unsigned int, std::vector<double>> dof_to_node;
+    for (auto dof : rot_dofs){
+        dof_to_node[dof] = {nodes[dof][0], nodes[dof][1]};
+    }
+    sr = new SlidingRotation{rot_dofs, dof_to_node, offset};
+    std::cout << "Sliding boundary has " << sr->get_dofs().size() << " dofs." << std::endl;
+
+}
+
+template<int dim>
+void Solver<dim>::extend_dsp(DynamicSparsityPattern& dsp){
+    std::vector<types::global_dof_index> local_dof_indices(4);
+    for (auto cell: dof_handler.active_cell_iterators()){
+        cell->get_dof_indices(local_dof_indices);
+
+        if (std::count(rot_cell_indices.begin(), rot_cell_indices.end(), cell->index())){
+            for (auto& local_dof_index : local_dof_indices){
+                local_dof_index = sr->get_mapped(local_dof_index);
+            }
+            for (auto i : local_dof_indices)
+                for (auto j : local_dof_indices){
+                    dsp.add(i, j);
+                }
+        }
+    }
+}
 
 template<int dim>
 void Solver<dim>::read_mesh(const std::string& mesh_filepath) {

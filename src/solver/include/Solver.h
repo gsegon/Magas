@@ -30,6 +30,7 @@
 
 #include "NuCurveFactory.h"
 #include "FSourceFactory.h"
+#include "SlidingRotation.h"
 
 using namespace dealii;
 
@@ -49,10 +50,10 @@ public:
     void set_f_map(t_f_map);
     void set_dc_map(t_dc_map);
     void set_per_map(t_per_map);
-//    virtual void setup_system() = 0;
+    virtual void setup_system() = 0;
     void assemble_system();
     virtual void run() = 0;
-//    virtual void solve() = 0;
+    virtual void solve() = 0;
 
     Triangulation<dim>& get_triangulation();
     Vector<double>& get_solution();
@@ -88,12 +89,17 @@ public:
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
+    std::vector<unsigned int> rot_cell_indices;
+    std::vector<unsigned int> rot_dofs;
+    SlidingRotation* sr = nullptr;
+
     Vector<double> solution;
     Vector<double> system_rhs;
     t_nu_map nu_map;
     t_f_map f_map;
     t_dc_map dc_map;
     t_per_map per_map;
+    t_rot_map rot_map = {};
 };
 
 #endif //MAGAS_SOLVER_H
