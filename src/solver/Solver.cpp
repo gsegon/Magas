@@ -43,7 +43,6 @@ template<int dim>
 void set_rotating_bound_data(unsigned int domain1,
                              unsigned int domain2,
                              const Triangulation<dim>&  triangulation,
-                             const Vector<double>&      solution,
                              const FE_Q<dim>&           fe,
                              std::vector<unsigned int>& cell_indices,
                              std::vector<unsigned int>& dofs
@@ -111,7 +110,7 @@ template<int dim>
 void Solver<dim>::setup_rotation(unsigned int a, unsigned int b, int offset) {
 
 //    dof_handler.distribute_dofs(fe);
-    set_rotating_bound_data(a, b, triangulation, solution, fe, rot_cell_indices, rot_dofs);
+    set_rotating_bound_data(a, b, triangulation, fe, rot_cell_indices, rot_dofs);
 
     std::vector<Point<dim>> nodes(dof_handler.n_dofs());
     DoFTools::map_dofs_to_support_points(MappingQ1<dim>(), dof_handler, nodes);
