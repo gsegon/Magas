@@ -46,9 +46,15 @@ Plane Surface(27) = {11};
 
 //Transfinite Curve {242} = 1 Using Progression 1;
 //Transfinite Curve {241} = 1 Using Progression 1;
+//Transfinite Curve {367} = 50 Using Progression 1;
+//Transfinite Curve {244} = 50 Using Progression 1;
+//Transfinite Curve {242} = 5 Using Progression 1;
 Periodic Line {246} = {244};
 Periodic Line {241} = {242};
 Periodic Line {369} = {367};
+
+Transfinite Curve {368} = 30 Using Progression 1;
+
 
 Mesh 2;
 
@@ -102,3 +108,7 @@ Physical Surface("Airgap") = {27};
 //+
 Physical Curve("bc_periodic_a") = {369, 241, 246};
 Physical Curve("bc_periodic_b") = {367, 242, 244};
+//+
+
+//+
+

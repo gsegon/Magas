@@ -30,6 +30,11 @@ void LinearSolver<dim>::setup_system() {
 
     this->constraints.clear();
 
+    // setup_rotation
+    for (auto [key, value] : this->rot_map){
+        this->setup_rotation(key.first, key.second, value);
+    }
+
     // Apply 0 DC boundary conditions
     for (auto& [mat_id, value] : this->dc_map){
         VectorTools::interpolate_boundary_values(this->dof_handler, mat_id, Functions::ConstantFunction<2>(value), this->constraints);
@@ -39,7 +44,6 @@ void LinearSolver<dim>::setup_system() {
     for (auto [per_type, boundary_ids] : Solver<dim>::per_map){
         const IndexSet b_dofs_1 = DoFTools::extract_boundary_dofs(Solver<dim>::dof_handler, ComponentMask(), {boundary_ids[0]});
         const IndexSet b_dofs_2 = DoFTools::extract_boundary_dofs(Solver<dim>::dof_handler, ComponentMask(), {boundary_ids[1]});
-
 
         AssertThrow (b_dofs_1.n_elements() == b_dofs_2.n_elements(), ExcInternalError())
 
@@ -83,10 +87,10 @@ void LinearSolver<dim>::setup_system() {
     Solver<dim>::constraints.close();
 
     DynamicSparsityPattern dsp(Solver<dim>::dof_handler.n_dofs());
-
-    // TODO: Investigate condensing DynamicSparsityPattern
-//    constraints.condense(dsp);
     DoFTools::make_sparsity_pattern(Solver<dim>::dof_handler, dsp, Solver<dim>::constraints);
+
+    //Extend dsp due to rotation mappings:
+    this->extend_dsp(dsp);
 
     Solver<dim>::sparsity_pattern.copy_from(dsp);
 
@@ -152,6 +156,15 @@ void LinearSolver<dim>::local_assemble_system(const typename DoFHandler<dim>::ac
         }
 
     cell->get_dof_indices(copy_data.local_dof_indices);
+
+    if (this->sr){
+        if (std::count(this->rot_cell_indices.begin(), this->rot_cell_indices.end(), cell->index())){
+            for (auto& local_dof_index : copy_data.local_dof_indices){
+                local_dof_index = this->sr->get_mapped(local_dof_index);
+            }
+        }
+    }
+
 }
 
 template<int dim>

@@ -30,6 +30,7 @@
 
 #include "NuCurveFactory.h"
 #include "FSourceFactory.h"
+#include "SlidingRotation.h"
 
 using namespace dealii;
 
@@ -38,6 +39,7 @@ typedef std::unordered_map<int, std::variant<FSource*, std::pair<double, double>
 typedef std::unordered_map<int, double> t_dc_map;
 typedef std::unordered_map<std::string, std::vector<unsigned int>> t_per_map;
 typedef std::map<std::string, std::string> t_postprocessor_strings;
+typedef std::map<std::pair<unsigned int, unsigned int>, int> t_rot_map;
 
 template<int dim>
 class Solver{
@@ -49,7 +51,10 @@ public:
     void set_f_map(t_f_map);
     void set_dc_map(t_dc_map);
     void set_per_map(t_per_map);
+    void set_rot_map(t_rot_map);
 //    virtual void setup_system() = 0;
+    void setup_rotation(unsigned int, unsigned int, int);
+    void extend_dsp(DynamicSparsityPattern& dsp);
     void assemble_system();
     virtual void run() = 0;
 //    virtual void solve() = 0;
@@ -88,12 +93,17 @@ public:
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
+    std::vector<unsigned int> rot_cell_indices;
+    std::vector<unsigned int> rot_dofs;
+    SlidingRotation* sr = nullptr;
+
     Vector<double> solution;
     Vector<double> system_rhs;
     t_nu_map nu_map;
     t_f_map f_map;
     t_dc_map dc_map;
     t_per_map per_map;
+    t_rot_map rot_map = {};
 };
 
 #endif //MAGAS_SOLVER_H

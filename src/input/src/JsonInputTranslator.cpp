@@ -23,6 +23,10 @@ t_per_map JsonInputTranslator::get_per_map() {
     return per_map;
 }
 
+t_rot_map JsonInputTranslator::get_rot_map() {
+    return rot_map;
+}
+
 t_postprocessor_strings JsonInputTranslator::get_pp_cell() {
     return postprocessor_strings_cell;
 }
@@ -49,9 +53,15 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
     auto material_data = input_data.at("material");
     auto boundary_data = input_data.at("boundary");
     auto source_data = input_data.at("source");
+    json rotation_data;
+    if (input_data.contains("rotation")){
+        rotation_data = input_data.at("rotation");
+    }
+
+    std::cout << rotation_data << std::endl;
+
     auto boundary_id_data = input_data.at("boundary_id");
     auto mesh_id_data = input_data.at("mesh_id");
-
     auto postprocess_data = input_data.at("postprocess");
     auto postprocess_sum_data = input_data.at("postprocess_sum");
 
@@ -74,6 +84,7 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
     // Add material coefficients to 'nu_map' and sources to 'f_map'
     NuCurveFactory bh_factory;
     FSourceFactory fsf;
+    std::map<std::string, std::vector<unsigned int>> rot_to_mat_ids;
     for (auto& mesh_el_data : mesh_id_data.items()){
         int mat_id{std::stoi(mesh_el_data.key())};
         if (mesh_el_data.value().contains("material")){
@@ -92,6 +103,13 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
                 }
             }
         }
+
+        if (mesh_el_data.value().contains("rotation")) {
+            auto value1 =mesh_el_data.value().at("rotation");
+            rot_to_mat_ids[value1].push_back(mat_id);
+//            auto offset = rotation_data.at(value1);
+        }
+
         if (mesh_el_data.value().contains("source")){
 
             // if number take number; if string evaluate expression
@@ -126,6 +144,14 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
             // If there is no source, set f to 0.
         else{
             f_map.insert({mat_id, fsf.create(0)});
+        }
+    }
+
+    if (input_data.contains("rotation")) {
+        for (auto &rot_data: rotation_data.items()) {
+            std::pair<unsigned int, unsigned int> rot_pair{rot_to_mat_ids[rot_data.key()][0],
+                                                           rot_to_mat_ids[rot_data.key()][1]};
+            rot_map.insert({rot_pair, rot_data.value()});
         }
     }
 }

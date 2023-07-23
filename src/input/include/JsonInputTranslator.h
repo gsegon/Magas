@@ -16,6 +16,7 @@ typedef std::unordered_map<int, std::variant<FSource*, std::pair<double, double>
 typedef std::unordered_map<int, double> t_dc_map;
 typedef std::unordered_map<std::string, std::vector<unsigned int>> t_per_map;
 typedef std::map<std::string, std::string> t_postprocessor_strings;
+typedef std::map<std::pair<unsigned int, unsigned int>, int> t_rot_map;
 
 class JsonInputTranslator{
 public:
@@ -24,6 +25,7 @@ public:
     t_f_map get_f_map();
     t_dc_map get_dc_map();
     t_per_map get_per_map();
+    t_rot_map get_rot_map();
     t_postprocessor_strings get_pp_cell();
     t_postprocessor_strings get_pp_scalar();
     std::filesystem::path get_mesh_filepath();
@@ -35,6 +37,7 @@ private:
     t_nu_map nu_map;
     t_dc_map dc_map;
     t_per_map per_map;
+    t_rot_map rot_map;
     t_postprocessor_strings postprocessor_strings_cell;
     t_postprocessor_strings postprocessor_strings_scalar;
     std::filesystem::path mesh_filepath;

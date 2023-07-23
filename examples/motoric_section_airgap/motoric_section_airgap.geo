@@ -6,8 +6,8 @@ ShapeFromFile("motoric_section_airgap.brep")
 //Line(242) = {186, 1};
 
 //+
-Point(340) = {46.1, 0, 0, 1.0};
-Point(341) = {0, 46.1, 0, 1.0};
+Point(340) = {46.2, 0, 0, 1.0};
+Point(341) = {0, 46.2, 0, 1.0};
 //+
 Point(342) = {46.4, 0, 0, 1.0};
 Point(343) = {0, 46.4, 0, 1.0};
@@ -79,8 +79,15 @@ Curve Loop(36) = {597, 570, -569, -568, -567};
 Plane Surface(29) = {36};
 //+
 Physical Curve("A0", 505) = {553, 429};
-Physical Curve("bc_periodic_a", 518) = {551, 428, 421, 422, 423};
-Physical Curve("bc_periodic_b", 519) = {552, 430, 426, 425, 424};
+
+Periodic Curve {551} = {552};
+Periodic Curve {421} = {424};
+Periodic Curve {422} = {425};
+Periodic Curve {423} = {426};
+Periodic Curve {428} = {430};
+
+Physical Curve("bc_periodic_a", 518) = {551, 421, 422, 423, 428};
+Physical Curve("bc_periodic_b", 519) = {552, 424, 425, 426, 430};
 
 Physical Surface("Magnet_N_1", 512) = {17};
 Physical Surface("Magnet_N_2", 513) = {18};
@@ -94,12 +101,18 @@ Physical Surface("Coil_C+", 509) = {3, 9};
 Physical Surface("Coil_B+", 510) = {8, 10};
 Physical Surface("Coil_C-", 511) = {6, 4};
 
-
 Physical Surface("AirPockets", 516) = {22, 23, 24, 25, 26, 27, 28, 29};
-Physical Surface("Air", 518) = {19, 21};
+Physical Surface("Air", 2000) = {19};
+Physical Surface("Air2", 2001) = {21};
 Physical Surface("AirGap", 517) = {20};//+
-
 //+
 Physical Surface("RotorCore", 601) = {14};
 //+
 Physical Surface("StatorCore", 602) = {1};
+//+
+Transfinite Curve {420} = 90 Using Progression 1;
+//+
+Transfinite Curve {186} = 30 Using Progression 1;
+//+
+Transfinite Curve {419} = 90 Using Progression 1;
+//+
