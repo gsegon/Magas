@@ -1,28 +1,34 @@
 ![CMake-Build](https://github.com/gsegon/solver/actions/workflows/cmake.yml/badge.svg?event=push)
 
 
-# Magas - Magnetostatic analysis suite
+Magas
+=====
 
-## Description
-
-Magnetostatics is the study of steady magnet fields where the sources are not time-varrying. Equivallently, magnetostatics can be seen as a special case of Maxwell's equations where the charges are assumed to be fixed or move at a constant current J. The governing equations are:
-
+Magas is an open source magnetostatic finite element solver. 
 
 
-Magnetostatic analsysis suite is used to solve the magnetostatic problem in finite element formulation. 
+Installation:
+-------------
 
-## Table of Contents (Optional)
+From sources
+------------
+Let's say you've unpacked the .tar.gz file into a directory /path/to/magas/sources. 
+Then configure, compile, and install Magas with:
 
-If your README is long, add a table of contents to make it easy for users to find what they need.
+    $ mkdir build
+    $ cd build
+    $ cmake -DCMAKE_INSTALL_PREFIX=/path/where/magas/should/be/installed/to /path/to/magas/sources
+    $ make install    (alternatively $ make -j<N> install)
+    $ make test
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Credits](#credits)
-- [License](#license)
+To build from the repository, execute the following commands first:
 
-## Installation
+    $ git clone https://github.com/gsegon/Magas.git
+    $ cd Magas
 
-What are the steps required to install your project? Provide a step-by-step description of how to get the development environment running.
+Then continue as before.
+
+
 
 ## Usage
 
