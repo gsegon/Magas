@@ -7,18 +7,15 @@ Magas
 Magas is an open source magnetostatic finite element solver. 
 
 
-Installation:
--------------
-
-From sources
-------------
+Installation from sources:
+--------------------------
 Let's say you've unpacked the .tar.gz file into a directory /path/to/magas/sources. 
 Then configure, compile, and install Magas with:
 
     $ mkdir build
     $ cd build
     $ cmake -DCMAKE_INSTALL_PREFIX=/path/where/magas/should/be/installed/to /path/to/magas/sources
-    $ make install    (alternatively $ make -j<N> install)
+    $ sudo make install    (alternatively $ make -j<N> install)
     $ make test
 
 To build from the repository, execute the following commands first:
@@ -30,9 +27,17 @@ Then continue as before.
 
 
 
-## Usage
+## Run an example
 
-Provide instructions and examples for use. Include screenshots as needed.
+Before running an example:
+
+    $ sudo chown -R $USER ~/magas
+    
+
+Run an example:
+
+    $ cd ~/magas/examples/motoric
+    $ magas motoric.json
 
 To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
 
