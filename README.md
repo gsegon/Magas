@@ -6,6 +6,16 @@ Magas
 
 Magas is an open source magnetostatic finite element solver. 
 
+## Features
+Linear 2D solver.
+Non-linear 2D solver (experimental).
+VTU export for visualization and JSON export for scalar results.
+User defined post processing Scalar and Field functions.
+Torque calculation based on Eggshell and Arkkio methods.
+Flux linkage calulcation.
+Periodic and anti-periodic boundaries.
+Virtual mesh rotation (experimental).
+
 
 Installation from sources:
 --------------------------
@@ -90,7 +100,3 @@ Dependency  | Version | Bundled
 
 See LICENSE file.
 
-
-## Features
-
-If your project has a lot of features, list them here.
