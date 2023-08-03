@@ -51,19 +51,24 @@ Run an example:
 
 Before running an example:
 
-    $ sudo chown -R $USER ~/magas
+    sudo chown -R $USER ~/magas
     
 
 Run an example:
 
-    $ cd ~/magas/examples/motoric
-    $ magas motoric.json
+    cd ~/magas/examples/motoric
+    magas motoric.json
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+After a successful run two new files should be created in the current directory.
 
-    ```md
-    ![alt text](assets/images/screenshot.png)
-    ```
+Results of user defined postprocessing section found in motoric.json
+    
+    results-motoric.json 
+
+VTU file containing visualization of the mesh, solution and results of user defined postprocessor expessions found in motoric.json. Paraview may be used for visualization.
+
+    motoric.vtu
+    
 
 Dependency list:
 ----------------
