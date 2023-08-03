@@ -11,9 +11,15 @@ Magas is an open source magnetostatic finite element solver featuring:
 - VTU export for visualization with Paraview.
 - JSON export for scalar results.
 - User defined post processing Scalar and Field functions.
-- Torque, force, flux linkage, energy,  Magnetic flux density (B), Magnetic field strength (H) 
-- Force calculation based on Eggshell and Lorentz methods.
-- Flux linkage calulcation.
+- Pre-made common postprocessors:
+  - Torque, 
+  - Force, 
+  - Flux linkage, 
+  - Energy,  
+  - Magnetic flux density (B), 
+  - Magnetic field strength (H), 
+  - Point evaluation
+  - Lorentz Force
 - Periodic and anti-periodic boundaries.
 - Virtual mesh rotation (experimental).
 
