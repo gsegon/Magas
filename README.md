@@ -29,10 +29,10 @@ To build from the repository, execute the following commands first:
 Then continue as before.
 
 
-Installation from package managers:
+Installation from package managers (Ubuntu/Debian):
 -----------------------------------
 
-Ubuntu/Debian
+
 
 Add magas and dependecy repositories:
 
