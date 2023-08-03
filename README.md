@@ -4,14 +4,15 @@
 Magas
 =====
 
-Magas is an open source magnetostatic finite element solver. 
-
-## Features
-- Linear 2D solver.
-- Non-linear 2D solver (experimental).
-- VTU export for visualization and JSON export for scalar results.
+Magas is an open source magnetostatic finite element solver featuring:
+- Linear and Non-linear (experimental) 2D solver.
+- Mesh support: Gmsh.
+- Material definition as a constant permitivty or a CSV text file describing BH curve.
+- VTU export for visualization with Paraview.
+- JSON export for scalar results.
 - User defined post processing Scalar and Field functions.
-- Torque calculation based on Eggshell and Arkkio methods.
+- Torque, force, flux linkage, energy,  Magnetic flux density (B), Magnetic field strength (H) 
+- Force calculation based on Eggshell and Lorentz methods.
 - Flux linkage calulcation.
 - Periodic and anti-periodic boundaries.
 - Virtual mesh rotation (experimental).
