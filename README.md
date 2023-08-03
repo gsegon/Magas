@@ -73,7 +73,7 @@ Other dependencies are included with Magas source code and can be found in _exte
 
 Dependency  | Version | Bundled 
 ------------- | ------------- | ---------
-[deal.ii](https://www.dealii.org/)  | >=9.4.0 | No
+[deal.ii](https://github.com/dealii/dealii)  | >=9.4.0 | No
 [json](https://github.com/nlohmann/json)  |  | Yes
 [cxxopts](https://github.com/jarro2783/cxxopts)  |  | Yes
 [exprtk](https://github.com/ArashPartow/exprtk)  |  | Yes
