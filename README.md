@@ -9,25 +9,45 @@ Magas is an open source magnetostatic finite element solver.
 
 Installation from sources:
 --------------------------
+If building from sources, make sure all the dependencies are installed. See the dependecy list for more details.
+
+
 Let's say you've unpacked the .tar.gz file into a directory /path/to/magas/sources. 
 Then configure, compile, and install Magas with:
 
-    $ mkdir build
-    $ cd build
-    $ cmake -DCMAKE_INSTALL_PREFIX=/path/where/magas/should/be/installed/to /path/to/magas/sources
-    $ sudo make install    (alternatively $ make -j<N> install)
-    $ make test
+    mkdir build
+    cd build
+    cmake -DCMAKE_INSTALL_PREFIX=/path/where/magas/should/be/installed/to /path/to/magas/sources
+    sudo make install    (alternatively $ make -j<N> install)
+    make test
 
 To build from the repository, execute the following commands first:
 
-    $ git clone https://github.com/gsegon/Magas.git
-    $ cd Magas
+    git clone https://github.com/gsegon/Magas.git
+    cd Magas
 
 Then continue as before.
 
 
+Installation from package managers:
+-----------------------------------
 
-## Run an example
+Ubuntu/Debian
+
+Add magas and dependecy repositories:
+
+    sudo add-apt-repository ppa:ginggs/deal.ii-9.4.0-backports
+    sudo add-apt-repository ppa:gsegon/magas
+    sudo apt update
+
+Install magas:
+
+    sudo apt-get install magas
+
+    
+
+Run an example:
+--------------
 
 Before running an example:
 
@@ -44,6 +64,22 @@ To add a screenshot, create an `assets/images` folder in your repository and upl
     ```md
     ![alt text](assets/images/screenshot.png)
     ```
+
+Dependency list:
+----------------
+
+The only dependecy that needs to be installed spearately from magas is [deal.ii](https://www.dealii.org/). Instruction on how to install deal.ii can be found on the it's website. 
+Other dependencies are included with Magas source code and can be found in _external_ directory.
+
+Dependency  | Version | Bundled 
+------------- | ------------- | ---------
+[deal.ii](https://www.dealii.org/)  | >=9.4.0 | No
+[json](https://github.com/nlohmann/json)  |  | Yes
+[cxxopts](https://github.com/jarro2783/cxxopts)  |  | Yes
+[exprtk](https://github.com/ArashPartow/exprtk)  |  | Yes
+[vtu11](https://github.com/phmkopp/vtu11)  |  | Yes
+
+
 
 ## Credits
 
