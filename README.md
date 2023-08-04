@@ -4,12 +4,14 @@
 Magas
 =====
 
-Magas is an open source magnetostatic finite element solver solving:
+Magas is an open source magnetostatic finite element solver solving
 
-![Problem equation 2D](doc/assets/2d_problem_equation.png)
+<p align="center">
+  <img src="doc/assets/2d_problem_equation.png" />
+</p>
 
 where:
-A - Vector potential (3rd component), &nu; - Material reluctivity (reciprocal of permeability), J - Current density, **H**<sub>0</sub> - Magnetic field strength (used to model permanent magnets).
+A - Vector potential (3rd component), &nu; - Material reluctivity (reciprocal of permeability), J - Current density, **H**<sub>0</sub> - Permanent magnet field strength.
 
 It features:
 - Linear and Non-linear (experimental) 2D solver.
