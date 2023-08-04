@@ -6,12 +6,17 @@ Magas
 
 Magas is an open source magnetostatic finite element solver solving:
 
+![Problem equation 2D](doc/assets/2d_problem_equation.png)
+
+where:
+
+A - Vector potential (3rd component), &nu; - Material reluctivity (reciprocal of permeability), J - Current density, **H**<sub>0</sub> - Magnetic field strength (used to model permanent magnets)
 
 
 It features:
 - Linear and Non-linear (experimental) 2D solver.
 - Mesh support: Gmsh.
-- Material definition as a constant permitivity or a CSV text file describing BH curve.
+- Material definition as a constant reluctivity or a CSV text file describing BH curve.
 - VTU export for visualization with Paraview.
 - JSON export for scalar results.
 - User defined post processing Scalar and Field functions.
