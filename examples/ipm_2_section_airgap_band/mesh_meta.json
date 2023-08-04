@@ -65,15 +65,13 @@
     },
     "2000": {
       "name": "Air2",
-      "material": "air",
-      "rotation": "rot1"},
+      "material": "air"},
     "2001": {
       "name": "Air3",
       "material": "air"},
     "601": {
       "name": "Rotor Core",
-      "material": "core",
-      "rotation": "rot1"
+      "material": "core"
     }
   }
 }

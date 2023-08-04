@@ -3,6 +3,5 @@
   "materials": "problem/material_data.json",
   "sources": "problem/sources.json",
   "post": "problem/post.json",
-  "mesh_meta": "geo_mesh/mesh_meta.json",
-  "rotation": {"rot1": 0}
+  "mesh_meta": "geo_mesh/mesh_meta.json"
 }
