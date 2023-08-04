@@ -100,15 +100,13 @@ Dependency list:
 The only dependecy that needs to be installed spearately from magas is [deal.ii](https://www.dealii.org/). Instruction on how to install deal.ii can be found on the it's website. 
 Other dependencies are included with Magas source code and can be found in _external_ directory.
 
-Dependency  | Version | Bundled 
-------------- | ------------- | ---------
-[deal.ii](https://github.com/dealii/dealii)  | >=9.4.0 | No
-[json](https://github.com/nlohmann/json)  |  | Yes
-[cxxopts](https://github.com/jarro2783/cxxopts)  |  | Yes
-[exprtk](https://github.com/ArashPartow/exprtk)  |  | Yes
-[vtu11](https://github.com/phmkopp/vtu11)  |  | Yes
-
-
+| Dependency                                      | Version  | Bundled |
+|-------------------------------------------------|----------|---------|
+| [deal.ii](https://github.com/dealii/dealii)     | >= 9.4.0 | No      |
+| [json](https://github.com/nlohmann/json)        |          | Yes     |
+| [cxxopts](https://github.com/jarro2783/cxxopts) |          | Yes     |
+| [exprtk](https://github.com/ArashPartow/exprtk) |          | Yes     |
+| [vtu11](https://github.com/phmkopp/vtu11)       |          | Yes     |
 
 ## License
 
