@@ -4,10 +4,14 @@
 Magas
 =====
 
-Magas is an open source magnetostatic finite element solver featuring:
+Magas is an open source magnetostatic finite element solver solving:
+
+
+
+It features:
 - Linear and Non-linear (experimental) 2D solver.
 - Mesh support: Gmsh.
-- Material definition as a constant permitivty or a CSV text file describing BH curve.
+- Material definition as a constant permitivity or a CSV text file describing BH curve.
 - VTU export for visualization with Paraview.
 - JSON export for scalar results.
 - User defined post processing Scalar and Field functions.
@@ -26,7 +30,7 @@ Magas is an open source magnetostatic finite element solver featuring:
 
 Installation from sources:
 --------------------------
-If building from sources, make sure all the dependencies are installed. See the dependecy list for more details.
+If building from sources, make sure all the dependencies are installed. See the dependency list for more details.
 
 
 Let's say you've unpacked the .tar.gz file into a directory /path/to/magas/sources. 
