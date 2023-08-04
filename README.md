@@ -20,19 +20,9 @@ It features:
 - VTU export for visualization with Paraview.
 - JSON export for scalar results.
 - User defined post processing Scalar and Field functions.
-- Pre-made common postprocessors:
-  - Torque, 
-  - Force, 
-  - Flux linkage, 
-  - Energy,  
-  - Magnetic flux density (B), 
-  - Magnetic field strength (H), 
-  - Point evaluation
-  - Lorentz Force
+- Pre-made common postprocessors (Torque, Force, Flux linkage, Energy, Magnetic flux density (B), Magnetic field strength (H), Point evaluation, Lorentz Force, ...)
 - Periodic and anti-periodic boundaries.
 - Virtual mesh rotation (experimental).
-
-Common applications of electromagnetic simulations: Coils, Solenoids, Electric motors, Electric generators, Transformers, Electromechanical actuators, Magnet assemblies, Superconducting electromagnets, and other. 
 
 Installation from sources:
 --------------------------
