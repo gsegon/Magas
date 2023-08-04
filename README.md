@@ -30,6 +30,7 @@ It features:
 - Periodic and anti-periodic boundaries.
 - Virtual mesh rotation (experimental).
 
+Common applications of electromagnetic simulations: Coils, Solenoids, Electric motors, Electric generators, Transformers, Electromechanical actuators, Magnet assemblies, Superconducting electromagnets, and other. 
 
 Installation from sources:
 --------------------------
