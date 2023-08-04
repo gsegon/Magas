@@ -12,7 +12,7 @@
   },
 
   "source": {
-    "one": "if((x^2+y^2)> 0.2^2 and (x^2+y^2)< 0.5^2, sin(atan2(x, y)+pi/2), 0)"
+    "one": "2*1"
   },
 
   "postprocess" : {
@@ -20,6 +20,7 @@
   },
 
   "postprocess_sum": {
+    "I": "J_q1*JxW_q1 + J_q2*JxW_q2 + J_q3*JxW_q3 + J_q4*JxW_q4"
   },
 
   "boundary_id": {
