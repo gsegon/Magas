@@ -1,6 +1,6 @@
 {
 
-  "mesh_path": "motoric_section_airgap.msh",
+  "mesh_path": "ipm_2_section_airgap_band.msh",
 
   "boundary_id": {
     "505": {

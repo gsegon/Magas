@@ -1,6 +1,6 @@
 // Gmsh project created on Thu May  4 12:33:04 2023
 SetFactory("OpenCASCADE");
-ShapeFromFile("motoric_section_airgap.brep")
+ShapeFromFile("ipm_2_section_airgap_band.brep")
 
 //Line(241) = {187, 5};
 //Line(242) = {186, 1};
