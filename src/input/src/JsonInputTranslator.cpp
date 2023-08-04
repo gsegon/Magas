@@ -73,8 +73,6 @@ JsonInputTranslator::JsonInputTranslator(std::filesystem::path input) {
         rotation_data = input_data.at("rotation");
     }
 
-    std::cout << rotation_data << std::endl;
-
     auto boundary_id_data = input_data.at("boundary_id");
     auto mesh_id_data = input_data.at("mesh_id");
     auto postprocess_data = input_data.at("postprocess");

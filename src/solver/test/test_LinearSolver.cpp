@@ -218,7 +218,7 @@ TEST(LinearSolver, motoric_section){
     double J2 = -10*66/8.0645e-05;
 
     std::filesystem::path home = std::getenv("HOME");
-    std::filesystem::path test_mesh = "../../../examples/motoric_section/motoric_section.msh";
+    std::filesystem::path test_mesh = "../../../examples/ipm_2_section/ipm_2_section.msh";
 
 
     std::unordered_map<int, NuCurve*> nu_map{{1,   new LinearNuCurve{nu_core}},            // Core rotor

@@ -1,6 +1,6 @@
 {
 
-  "mesh_path": "motoric_section_airgap.msh",
+  "mesh_path": "ipm_2_section_airgap_band.msh",
 
   "boundary_id": {
     "505": {
@@ -65,15 +65,13 @@
     },
     "2000": {
       "name": "Air2",
-      "material": "air",
-      "rotation": "rot1"},
+      "material": "air"},
     "2001": {
       "name": "Air3",
       "material": "air"},
     "601": {
       "name": "Rotor Core",
-      "material": "core",
-      "rotation": "rot1"
+      "material": "core"
     }
   }
 }

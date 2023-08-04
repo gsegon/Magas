@@ -1,4 +1,4 @@
-Merge "motoric.brep";
+Merge "ipm_2.brep";
 SetFactory("OpenCASCADE");
 Circle(932) = {0, 0, 0, 170/2, 0, 2*Pi};
 //+

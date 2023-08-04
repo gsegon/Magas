@@ -20,40 +20,22 @@
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/base/quadrature_lib.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/logstream.h>
 #include <deal.II/lac/vector.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/precondition.h>
-#include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
-#include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/numerics/data_out.h>
-#include <deal.II/grid/tria_accessor.h>
-
-#include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <fstream>
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <fstream>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/fe/mapping_q1.h>
 #include <deal.II/grid/grid_tools.h>
-
 #include <deal.II/base/work_stream.h>
 #include <deal.II/base/multithread_info.h>
 
 #include "PeriodicityMapperFactory.h"
 #include "Solver.h"
-#include "ConstFSource.h"
 
 using namespace dealii;
 
