@@ -104,7 +104,7 @@ Output file _results-EI_core.json_ contains results of user defined scalar postp
 Output file _EI_core.vtu_ contains visualization of the mesh, solution and results of user defined postprocessor expessions found in EI_core.json. Paraview may be used for visualization.
 
 <p align="center">
-  <img src="doc/assets/EI_core_vtu_screenshot.png" />
+  <img src="doc/assets/EI_core_vtu_screenshot.png" width=60% />
 </p>
 
 
