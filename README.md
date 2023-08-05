@@ -86,7 +86,9 @@ After a successful run the output is:
         Assembling system...Done!
         Solving system...       Solving: Done!
     ::Postprocessing results::
-        Total magnetic energy = 0.036475
+        Total magnetic energy [J] = 0.036475
+        NUmber of cells = 16296
+        I [A] = 67.65
     ::Export results::
         Output written to EI_core.vtu ("<full path to current working directory>/EI_core.vtu")
         Output written to results-EI_core.json ("<full path to current working directory>/results-EI_core.json")
