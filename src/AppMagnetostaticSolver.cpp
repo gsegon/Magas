@@ -133,7 +133,8 @@ int main(int argc, char* argv[]){
             results[key] = val;
         }
 
-        std::ofstream o("results-" + (std::string)output + ".json");
+        std::filesystem::path result_filename{"results-" + (std::string)output + ".json"};
+        std::ofstream o(result_filename);
         o << std::setw(4) << results << std::endl;
 
         // Perform vector postprocessing and export to vtu.
@@ -142,6 +143,8 @@ int main(int argc, char* argv[]){
         std::cout << "::Export results::" << std::endl;
         std::cout << "\tOutput written to " << output.concat(".vtu").string();
         std::cout << " (" << (std::filesystem::current_path() / output)<< ")" << std::endl;
+        std::cout << "\tOutput written to " << result_filename.string();
+        std::cout << " (" << (std::filesystem::current_path() / result_filename) << ")" << std::endl;
 
         return 0;
 
