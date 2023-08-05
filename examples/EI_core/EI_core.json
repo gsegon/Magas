@@ -53,7 +53,9 @@
   },
 
   "postprocess_sum": {
-    "Total magnetic energy": "(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu_q1 * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu_q3 * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu_q4 * JxW_q4"
+    "Total magnetic energy [J]": "(Bx_q1^2+By_q1^2)/2.0 * nu_q1 * JxW_q1 + (Bx_q2^2+By_q2^2)/2.0 * nu_q1 * JxW_q2 + (Bx_q3^2+By_q3^2)/2.0 * nu_q3 * JxW_q3 + (Bx_q4^2+By_q4^2)/2.0 * nu_q4 * JxW_q4",
+    "I [A]": "if((mat_id==202), J_q1*JxW_q1 + J_q2*JxW_q2 + J_q3*JxW_q3 + J_q4*JxW_q4, 0)",
+    "NUmber of cells": "1"
   },
 
   "mesh_path": "EI_core.msh"

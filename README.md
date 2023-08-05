@@ -73,19 +73,40 @@ Before running an example:
 
 Run an example:
 
-    cd ~/magas/examples/motoric
-    magas motoric.json
+    cd ~/magas/examples/EI_core
+    magas EI_core.json
 
-After a successful run two new files should be created in the current directory.
+After a successful run the output is:
 
-Results of user defined postprocessing section found in motoric.json
-    
-    results-motoric.json 
+    ::Initializing solver::
+        Reading mesh...Done!
+        Setting up maps...Done!
+    ::Running solver::
+        Setting up system...Done!
+        Assembling system...Done!
+        Solving system...       Solving: Done!
+    ::Postprocessing results::
+        Total magnetic energy [J] = 0.036475
+        NUmber of cells = 16296
+        I [A] = 67.65
+    ::Export results::
+        Output written to EI_core.vtu ("<full path to current working directory>/EI_core.vtu")
+        Output written to results-EI_core.json ("<full path to current working directory>/results-EI_core.json")
 
-VTU file containing visualization of the mesh, solution and results of user defined postprocessor expessions found in motoric.json. Paraview may be used for visualization.
+Output file _results-EI_core.json_ contains results of user defined scalar postprocessor expressions:
 
-    motoric.vtu
-    
+    {
+        "I [A]": 67.6499999999774,
+        "NUmber of cells": 16296.0,
+        "Total magnetic energy [J]": 0.036474959423895545
+    }
+
+Output file _EI_core.vtu_ contains visualization of the mesh, solution and results of user defined postprocessor expessions found in EI_core.json. Paraview may be used for visualization.
+
+<p align="center">
+  <img src="doc/assets/EI_core_vtu_screenshot.png" width=60% />
+</p>
+
 
 Dependency list:
 ----------------
@@ -100,6 +121,7 @@ Other dependencies are included with Magas source code and can be found in _exte
 | [cxxopts](https://github.com/jarro2783/cxxopts) |          | Yes     |
 | [exprtk](https://github.com/ArashPartow/exprtk) |          | Yes     |
 | [vtu11](https://github.com/phmkopp/vtu11)       |          | Yes     |
+| [GSL](https://www.gnu.org/software/gsl/)        |          | No      |
 
 ## License
 
